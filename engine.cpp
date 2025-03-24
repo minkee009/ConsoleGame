@@ -23,7 +23,7 @@ void MyGame::Engine::Run()
 
 void MyGame::Engine::Update()
 {
-	//UPDATE_TIME();
+	UPDATE_TIME();
 	SCAN_KEY();
 }
 

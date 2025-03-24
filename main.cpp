@@ -4,12 +4,13 @@
 #include <iostream>
 #include "engine.hpp"
 #include "input.hpp"
+#include "time.hpp"
 
 using namespace MyGame;
 
 int main()
 {
-	ConsoleRenderer render(120,48);
+	ConsoleRenderer render(160,40);
 
 	int x, y;
 
@@ -18,15 +19,15 @@ int main()
 
 	SPRITE spr;
 
-	CHAR_INFO pixels[9];
+	CHAR_INFO pixels[10*10];
 
 	spr.Pixels = pixels;
-	spr.Size = { 3, 3 };
+	spr.Size = { 10, 10 };
 	spr.Position = { 0, 0 };
 	spr.Pivot = { 1, 1 };
 	spr.SortingOrder = 5;
 
-	for (int i = 0; i < 9; i++) {
+	for (int i = 0; i < 100; i++) {
 		pixels[i].Char.UnicodeChar = L'█'; // 유니코드 블록 문자
 		pixels[i].Attributes = FOREGROUND_RED | FOREGROUND_INTENSITY; // 밝은 초록색
 	}
@@ -34,7 +35,10 @@ int main()
 
 	pixels[0].Char.UnicodeChar = 0;
 
-	pixels[4].Attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+	pixels[5 * 10 + 5].Attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+	pixels[5 * 10 + 4].Attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+	pixels[4 * 10 + 5].Attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+	pixels[4 * 10 + 4].Attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
 
 	SPRITE spr1;
 
@@ -46,19 +50,27 @@ int main()
 	spr1.Position = { (SHORT)(render.GetScreenWidth() / 2 - 6), (SHORT)(render.GetScreenHeight() / 2) };
 	spr1.SortingOrder = 3;
 
-	std::wstring hello = L"hello, world!";
+	std::wstring hello = L"---안녕하세요, 월드!";
 
 	for (int i = 0; i < hello.size(); i++) {
 		pixels1[i].Char.UnicodeChar = hello[i]; // 유니코드 블록 문자
 		pixels1[i].Attributes = FOREGROUND_GREEN | FOREGROUND_INTENSITY; // 밝은 초록색
 	}
 
+	INIT_TIME();
 
+	float sx = 0.0f, sy = 0.0f;
+	float speed = 12.0f;
 	while (1)
 	{
+		UPDATE_TIME();
 		SCAN_KEY();
-		spr.Position.X += (int)GET_KEY_DOWN(VK_RIGHT) - (int)GET_KEY_DOWN(VK_LEFT);
-		spr.Position.Y += (int)GET_KEY_DOWN(VK_DOWN) - (int)GET_KEY_DOWN(VK_UP);
+
+		sx += ((float)GET_KEY(VK_RIGHT) - (float)GET_KEY(VK_LEFT)) * speed * GET_DELTATIME();
+		sy += ((float)GET_KEY(VK_DOWN) - (float)GET_KEY(VK_UP)) * speed * GET_DELTATIME();
+
+		spr.Position.X = sx;//+= (int)GET_KEY_DOWN(VK_RIGHT) - (int)GET_KEY_DOWN(VK_LEFT);
+		spr.Position.Y = sy;//+= (int)GET_KEY_DOWN(VK_DOWN) - (int)GET_KEY_DOWN(VK_UP);
 
 		render.AddDrawCall(&spr1);
 		render.AddDrawCall(&spr);

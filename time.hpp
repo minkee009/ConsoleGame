@@ -23,6 +23,7 @@ namespace MyGame
 	};
 }
 
+#define INIT_TIME MyGame::Time::Initialize
 #define UPDATE_TIME MyGame::Time::UpdateTime
 #define GET_DELTATIME MyGame::Time::GetDeltaTime
 #define GET_TOTALTIME MyGame::Time::GetTotalTime

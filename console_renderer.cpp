@@ -9,13 +9,24 @@ MyGame::ConsoleRenderer::ConsoleRenderer(SHORT width, SHORT height)
 	COORD bufferSize = { m_width, m_height };
 
 	m_hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	m_window = { 0, 0, 1, 1 };
+	SetConsoleWindowInfo(m_hConsole, TRUE, &m_window);
+
 	SetConsoleScreenBufferSize(m_hConsole, bufferSize);
+	SetConsoleActiveScreenBuffer(m_hConsole);
 
 	CONSOLE_CURSOR_INFO cursorInfo;
 
 	GetConsoleCursorInfo(m_hConsole, &cursorInfo); // 현재 커서 정보 가져오기
 	cursorInfo.bVisible = FALSE;                // 커서 숨기기
 	SetConsoleCursorInfo(m_hConsole, &cursorInfo); // 설정 적용
+
+	// Set the font size now that the screen buffer has been assigned to the console
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	GetConsoleScreenBufferInfo(m_hConsole, &csbi);
+
+	SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
 
 	m_screen = new CHAR_INFO[m_height * m_width];
 	m_depthBuffer = new SHORT[m_height * m_width];
@@ -49,7 +60,6 @@ void MyGame::ConsoleRenderer::Draw()
 	{
 		const SPRITE* dc = m_drawCalls.front();
 
-		//pivot 처리 뺴고 테스트
 		for(int i = 0; i < dc->Size.Y; i++)
 			for (int j = 0; j < dc->Size.X; j++)
 			{
