@@ -54,20 +54,19 @@ void MyGame::ConsoleRenderer::Draw()
 			for (int j = 0; j < dc->Size.X; j++)
 			{
 				//범위 이탈
-				if ( (i + dc->Position.Y) >= m_height
-					|| (i + dc->Position.Y) < 0
-					|| (j + dc->Position.X) >= m_width
-					|| (j + dc->Position.X) < 0)
+				if ( (i - dc->Pivot.Y + dc->Position.Y) >= m_height
+					|| (i - dc->Pivot.Y + dc->Position.Y) < 0
+					|| (j - dc->Pivot.X + dc->Position.X) >= m_width
+					|| (j - dc->Pivot.X + dc->Position.X) < 0)
 					continue;
 
-				auto screen_idx = (i + dc->Position.Y) * m_width + (j + dc->Position.X);
 				auto pixel_idx = i * dc->Size.Y + j;
 
 				//공백문자 체크
 				if (dc->Pixels[pixel_idx].Char.UnicodeChar == 0)
 					continue;
 
-				auto depth = m_depthBuffer[screen_idx];
+				auto screen_idx = (i - dc->Pivot.Y + dc->Position.Y) * m_width + (j + dc->Position.X - dc->Pivot.X);
 
 				//깊이 버퍼 확인
 				if (dc->SortingOrder > m_depthBuffer[screen_idx])

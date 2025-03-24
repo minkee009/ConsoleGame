@@ -133,12 +133,14 @@
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="sprite.h" />
+    <ClCompile Include="time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="console_renderer.hpp" />
     <ClInclude Include="delegate.hpp" />
     <ClInclude Include="engine.hpp" />
     <ClInclude Include="input.hpp" />
+    <ClInclude Include="time.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

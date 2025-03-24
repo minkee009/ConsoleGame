@@ -1,5 +1,6 @@
 #include "engine.hpp"
 #include "input.hpp"
+#include "time.hpp"
 
 MyGame::Engine::Engine(int screenWidth, int screenHeight) : m_consoleRenderer(screenWidth, screenHeight)
 {
@@ -22,6 +23,7 @@ void MyGame::Engine::Run()
 
 void MyGame::Engine::Update()
 {
+	//UPDATE_TIME();
 	SCAN_KEY();
 }
 

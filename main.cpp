@@ -9,7 +9,7 @@ using namespace MyGame;
 
 int main()
 {
-	ConsoleRenderer render(80,25);
+	ConsoleRenderer render(120,48);
 
 	int x, y;
 
@@ -42,6 +42,7 @@ int main()
 
 	spr1.Pixels = pixels1;
 	spr1.Size = { 13, 1 };
+	spr1.Pivot = { 0 , 0 };
 	spr1.Position = { (SHORT)(render.GetScreenWidth() / 2 - 6), (SHORT)(render.GetScreenHeight() / 2) };
 	spr1.SortingOrder = 3;
 

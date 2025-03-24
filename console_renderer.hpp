@@ -22,7 +22,7 @@ namespace MyGame
 		{
 			Clear();
 			Draw();
-			Swap();
+			//Swap();
 		}
 
 	private:

@@ -5,17 +5,18 @@ namespace CSharpWrapper
 {
 	class Delegate
 	{
-		std::vector<std::function<void()>> handlers;
-
+	public:
 		void AddListener(std::function<void()> func)
 		{
-			handlers.push_back(func);
+			m_handlers.push_back(func);
 		};
 
 		void Invoke()
 		{
-			for (auto& func : handlers)
+			for (auto& func : m_handlers)
 				func();
 		}
+	private:
+		std::vector<std::function<void()>> m_handlers;
 	};
 }

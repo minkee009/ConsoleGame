@@ -1,5 +1,5 @@
-#ifndef __MYGAME__SPRITE__
-#define __MYGAME__SPRITE__
+#ifndef __MYGAME_SPRITE__
+#define __MYGAME_SPRITE__
 
 #include <Windows.h>
 
@@ -12,4 +12,4 @@ typedef struct _SPRITE
 	CHAR_INFO* Pixels;
 } SPRITE;
 
-#endif // !__MYGAME__SPRITE__
+#endif // !__MYGAME_SPRITE__

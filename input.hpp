@@ -15,8 +15,8 @@ namespace MyGame
 		static bool GetKeyDown(int32_t keyCode);
 		static bool GetKeyUp(int32_t keyCode);
 	private:
-		static SHORT _oldKeyState[];
-		static SHORT _curKeyState[];
+		static SHORT m_oldKeyState[];
+		static SHORT m_curKeyState[];
 	};
 }
 
