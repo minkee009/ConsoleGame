@@ -9,7 +9,8 @@ typedef struct _SPRITE
 	COORD Position;
 	COORD Pivot;
 	SHORT SortingOrder;
-	CHAR_INFO* Pixels;
+	const WCHAR* ShapeString;
+	WORD Attribute;
 } SPRITE;
 
 #endif // !__MYGAME_SPRITE__

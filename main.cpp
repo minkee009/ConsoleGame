@@ -10,7 +10,7 @@ using namespace MyGame;
 
 int main()
 {
-	ConsoleRenderer render(160,40);
+	ConsoleRenderer render(160,60);
 
 	int x, y;
 
@@ -19,43 +19,32 @@ int main()
 
 	SPRITE spr;
 
-	CHAR_INFO pixels[10*10];
+	const WCHAR* dot = L"█ █ █ █ █";
 
-	spr.Pixels = pixels;
-	spr.Size = { 10, 10 };
+	spr.ShapeString = dot;
+	spr.Size = { 3, 3 };
 	spr.Position = { 0, 0 };
 	spr.Pivot = { 1, 1 };
 	spr.SortingOrder = 5;
+	spr.Attribute = FOREGROUND_RED | FOREGROUND_INTENSITY;
 
-	for (int i = 0; i < 100; i++) {
-		pixels[i].Char.UnicodeChar = L'█'; // 유니코드 블록 문자
-		pixels[i].Attributes = FOREGROUND_RED | FOREGROUND_INTENSITY; // 밝은 초록색
-	}
+	SPRITE spr2;
 
 
-	pixels[0].Char.UnicodeChar = 0;
-
-	pixels[5 * 10 + 5].Attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
-	pixels[5 * 10 + 4].Attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
-	pixels[4 * 10 + 5].Attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
-	pixels[4 * 10 + 4].Attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+	spr2.ShapeString = dot;
+	spr2.Size = { 3, 3 };
+	spr2.Position = { 0, 0 };
+	spr2.Pivot = { 1, 1 };
+	spr2.SortingOrder = 5;
+	spr2.Attribute = FOREGROUND_RED | FOREGROUND_INTENSITY;
 
 	SPRITE spr1;
-
-	CHAR_INFO pixels1[13];
-
-	spr1.Pixels = pixels1;
+	spr1.ShapeString = L"hello, world!";
 	spr1.Size = { 13, 1 };
 	spr1.Pivot = { 0 , 0 };
 	spr1.Position = { (SHORT)(render.GetScreenWidth() / 2 - 6), (SHORT)(render.GetScreenHeight() / 2) };
 	spr1.SortingOrder = 3;
-
-	std::wstring hello = L"---안녕하세요, 월드!";
-
-	for (int i = 0; i < hello.size(); i++) {
-		pixels1[i].Char.UnicodeChar = hello[i]; // 유니코드 블록 문자
-		pixels1[i].Attributes = FOREGROUND_GREEN | FOREGROUND_INTENSITY; // 밝은 초록색
-	}
+	spr1.Attribute = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
 
 	INIT_TIME();
 
