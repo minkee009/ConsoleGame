@@ -106,26 +106,29 @@ void MyGame::ConsoleRenderer::Draw()
 			short cursorX = 0;
 			for (int j = 0; j < dc->Size.X; j++, cursorX++)
 			{
-				//문자범위 계산
+				//문자 인덱스 계산
 				auto wchar_idx = i * dc->Size.Y + j;
+				BOOL isWideFont = IsDoubleWidthCharacter(dc->ShapeString[wchar_idx]);
 
-				//범위 이탈
-				if ((i - dc->Pivot.Y + dc->Position.Y) >= m_height
-					|| (i - dc->Pivot.Y + dc->Position.Y) < 0
-					|| (cursorX - dc->Pivot.X + dc->Position.X) >= m_width
-					|| (cursorX - dc->Pivot.X + dc->Position.X) < 0)
+				//범위 이탈 확인
+				COORD screenPos = { (cursorX - dc->Pivot.X + m_viewportX + dc->Position.X), (i - dc->Pivot.Y + m_viewportY + dc->Position.Y) };
+
+				if (screenPos.Y >= m_height
+					|| screenPos.Y < 0
+					|| screenPos.X + isWideFont >= m_width
+					|| screenPos.X < 0)
+				{
+					cursorX += isWideFont;
 					continue;
+				}
 
 				//널문자 체크
 				if (dc->ShapeString[wchar_idx] == 0)
 					continue;
 					
-
-				COORD screenPos = { (cursorX + dc->Position.X - dc->Pivot.X), (i - dc->Pivot.Y + dc->Position.Y) };
 				auto screen_idx = screenPos.Y * m_width + screenPos.X;
 				BOOL	bRval = FALSE;
 				DWORD	dwCharsWritten;
-				BOOL    isWideFont = IsDoubleWidthCharacter(dc->ShapeString[wchar_idx]);
 
 				//깊이 버퍼 확인
 				if (dc->SortingOrder > m_depthBuffer[screen_idx])
@@ -143,7 +146,7 @@ void MyGame::ConsoleRenderer::Draw()
 
 					m_depthBuffer[screen_idx] = dc->SortingOrder;
 
-					cursorX += isWideFont ? 1 : 0;
+					cursorX += isWideFont;
 				}
 			}
 		}

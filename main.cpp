@@ -19,14 +19,14 @@ int main()
 
 	SPRITE spr;
 
-	const WCHAR* dot = L"█████████";
+	const WCHAR* dot = L"██████████████████";
 	const WORD atr = FOREGROUND_BLUE | FOREGROUND_INTENSITY;
 
 	spr.ShapeString = dot;
-	spr.Size = { 3, 3 };
-	spr.Position = { 0, 0 };
+	spr.Size = { 6, 3 };
+	spr.Position = { 4, 2 };
 	spr.Pivot = { 1, 1 };
-	spr.SortingOrder = 2;
+	spr.SortingOrder = 15;
 	spr.Attribute = atr;
 
 	SPRITE spr2;
@@ -60,16 +60,30 @@ int main()
 
 	float sx = 0.0f, sy = 0.0f;
 	float speed = 12.0f;
+	
+	float timer = 0;
+	float viewCenterX = 0, viewCenterY = 0;
+
 	while (1)
 	{
 		UPDATE_TIME();
 		SCAN_KEY();
 
+		//timer += GET_DELTATIME();
+
+		//if (timer > 1.0f)
+		//{
+		//	timer = 0;
+		//	render.SetViewPortCenter(++viewCenterX, ++viewCenterY);
+		//}
+
 		sx += ((float)GET_KEY(VK_RIGHT) - (float)GET_KEY(VK_LEFT)) * speed * GET_DELTATIME();
 		sy += ((float)GET_KEY(VK_DOWN) - (float)GET_KEY(VK_UP)) * speed * GET_DELTATIME();
 
-		spr.Position.X = sx;//+= (int)GET_KEY_DOWN(VK_RIGHT) - (int)GET_KEY_DOWN(VK_LEFT);
-		spr.Position.Y = sy;//+= (int)GET_KEY_DOWN(VK_DOWN) - (int)GET_KEY_DOWN(VK_UP);
+		render.SetViewPortCenter(std::round(sx), std::round(sy));
+
+		//spr.Position.X = sx;//+= (int)GET_KEY_DOWN(VK_RIGHT) - (int)GET_KEY_DOWN(VK_LEFT);
+		//spr.Position.Y = sy;//+= (int)GET_KEY_DOWN(VK_DOWN) - (int)GET_KEY_DOWN(VK_UP);
 
 		render.AddDrawCall(&spr1);
 		render.AddDrawCall(&spr2);

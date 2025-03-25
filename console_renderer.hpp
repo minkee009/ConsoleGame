@@ -17,6 +17,8 @@ namespace MyGame
 		int GetScreenWidth() { return m_width; }
 		int GetScreenHeight() { return m_height; };
 
+		void SetViewPortCenter(SHORT x, SHORT y) { m_viewportX = x; m_viewportY = y; }
+
 		void AddDrawCall(const SPRITE* sprite);
 
 		void Render() 
@@ -36,6 +38,9 @@ namespace MyGame
 		SHORT* m_depthBuffer;
 		SMALL_RECT m_window;
 		HANDLE m_hConsole;
+
+		SHORT m_viewportX;
+		SHORT m_viewportY;
 
 		std::queue<const SPRITE*> m_drawCalls;
 
