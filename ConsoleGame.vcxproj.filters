@@ -57,6 +57,9 @@
     <ClCompile Include="main.cpp">
       <Filter>소스 파일\내 게임</Filter>
     </ClCompile>
+    <ClCompile Include="MenuScene.cpp">
+      <Filter>소스 파일\내 게임\씬</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="console_renderer.hpp">
@@ -79,6 +82,9 @@
     </ClInclude>
     <ClInclude Include="IScene.hpp">
       <Filter>헤더 파일\엔진\인터페이스</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuScene.hpp">
+      <Filter>헤더 파일\내 게임\씬</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

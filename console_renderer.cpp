@@ -99,7 +99,6 @@ void MyGame::ConsoleRenderer::Draw()
 {
 	while (m_drawCalls.size() > 0)
 	{
-		//SetConsoleActiveScreenBuffer(m_hConsole);
 		const SPRITE* dc = m_drawCalls.front();
 
 		SHORT biasX = dc->Position.X - dc->Pivot.X - m_viewportX;
@@ -170,65 +169,3 @@ void MyGame::ConsoleRenderer::Swap()
 	m_screenBufferIndex++;
 	m_screenBufferIndex %= SCREEN_BUFFER_MAXCOUNT;
 }
-
-//bool MyGame::ConsoleRenderer::DrawChar(int x, int y, char ch, WORD attr)
-//{
-//	COORD	cdPos;
-//	BOOL	bRval = FALSE;
-//	DWORD	dwCharsWritten;
-//	cdPos.X = x;
-//	cdPos.Y = y;
-//
-//	bRval = FillConsoleOutputCharacterA(m_screenBuffer[m_screenBufferIndex], ch, 1, cdPos, &dwCharsWritten);
-//	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputCharacter()\n");
-//
-//	bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], attr, 1, cdPos, &dwCharsWritten);
-//	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
-//	return bRval;
-//}
-//bool MyGame::ConsoleRenderer::DrawChar(int x, int y, wchar_t ch, WORD attr)
-//{
-//	COORD	cdPos;
-//	BOOL	bRval = FALSE;
-//	DWORD	dwCharsWritten;
-//	cdPos.X = x;
-//	cdPos.Y = y;
-//
-//	bRval = FillConsoleOutputCharacterW(m_screenBuffer[m_screenBufferIndex], ch, 1, cdPos, &dwCharsWritten);
-//	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputCharacter()\n");
-//
-//	bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], attr, 1, cdPos, &dwCharsWritten);
-//	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
-//	return bRval;
-//}
-//
-//
-//bool MyGame::ConsoleRenderer::DrawString(int x, int y, const char* pStr, DWORD len, WORD attr)
-//{
-//	COORD	cdPos;
-//	BOOL	bRval = FALSE;
-//	DWORD	dwCharsWritten;
-//	cdPos.X = x;
-//	cdPos.Y = y;
-//
-//	//특정 위치에 문자열을 출력한다.
-//	WriteConsoleOutputCharacterA(m_screenBuffer[m_screenBufferIndex], pStr, len, cdPos, &dwCharsWritten);
-//	bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], attr, len, cdPos, &dwCharsWritten);
-//	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
-//	return bRval;
-//}
-//
-//bool MyGame::ConsoleRenderer::DrawString(int x, int y, const wchar_t* pStr, DWORD len, WORD attr)
-//{
-//	COORD	cdPos;
-//	BOOL	bRval = FALSE;
-//	DWORD	dwCharsWritten;
-//	cdPos.X = x;
-//	cdPos.Y = y;
-//
-//	//특정 위치에 문자열을 출력한다.
-//	WriteConsoleOutputCharacterW(m_screenBuffer[m_screenBufferIndex], pStr, len, cdPos, &dwCharsWritten);
-//	bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], attr, len, cdPos, &dwCharsWritten);
-//	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
-//	return bRval;
-//}
