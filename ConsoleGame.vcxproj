@@ -141,6 +141,7 @@
     <ClInclude Include="delegate.hpp" />
     <ClInclude Include="engine.hpp" />
     <ClInclude Include="input.hpp" />
+    <ClInclude Include="IScene.hpp" />
     <ClInclude Include="time.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

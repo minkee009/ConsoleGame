@@ -11,6 +11,7 @@ typedef struct _SPRITE
 	SHORT SortingOrder;
 	const WCHAR* ShapeString;
 	WORD Attribute;
+	BOOL Flip;
 } SPRITE;
 
 #endif // !__MYGAME_SPRITE__

@@ -13,45 +13,72 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="헤더 파일\엔진">
+      <UniqueIdentifier>{8c3a56dd-88d7-424f-9c8d-4289b64ad5bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\엔진">
+      <UniqueIdentifier>{8ca8d926-4fed-474a-a4d8-7fac9e87901d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\툴 및 랩퍼">
+      <UniqueIdentifier>{0ba7e4e7-d09c-4354-8ad2-380bc0550bc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\엔진\인터페이스">
+      <UniqueIdentifier>{1a087712-f027-4ea3-8797-98836f961013}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\내 게임">
+      <UniqueIdentifier>{f8cc6900-fbf8-4835-840b-bb6afe44e884}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\내 게임">
+      <UniqueIdentifier>{cb932e24-cd99-4e5d-80fe-f78999465eaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\내 게임\씬">
+      <UniqueIdentifier>{11baa74e-bf59-4bef-96ad-07f491dd9362}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\내 게임\씬">
+      <UniqueIdentifier>{a6d9dac5-13b0-4949-9bbf-fa32849b70cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="console_renderer.cpp">
+      <Filter>소스 파일\엔진</Filter>
     </ClCompile>
     <ClCompile Include="engine.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="console_renderer.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\엔진</Filter>
     </ClCompile>
     <ClCompile Include="input.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="sprite.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>소스 파일\엔진</Filter>
     </ClCompile>
     <ClCompile Include="time.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\엔진</Filter>
+    </ClCompile>
+    <ClCompile Include="sprite.h">
+      <Filter>헤더 파일\툴 및 랩퍼</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>소스 파일\내 게임</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="engine.hpp">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="console_renderer.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\엔진</Filter>
     </ClInclude>
-    <ClInclude Include="delegate.hpp">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="engine.hpp">
+      <Filter>헤더 파일\엔진</Filter>
     </ClInclude>
     <ClInclude Include="input.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\엔진</Filter>
     </ClInclude>
     <ClInclude Include="time.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\엔진</Filter>
     </ClInclude>
     <ClInclude Include="char_width_check.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\툴 및 랩퍼</Filter>
+    </ClInclude>
+    <ClInclude Include="delegate.hpp">
+      <Filter>헤더 파일\툴 및 랩퍼</Filter>
+    </ClInclude>
+    <ClInclude Include="IScene.hpp">
+      <Filter>헤더 파일\엔진\인터페이스</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

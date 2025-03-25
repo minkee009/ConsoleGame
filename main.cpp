@@ -19,15 +19,16 @@ int main()
 
 	SPRITE spr;
 
-	const WCHAR* dot = L"██████████████████";
+	const WCHAR* dot = L"██████████\0\0███";
 	const WORD atr = FOREGROUND_BLUE | FOREGROUND_INTENSITY;
 
 	spr.ShapeString = dot;
-	spr.Size = { 6, 3 };
-	spr.Position = { 4, 2 };
-	spr.Pivot = { 1, 1 };
-	spr.SortingOrder = 15;
+	spr.Size = { 5, 3 };
+	spr.Position = { 0, 0 };
+	spr.Pivot = { 2, 1 };
+	spr.SortingOrder = 4;
 	spr.Attribute = atr;
+	spr.Flip = true;
 
 	SPRITE spr2;
 
@@ -37,16 +38,17 @@ int main()
 	spr2.Pivot = { 1, 1 };
 	spr2.SortingOrder = 5;
 	spr2.Attribute = FOREGROUND_RED | FOREGROUND_INTENSITY;
+	spr2.Flip = false;
 
 	SPRITE spr3;
 
-	spr3.ShapeString = L"█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█";
-	spr3.Size = { 15, 15 };
+	spr3.ShapeString = L"█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0██\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0██\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0██\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█\0█";
+	spr3.Size = { 15 , 15 };
 	spr3.Position = { 9 , 22 };
 	spr3.Pivot = { 5, 6 };
 	spr3.SortingOrder = 4;
 	spr3.Attribute = FOREGROUND_RED | FOREGROUND_INTENSITY;
-
+	spr3.Flip = false;
 
 	SPRITE spr1;
 	spr1.ShapeString = L"안녕하세요 이 프로그램은 한글을 지원합니다";
@@ -55,6 +57,7 @@ int main()
 	spr1.Position = { 0, 0 };//{ (SHORT)(render.GetScreenWidth() / 2 - 6), (SHORT)(render.GetScreenHeight() / 2) };
 	spr1.SortingOrder = 3;
 	spr1.Attribute = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+	spr1.Flip = true;
 
 	INIT_TIME();
 
@@ -69,21 +72,15 @@ int main()
 		UPDATE_TIME();
 		SCAN_KEY();
 
-		//timer += GET_DELTATIME();
-
-		//if (timer > 1.0f)
-		//{
-		//	timer = 0;
-		//	render.SetViewPortCenter(++viewCenterX, ++viewCenterY);
-		//}
-
 		sx += ((float)GET_KEY(VK_RIGHT) - (float)GET_KEY(VK_LEFT)) * speed * GET_DELTATIME();
 		sy += ((float)GET_KEY(VK_DOWN) - (float)GET_KEY(VK_UP)) * speed * GET_DELTATIME();
 
 		render.SetViewPortCenter(std::round(sx), std::round(sy));
 
-		//spr.Position.X = sx;//+= (int)GET_KEY_DOWN(VK_RIGHT) - (int)GET_KEY_DOWN(VK_LEFT);
-		//spr.Position.Y = sy;//+= (int)GET_KEY_DOWN(VK_DOWN) - (int)GET_KEY_DOWN(VK_UP);
+		auto center = render.GetViewPortCenter();
+
+		spr.Position.X = center.X + (SHORT)(render.GetScreenWidth() / 2);
+		spr.Position.Y = center.Y + (SHORT)(render.GetScreenHeight() / 2);
 
 		render.AddDrawCall(&spr1);
 		render.AddDrawCall(&spr2);

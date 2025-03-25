@@ -99,34 +99,44 @@ void MyGame::ConsoleRenderer::Draw()
 {
 	while (m_drawCalls.size() > 0)
 	{
+		//SetConsoleActiveScreenBuffer(m_hConsole);
 		const SPRITE* dc = m_drawCalls.front();
 
-		for (int i = 0; i < dc->Size.Y; i++)
+		SHORT biasX = dc->Position.X - dc->Pivot.X - m_viewportX;
+		SHORT biasY = dc->Position.Y - dc->Pivot.Y - m_viewportY;
+
+		SHORT minX = biasX < 0 ? 0 : biasX;
+		SHORT maxX = biasX + dc->Size.X > m_width ? m_width : biasX + dc->Size.X;
+		SHORT minY = biasY < 0 ? 0 : biasY;
+		SHORT maxY = biasY + dc->Size.Y > m_height ? m_height : biasY + dc->Size.Y;
+
+		for (int i = minY; i < maxY; i++)
 		{
-			short cursorX = 0;
-			for (int j = 0; j < dc->Size.X; j++, cursorX++)
+			auto flipX = maxX - minX - 1;
+
+			for (int j = minX, cursorX = minX; j < maxX && cursorX < m_width; j++,cursorX++)
 			{
-				//문자 인덱스 계산
-				auto wchar_idx = i * dc->Size.Y + j;
+				auto wchar_idx = (i - biasY) * dc->Size.Y + (j - biasX);
+			
+				//뒤집기 처리
+				wchar_idx = dc->Flip ? (i - biasY) * dc->Size.Y + flipX : wchar_idx;
+				flipX--;
+				flipX = flipX < 0 ? 0 : flipX;
+
+				//널문자 체크
+				if (dc->ShapeString[wchar_idx] == 0)
+					continue;
+
+				COORD screenPos = { (cursorX), (i) };
 				BOOL isWideFont = IsDoubleWidthCharacter(dc->ShapeString[wchar_idx]);
 
-				//범위 이탈 확인
-				COORD screenPos = { (cursorX - dc->Pivot.X + m_viewportX + dc->Position.X), (i - dc->Pivot.Y + m_viewportY + dc->Position.Y) };
-
-				if (screenPos.Y >= m_height
-					|| screenPos.Y < 0
-					|| screenPos.X + isWideFont >= m_width
-					|| screenPos.X < 0)
+				if (cursorX + isWideFont >= m_width)
 				{
 					cursorX += isWideFont;
 					continue;
 				}
 
-				//널문자 체크
-				if (dc->ShapeString[wchar_idx] == 0)
-					continue;
-					
-				auto screen_idx = screenPos.Y * m_width + screenPos.X;
+				auto screen_idx = i * m_width + cursorX;
 				BOOL	bRval = FALSE;
 				DWORD	dwCharsWritten;
 
@@ -138,9 +148,8 @@ void MyGame::ConsoleRenderer::Draw()
 					if (bRval == false) OutputDebugStringA("Error, WriteConsoleOutputCharacterW()\n");
 					bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], dc->Attribute, 1, screenPos, &dwCharsWritten);
 					if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
-					if (isWideFont && (cursorX + 1 - dc->Pivot.X + dc->Position.X) < m_width)
+					if (isWideFont && (cursorX + 1) < m_width)
 					{
-						screenPos.X += 1;
 						m_depthBuffer[screen_idx + 1] = dc->SortingOrder;
 					}
 
@@ -150,7 +159,6 @@ void MyGame::ConsoleRenderer::Draw()
 				}
 			}
 		}
-			
 
 		m_drawCalls.pop();
 	}
