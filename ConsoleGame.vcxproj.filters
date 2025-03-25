@@ -50,5 +50,8 @@
     <ClInclude Include="time.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="char_width_check.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

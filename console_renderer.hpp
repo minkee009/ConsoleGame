@@ -39,13 +39,13 @@ namespace MyGame
 
 		std::queue<const SPRITE*> m_drawCalls;
 
-		bool DrawChar(int x, int y, char ch, WORD attr);
-		bool DrawChar(int x, int y, wchar_t ch, WORD attr);
-		bool DrawString(int x, int y, const char* pStr, DWORD len, WORD attr);
-		bool DrawString(int x, int y, const wchar_t* pStr, DWORD len, WORD attr);
-
 		void Clear();
 		void Draw();
 		void Swap();
+
+		//bool DrawChar(int x, int y, char ch, WORD attr);
+		//bool DrawChar(int x, int y, wchar_t ch, WORD attr);
+		//bool DrawString(int x, int y, const char* pStr, DWORD len, WORD attr);
+		//bool DrawString(int x, int y, const wchar_t* pStr, DWORD len, WORD attr);
 	};
 }

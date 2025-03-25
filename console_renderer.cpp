@@ -1,8 +1,30 @@
 #include "console_renderer.hpp"
+#include "char_width_check.h"
 #include <cstring>
 
 MyGame::ConsoleRenderer::ConsoleRenderer(SHORT width, SHORT height)
 {
+	HWND hwnd = GetConsoleWindow();
+	if (hwnd == NULL) return;
+
+	// 현재 윈도우 스타일 가져오기
+	LONG style = GetWindowLong(hwnd, GWL_STYLE);
+
+	// 크기 조정 및 최대화 스타일 제거
+	style &= ~WS_SIZEBOX;       // 크기 조정 막기
+	style &= ~WS_MAXIMIZEBOX;   // 최대화 버튼 제거
+
+	// 수정된 스타일 적용
+	SetWindowLong(hwnd, GWL_STYLE, style);
+
+	// 창 위치와 크기 고정
+	SetWindowPos(
+		hwnd,
+		NULL,
+		0, 0, 0, 0,
+		SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED
+	);
+
 	m_width = width;
 	m_height = height;
 
@@ -73,68 +95,6 @@ void MyGame::ConsoleRenderer::Clear()
 	memset(m_depthBuffer, (SHORT)SHRT_MIN, sizeof(SHORT) * m_height * m_width);
 }
 
-bool MyGame::ConsoleRenderer::DrawChar(int x, int y, char ch, WORD attr)
-{
-	COORD	cdPos;
-	BOOL	bRval = FALSE;
-	DWORD	dwCharsWritten;
-	cdPos.X = x;
-	cdPos.Y = y;
-
-	bRval = FillConsoleOutputCharacterA(m_screenBuffer[m_screenBufferIndex], ch, 1, cdPos, &dwCharsWritten);
-	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputCharacter()\n");
-
-	bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], attr, 1, cdPos, &dwCharsWritten);
-	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
-	return bRval;
-}
-bool MyGame::ConsoleRenderer::DrawChar(int x, int y, wchar_t ch, WORD attr)
-{
-	COORD	cdPos;
-	BOOL	bRval = FALSE;
-	DWORD	dwCharsWritten;
-	cdPos.X = x;
-	cdPos.Y = y;
-
-	bRval = FillConsoleOutputCharacterW(m_screenBuffer[m_screenBufferIndex], ch, 1, cdPos, &dwCharsWritten);
-	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputCharacter()\n");
-
-	bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], attr, 1, cdPos, &dwCharsWritten);
-	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
-	return bRval;
-}
-
-
-bool MyGame::ConsoleRenderer::DrawString(int x, int y, const char* pStr, DWORD len, WORD attr)
-{
-	COORD	cdPos;
-	BOOL	bRval = FALSE;
-	DWORD	dwCharsWritten;
-	cdPos.X = x;
-	cdPos.Y = y;
-
-	//특정 위치에 문자열을 출력한다.
-	WriteConsoleOutputCharacterA(m_screenBuffer[m_screenBufferIndex], pStr, len, cdPos, &dwCharsWritten);
-	bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], attr, len, cdPos, &dwCharsWritten);
-	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
-	return bRval;
-}
-
-bool MyGame::ConsoleRenderer::DrawString(int x, int y, const wchar_t* pStr, DWORD len, WORD attr)
-{
-	COORD	cdPos;
-	BOOL	bRval = FALSE;
-	DWORD	dwCharsWritten;
-	cdPos.X = x;
-	cdPos.Y = y;
-
-	//특정 위치에 문자열을 출력한다.
-	WriteConsoleOutputCharacterW(m_screenBuffer[m_screenBufferIndex], pStr, len, cdPos, &dwCharsWritten);
-	bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], attr, len, cdPos, &dwCharsWritten);
-	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
-	return bRval;
-}
-
 void MyGame::ConsoleRenderer::Draw()
 {
 	while (m_drawCalls.size() > 0)
@@ -142,34 +102,52 @@ void MyGame::ConsoleRenderer::Draw()
 		const SPRITE* dc = m_drawCalls.front();
 
 		for (int i = 0; i < dc->Size.Y; i++)
-			for (int j = 0; j < dc->Size.X; j++)
+		{
+			short cursorX = 0;
+			for (int j = 0; j < dc->Size.X; j++, cursorX++)
 			{
+				//문자범위 계산
+				auto wchar_idx = i * dc->Size.Y + j;
+
 				//범위 이탈
 				if ((i - dc->Pivot.Y + dc->Position.Y) >= m_height
 					|| (i - dc->Pivot.Y + dc->Position.Y) < 0
-					|| (j - dc->Pivot.X + dc->Position.X) >= m_width
-					|| (j - dc->Pivot.X + dc->Position.X) < 0)
+					|| (cursorX - dc->Pivot.X + dc->Position.X) >= m_width
+					|| (cursorX - dc->Pivot.X + dc->Position.X) < 0)
 					continue;
 
-				auto pixel_idx = i * dc->Size.Y + j;
-
-				//공백문자 체크
-				if (dc->ShapeString[pixel_idx] == 0 || dc->ShapeString[pixel_idx] == L' ')
+				//널문자 체크
+				if (dc->ShapeString[wchar_idx] == 0)
 					continue;
+					
 
-				auto screen_x = (j + dc->Position.X - dc->Pivot.X);
-				auto screen_y = (i - dc->Pivot.Y + dc->Position.Y);
-
-				auto screen_idx = screen_y * m_width + screen_x;
+				COORD screenPos = { (cursorX + dc->Position.X - dc->Pivot.X), (i - dc->Pivot.Y + dc->Position.Y) };
+				auto screen_idx = screenPos.Y * m_width + screenPos.X;
+				BOOL	bRval = FALSE;
+				DWORD	dwCharsWritten;
+				BOOL    isWideFont = IsDoubleWidthCharacter(dc->ShapeString[wchar_idx]);
 
 				//깊이 버퍼 확인
 				if (dc->SortingOrder > m_depthBuffer[screen_idx])
 				{
 					//드로잉 가능
-					DrawChar(screen_x,screen_y,dc->ShapeString[pixel_idx], FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+					bRval = WriteConsoleOutputCharacterW(m_screenBuffer[m_screenBufferIndex], &dc->ShapeString[wchar_idx], 1, screenPos, &dwCharsWritten);
+					if (bRval == false) OutputDebugStringA("Error, WriteConsoleOutputCharacterW()\n");
+					bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], dc->Attribute, 1, screenPos, &dwCharsWritten);
+					if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
+					if (isWideFont && (cursorX + 1 - dc->Pivot.X + dc->Position.X) < m_width)
+					{
+						screenPos.X += 1;
+						m_depthBuffer[screen_idx + 1] = dc->SortingOrder;
+					}
+
 					m_depthBuffer[screen_idx] = dc->SortingOrder;
+
+					cursorX += isWideFont ? 1 : 0;
 				}
 			}
+		}
+			
 
 		m_drawCalls.pop();
 	}
@@ -181,3 +159,65 @@ void MyGame::ConsoleRenderer::Swap()
 	m_screenBufferIndex++;
 	m_screenBufferIndex %= SCREEN_BUFFER_MAXCOUNT;
 }
+
+//bool MyGame::ConsoleRenderer::DrawChar(int x, int y, char ch, WORD attr)
+//{
+//	COORD	cdPos;
+//	BOOL	bRval = FALSE;
+//	DWORD	dwCharsWritten;
+//	cdPos.X = x;
+//	cdPos.Y = y;
+//
+//	bRval = FillConsoleOutputCharacterA(m_screenBuffer[m_screenBufferIndex], ch, 1, cdPos, &dwCharsWritten);
+//	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputCharacter()\n");
+//
+//	bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], attr, 1, cdPos, &dwCharsWritten);
+//	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
+//	return bRval;
+//}
+//bool MyGame::ConsoleRenderer::DrawChar(int x, int y, wchar_t ch, WORD attr)
+//{
+//	COORD	cdPos;
+//	BOOL	bRval = FALSE;
+//	DWORD	dwCharsWritten;
+//	cdPos.X = x;
+//	cdPos.Y = y;
+//
+//	bRval = FillConsoleOutputCharacterW(m_screenBuffer[m_screenBufferIndex], ch, 1, cdPos, &dwCharsWritten);
+//	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputCharacter()\n");
+//
+//	bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], attr, 1, cdPos, &dwCharsWritten);
+//	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
+//	return bRval;
+//}
+//
+//
+//bool MyGame::ConsoleRenderer::DrawString(int x, int y, const char* pStr, DWORD len, WORD attr)
+//{
+//	COORD	cdPos;
+//	BOOL	bRval = FALSE;
+//	DWORD	dwCharsWritten;
+//	cdPos.X = x;
+//	cdPos.Y = y;
+//
+//	//특정 위치에 문자열을 출력한다.
+//	WriteConsoleOutputCharacterA(m_screenBuffer[m_screenBufferIndex], pStr, len, cdPos, &dwCharsWritten);
+//	bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], attr, len, cdPos, &dwCharsWritten);
+//	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
+//	return bRval;
+//}
+//
+//bool MyGame::ConsoleRenderer::DrawString(int x, int y, const wchar_t* pStr, DWORD len, WORD attr)
+//{
+//	COORD	cdPos;
+//	BOOL	bRval = FALSE;
+//	DWORD	dwCharsWritten;
+//	cdPos.X = x;
+//	cdPos.Y = y;
+//
+//	//특정 위치에 문자열을 출력한다.
+//	WriteConsoleOutputCharacterW(m_screenBuffer[m_screenBufferIndex], pStr, len, cdPos, &dwCharsWritten);
+//	bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], attr, len, cdPos, &dwCharsWritten);
+//	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
+//	return bRval;
+//}

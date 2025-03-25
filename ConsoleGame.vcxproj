@@ -136,6 +136,7 @@
     <ClCompile Include="time.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="char_width_check.h" />
     <ClInclude Include="console_renderer.hpp" />
     <ClInclude Include="delegate.hpp" />
     <ClInclude Include="engine.hpp" />
