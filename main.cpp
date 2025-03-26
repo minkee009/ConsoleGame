@@ -10,6 +10,7 @@
 using namespace MyGame;
 
 constexpr float PI_F = 3.14159265358979323846f;
+constexpr float DEG_TO_RAD = 3.1415927f / 180.0f;
 
 float lerp_f(float a, float b, float t)
 {
@@ -77,7 +78,7 @@ int main()
 	spr3.Size = { 15 , 15 };
 	spr3.Pivot = { 5, 6 };
 	spr3.SortingOrder = 4;
-	spr3.Attribute = FOREGROUND_RED | FOREGROUND_INTENSITY;
+	spr3.Attribute = FOREGROUND_GREEN | FOREGROUND_INTENSITY;
 	spr3.Flip = false;
 
 	INIT_TIME();
@@ -117,20 +118,25 @@ int main()
 		if(hInput != 0)
 			spr.Flip = hInput > 0 ? true : false;
 		
-
-		auto center = render.GetViewPortAnchor();
-
 		plyX += hInput;
 		plyY += vInput;
 
 		sprPos.X = std::round(plyX);
 		sprPos.Y = std::round(plyY);
 
-		float fourX = plyX + sinf(GET_TOTALTIME() * PI_F * 2.0f) * 8.0f;
-		float fourY = plyY + cosf(GET_TOTALTIME() * PI_F * 2.0f) * 4.0f;
+		int angleSet = 4;
+
+		for (int i = 0; i < angleSet; i++)
+		{
+			float rad = 360.0f / angleSet * DEG_TO_RAD;
+
+			float fourX = plyX + sinf(-GET_TOTALTIME() * PI_F * 1.2f + rad * i) * 8.0f;
+			float fourY = plyY + cosf(-GET_TOTALTIME() * PI_F * 1.2f + rad * i) * 4.0f;
+
+			render.AddSpriteDrawCall({ (SHORT)std::round(fourX) , (SHORT)std::round(fourY) }, &spr2);
+		}
 
 		render.AddStringDrawCall({ 43, 32 }, L"안녕하세요 이 프로그램은 한글을 지원합니다");
-		render.AddSpriteDrawCall({ (SHORT)std::round(fourX) , (SHORT)std::round(fourY) }, &spr2);
 		render.AddSpriteDrawCall({ 9 , 22 }, &spr3);
 		render.AddSpriteDrawCall(sprPos, &spr);
 
@@ -138,9 +144,12 @@ int main()
 
 		float targetX = plyX - (SHORT)(render.GetScreenWidth() / 2);
 		float targetY = plyY - (SHORT)(render.GetScreenHeight() / 2);
-
-		sx = lerp_f(sx, targetX, 3.2f * GET_DELTATIME());
-		sy = lerp_f(sy, targetY, 3.2f * GET_DELTATIME());
+		float minMovementThreshold = 0.5f;
+		if (std::abs(targetX - sx) > minMovementThreshold ||
+			std::abs(targetY - sy) > minMovementThreshold) {
+			sx = lerp_f(sx, targetX, 3.2f * GET_DELTATIME());
+			sy = lerp_f(sy, targetY, 3.2f * GET_DELTATIME());
+		}
 
 		render.SetViewPortCenter(std::round(sx), std::round(sy));
 

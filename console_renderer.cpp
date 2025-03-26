@@ -97,7 +97,7 @@ void MyGame::ConsoleRenderer::Clear()
 	COORD Coor = { 0, 0 };
 	DWORD dw;
 	FillConsoleOutputCharacter(m_screenBuffer[m_screenBufferIndex], ' ', m_screenBufferSize, Coor, &dw);
-	memset(m_depthBuffer, (SHORT)SHRT_MIN, sizeof(SHORT) * m_height * m_width);
+	std::fill(m_depthBuffer, m_depthBuffer + m_screenBufferSize, SHRT_MIN);
 }
 
 void MyGame::ConsoleRenderer::Draw()
