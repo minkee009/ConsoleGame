@@ -178,7 +178,7 @@ void MyGame::ConsoleRenderer::Draw()
 	{
 		COORD pos = m_stringDrawCalls.front().first;
 		const WCHAR* dc = m_stringDrawCalls.front().second;
-		auto sizeX = wcslen(dc);
+		auto sizeX = (int)(wcslen(dc) + 1);
 
 		SHORT biasX = pos.X - m_viewportX;
 		SHORT biasY = pos.Y - m_viewportY;

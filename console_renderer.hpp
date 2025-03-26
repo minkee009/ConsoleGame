@@ -17,7 +17,7 @@ namespace MyGame
 		int GetScreenWidth() { return m_width; }
 		int GetScreenHeight() { return m_height; };
 
-		COORD GetViewPortCenter() { return { m_viewportX, m_viewportY }; };
+		COORD GetViewPortAnchor() { return { m_viewportX, m_viewportY }; };
 
 		void SetViewPortCenter(SHORT x, SHORT y) { m_viewportX = x; m_viewportY = y; }
 

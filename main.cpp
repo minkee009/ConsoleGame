@@ -2,11 +2,24 @@
 //
 
 #include <iostream>
+#include <cmath>
 #include "engine.hpp"
 #include "input.hpp"
 #include "time.hpp"
 
 using namespace MyGame;
+
+constexpr float PI_F = 3.14159265358979323846f;
+
+float lerp_f(float a, float b, float t)
+{
+	return a + (b - a) * t;
+}
+
+float sign_f(float num)
+{
+	return num > 0 ? 1.0f : -1.0f;
+}
 
 int main()
 {
@@ -19,8 +32,8 @@ int main()
 
 	SPRITE spr;
 
-	const WCHAR* dot[] = { L"█████",
-						   L"█████",
+	const WCHAR* dot[] = { L"█ ███",
+						   L"███ █",
 						   L"  ███" };
 	const WORD atr = FOREGROUND_BLUE | FOREGROUND_INTENSITY;
 
@@ -79,31 +92,58 @@ int main()
 
 	//Engine::GetInstance()->Run();
 
+	COORD sprPos;
+	sprPos.X = (SHORT)(render.GetScreenWidth() / 2);
+	sprPos.Y = (SHORT)(render.GetScreenHeight() / 2);
+
+	float plyX = 0, plyY = 0;
+	plyX = sprPos.X;
+	plyY = sprPos.Y;
 
 	while (1)
 	{
 		UPDATE_TIME();
 		SCAN_KEY();
 
-		sx += ((float)GET_KEY(VK_RIGHT) - (float)GET_KEY(VK_LEFT)) * speed * GET_DELTATIME();
-		sy += ((float)GET_KEY(VK_DOWN) - (float)GET_KEY(VK_UP)) * speed * GET_DELTATIME();
+		auto hInput = ((float)GET_KEY(VK_RIGHT) - (float)GET_KEY(VK_LEFT)) * speed * GET_DELTATIME();
+		auto vInput = ((float)GET_KEY(VK_DOWN) - (float)GET_KEY(VK_UP)) * speed * GET_DELTATIME();
+		
+		if (GET_KEY_DOWN(VK_SPACE))
+		{
+			hInput += hInput != 0 ? sign_f(hInput) * 20 : 0;
+			vInput += vInput != 0 ? sign_f(vInput) * 10 : 0;
+		}
+		
+		if(hInput != 0)
+			spr.Flip = hInput > 0 ? true : false;
+		
 
-		render.SetViewPortCenter(std::round(sx), std::round(sy));
+		auto center = render.GetViewPortAnchor();
 
-		auto center = render.GetViewPortCenter();
+		plyX += hInput;
+		plyY += vInput;
 
-		COORD sprPos;
+		sprPos.X = std::round(plyX);
+		sprPos.Y = std::round(plyY);
 
-		sprPos.X = center.X + (SHORT)(render.GetScreenWidth() / 2);
-		sprPos.Y = center.Y + (SHORT)(render.GetScreenHeight() / 2);
+		float fourX = plyX + sinf(GET_TOTALTIME() * PI_F * 2.0f) * 8.0f;
+		float fourY = plyY + cosf(GET_TOTALTIME() * PI_F * 2.0f) * 4.0f;
 
-
-		render.AddStringDrawCall({ 43, 31 }, L"안녕하세요 이 프로그램은 한글을 지원합니다");
-		render.AddSpriteDrawCall({ 0 , 0 }, &spr2);
+		render.AddStringDrawCall({ 43, 32 }, L"안녕하세요 이 프로그램은 한글을 지원합니다");
+		render.AddSpriteDrawCall({ (SHORT)std::round(fourX) , (SHORT)std::round(fourY) }, &spr2);
 		render.AddSpriteDrawCall({ 9 , 22 }, &spr3);
 		render.AddSpriteDrawCall(sprPos, &spr);
 
 		render.Render();
+
+		float targetX = plyX - (SHORT)(render.GetScreenWidth() / 2);
+		float targetY = plyY - (SHORT)(render.GetScreenHeight() / 2);
+
+		sx = lerp_f(sx, targetX, 3.2f * GET_DELTATIME());
+		sy = lerp_f(sy, targetY, 3.2f * GET_DELTATIME());
+
+		render.SetViewPortCenter(std::round(sx), std::round(sy));
+
 	}
 
 	return 0;
