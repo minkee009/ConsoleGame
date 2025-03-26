@@ -21,7 +21,9 @@ namespace MyGame
 
 		void SetViewPortCenter(SHORT x, SHORT y) { m_viewportX = x; m_viewportY = y; }
 
-		void AddDrawCall(const SPRITE* sprite);
+		void AddSpriteDrawCall(COORD pos, const SPRITE* sprite);
+
+		void AddStringDrawCall(COORD pos, const WCHAR* sprite);
 
 		void Render() 
 		{
@@ -44,15 +46,11 @@ namespace MyGame
 		SHORT m_viewportX;
 		SHORT m_viewportY;
 
-		std::queue<const SPRITE*> m_drawCalls;
+		std::queue<std::pair<COORD, const SPRITE*>> m_spriteDrawCalls;
+		std::queue<std::pair<COORD, const WCHAR*>> m_stringDrawCalls;
 
 		void Clear();
 		void Draw();
 		void Swap();
-
-		//bool DrawChar(int x, int y, char ch, WORD attr);
-		//bool DrawChar(int x, int y, wchar_t ch, WORD attr);
-		//bool DrawString(int x, int y, const char* pStr, DWORD len, WORD attr);
-		//bool DrawString(int x, int y, const wchar_t* pStr, DWORD len, WORD attr);
 	};
 }

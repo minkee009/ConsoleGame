@@ -6,10 +6,9 @@
 typedef struct _SPRITE
 {
 	COORD Size;
-	COORD Position;
 	COORD Pivot;
 	SHORT SortingOrder;
-	const WCHAR* ShapeString;
+	const WCHAR** ShapeString;
 	WORD Attribute;
 	BOOL Flip;
 } SPRITE;

@@ -82,9 +82,14 @@ MyGame::ConsoleRenderer::~ConsoleRenderer()
 	delete[] m_depthBuffer;
 }
 
-void MyGame::ConsoleRenderer::AddDrawCall(const SPRITE* sprite)
+void MyGame::ConsoleRenderer::AddSpriteDrawCall(COORD pos,const SPRITE* sprite)
 {
-	m_drawCalls.push(sprite);
+	m_spriteDrawCalls.emplace(pos, sprite);
+}
+
+void MyGame::ConsoleRenderer::AddStringDrawCall(COORD pos,const WCHAR* string)
+{
+	m_stringDrawCalls.emplace(pos, string);
 }
 
 void MyGame::ConsoleRenderer::Clear()
@@ -97,12 +102,16 @@ void MyGame::ConsoleRenderer::Clear()
 
 void MyGame::ConsoleRenderer::Draw()
 {
-	while (m_drawCalls.size() > 0)
-	{
-		const SPRITE* dc = m_drawCalls.front();
+	//SetConsoleActiveScreenBuffer(m_hConsole);
 
-		SHORT biasX = dc->Position.X - dc->Pivot.X - m_viewportX;
-		SHORT biasY = dc->Position.Y - dc->Pivot.Y - m_viewportY;
+	//스프라이트 콜
+	while (m_spriteDrawCalls.size() > 0)
+	{
+		COORD pos = m_spriteDrawCalls.front().first;
+		const SPRITE* dc = m_spriteDrawCalls.front().second;
+
+		SHORT biasX = pos.X - dc->Pivot.X - m_viewportX;
+		SHORT biasY = pos.Y - dc->Pivot.Y - m_viewportY;
 
 		SHORT minX = biasX < 0 ? 0 : biasX;
 		SHORT maxX = biasX + dc->Size.X > m_width ? m_width : biasX + dc->Size.X;
@@ -115,19 +124,20 @@ void MyGame::ConsoleRenderer::Draw()
 
 			for (int j = minX, cursorX = minX; j < maxX && cursorX < m_width; j++,cursorX++)
 			{
-				auto wchar_idx = (i - biasY) * dc->Size.Y + (j - biasX);
-			
+				auto wchar_x = j - biasX;
+				auto wchar_y = i - biasY;
+
 				//뒤집기 처리
-				wchar_idx = dc->Flip ? (i - biasY) * dc->Size.Y + flipX : wchar_idx;
+				wchar_x = dc->Flip ? flipX : wchar_x;
 				flipX--;
 				flipX = flipX < 0 ? 0 : flipX;
 
-				//널문자 체크
-				if (dc->ShapeString[wchar_idx] == 0)
+				//널문자 및 공백 체크
+				if (dc->ShapeString[wchar_y][wchar_x] == 0 || dc->ShapeString[wchar_y][wchar_x] == L' ')
 					continue;
 
 				COORD screenPos = { (cursorX), (i) };
-				BOOL isWideFont = IsDoubleWidthCharacter(dc->ShapeString[wchar_idx]);
+				BOOL isWideFont = IsDoubleWidthCharacter(dc->ShapeString[wchar_y][wchar_x]);
 
 				if (cursorX + isWideFont >= m_width)
 				{
@@ -143,7 +153,7 @@ void MyGame::ConsoleRenderer::Draw()
 				if (dc->SortingOrder > m_depthBuffer[screen_idx])
 				{
 					//드로잉 가능
-					bRval = WriteConsoleOutputCharacterW(m_screenBuffer[m_screenBufferIndex], &dc->ShapeString[wchar_idx], 1, screenPos, &dwCharsWritten);
+					bRval = WriteConsoleOutputCharacterW(m_screenBuffer[m_screenBufferIndex], &dc->ShapeString[wchar_y][wchar_x], 1, screenPos, &dwCharsWritten);
 					if (bRval == false) OutputDebugStringA("Error, WriteConsoleOutputCharacterW()\n");
 					bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], dc->Attribute, 1, screenPos, &dwCharsWritten);
 					if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
@@ -159,7 +169,56 @@ void MyGame::ConsoleRenderer::Draw()
 			}
 		}
 
-		m_drawCalls.pop();
+		m_spriteDrawCalls.pop();
+	}
+
+
+	//문자열 콜 - 최상위 드로우
+	while (m_stringDrawCalls.size() > 0)
+	{
+		COORD pos = m_stringDrawCalls.front().first;
+		const WCHAR* dc = m_stringDrawCalls.front().second;
+		auto sizeX = wcslen(dc);
+
+		SHORT biasX = pos.X - m_viewportX;
+		SHORT biasY = pos.Y - m_viewportY;
+
+		SHORT minX = biasX < 0 ? 0 : biasX;
+		SHORT maxX = biasX + sizeX > m_width ? m_width : biasX + sizeX;
+
+		if (biasY <= m_height && biasY >= 0)
+		{
+			for (int j = minX, cursorX = minX; j < maxX && cursorX < m_width; j++, cursorX++)
+			{
+				auto wchar_x = j - biasX;
+
+				//널문자 및 공백 체크
+				if (dc[wchar_x] == 0 || dc[wchar_x] == L' ')
+					continue;
+
+				COORD screenPos = { (cursorX), (biasY) };
+				BOOL isWideFont = IsDoubleWidthCharacter(dc[wchar_x]);
+
+				if (cursorX + isWideFont >= m_width)
+				{
+					cursorX += isWideFont;
+					continue;
+				}
+
+				auto screen_idx = biasY + cursorX;
+				BOOL	bRval = FALSE;
+				DWORD	dwCharsWritten;
+
+				bRval = WriteConsoleOutputCharacterW(m_screenBuffer[m_screenBufferIndex], &dc[wchar_x], 1, screenPos, &dwCharsWritten);
+				if (bRval == false) OutputDebugStringA("Error, WriteConsoleOutputCharacterW()\n");
+				bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY, 1, screenPos, &dwCharsWritten);
+				if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
+
+				cursorX += isWideFont;
+			}
+		}
+
+		m_stringDrawCalls.pop();
 	}
 }
 
