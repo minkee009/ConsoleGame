@@ -1,6 +1,4 @@
 #include "engine.hpp"
-#include "input.hpp"
-#include "time.hpp"
 
 MyGame::Engine* MyGame::Engine::m_instance = nullptr;
 
@@ -28,9 +26,14 @@ MyGame::Engine* MyGame::Engine::GetInstance()
 	return m_instance;
 }
 
-const MyGame::ConsoleRenderer* MyGame::Engine::GetConsoleRenderer()
+MyGame::ConsoleRenderer* MyGame::Engine::GetConsoleRenderer()
 {
 	return &m_consoleRenderer;
+}
+
+MyGame::SceneManager* MyGame::Engine::GetSceneManager()
+{
+	return &m_sceneManager;
 }
 
 void MyGame::Engine::Run()
@@ -46,6 +49,8 @@ void MyGame::Engine::Update()
 {
 	UPDATE_TIME();
 	SCAN_KEY();
+	m_sceneManager.CheckIsSceneChanged();
+	m_sceneManager.UpdateScene();
 }
 
 void MyGame::Engine::Render()

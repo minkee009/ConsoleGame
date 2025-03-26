@@ -133,6 +133,7 @@
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuScene.cpp" />
+    <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="sprite.h" />
     <ClCompile Include="time.cpp" />
   </ItemGroup>
@@ -144,6 +145,8 @@
     <ClInclude Include="input.hpp" />
     <ClInclude Include="IScene.hpp" />
     <ClInclude Include="MenuScene.hpp" />
+    <ClInclude Include="PlayScene.hpp" />
+    <ClInclude Include="SceneManager.hpp" />
     <ClInclude Include="time.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

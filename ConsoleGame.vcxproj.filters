@@ -60,6 +60,9 @@
     <ClCompile Include="MenuScene.cpp">
       <Filter>소스 파일\내 게임\씬</Filter>
     </ClCompile>
+    <ClCompile Include="PlayScene.cpp">
+      <Filter>소스 파일\내 게임\씬</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="console_renderer.hpp">
@@ -84,6 +87,12 @@
       <Filter>헤더 파일\엔진\인터페이스</Filter>
     </ClInclude>
     <ClInclude Include="MenuScene.hpp">
+      <Filter>헤더 파일\내 게임\씬</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.hpp">
+      <Filter>헤더 파일\엔진</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayScene.hpp">
       <Filter>헤더 파일\내 게임\씬</Filter>
     </ClInclude>
   </ItemGroup>

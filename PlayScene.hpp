@@ -1,9 +1,7 @@
 #pragma once
 #include "IScene.hpp"
 
-
-
-class MenuScene : public IScene
+class PlayScene : public IScene
 {
 public:
 	void Initialize() override;
@@ -11,8 +9,7 @@ public:
 	SceneState& GetSceneState() override { return m_sceneState; };
 
 private:
-	int m_menuPointer;
-	SceneState m_sceneState = Menu;
-
-
+	COORD m_playerPos;
+	SPRITE m_playerSpr;
+	SceneState m_sceneState = Play;
 };

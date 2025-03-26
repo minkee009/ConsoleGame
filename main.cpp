@@ -6,6 +6,13 @@
 #include "engine.hpp"
 #include "input.hpp"
 #include "time.hpp"
+#include "MenuScene.hpp"
+
+const char* d[] =
+{
+	".e...............",
+	"dddd..dd........."
+};
 
 using namespace MyGame;
 
@@ -14,6 +21,7 @@ constexpr float DEG_TO_RAD = 3.1415927f / 180.0f;
 
 float lerp_f(float a, float b, float t)
 {
+	t = t > 1.0f ? 1.0f : (t < 0 ? 0.0f : t);
 	return a + (b - a) * t;
 }
 
@@ -24,136 +32,12 @@ float sign_f(float num)
 
 int main()
 {
-	ConsoleRenderer render(160,60);
+	Engine::Initialize(160, 60);
 
-	int x, y;
+	MenuScene menuScene;
 
-	x = 0;
-	y = 0;
-
-	SPRITE spr;
-
-	const WCHAR* dot[] = { L"█ ███",
-						   L"███ █",
-						   L"  ███" };
-	const WORD atr = FOREGROUND_BLUE | FOREGROUND_INTENSITY;
-
-	spr.ShapeString = dot;
-	spr.Size = { 5, 3 };
-	spr.Pivot = { 2, 1 };
-	spr.SortingOrder = 1;
-	spr.Attribute = atr;
-	spr.Flip = true;
-
-	SPRITE spr2;
-
-	spr2.ShapeString = dot;
-	spr2.Size = { 3, 3 };
-	spr2.Pivot = { 1, 1 };
-	spr2.SortingOrder = 5;
-	spr2.Attribute = FOREGROUND_RED | FOREGROUND_INTENSITY;
-	spr2.Flip = false;
-
-	SPRITE spr3;
-
-	const WCHAR* dot2[] = {
-		L"█ █ █ █ █ █ █ █",
-		L" █ █ █ █ █ █ █ ",
-		L"█ █ █ █ █ █ █ █",
-		L" █ █ █ █ █ █ █ ",
-		L"█ █ █ █ █ █ █ █",
-		L" █ █ █ █ █ █ █ ",
-		L"█ █ █ █ █ █ █ █",
-		L" █ █ █ █ █ █ █ ",
-		L"█ █ █ █ █ █ █ █",
-		L" █ █ █ █ █ █ █ ",
-		L"█ █ █ █ █ █ █ █",
-		L" █ █ █ █ █ █ █ ",
-		L"█ █ █ █ █ █ █ █",
-        L" █ █ █ █ █ █ █ ",
-		L"█ █ █ █ █ █ █ █",
-	};
-
-	spr3.ShapeString = dot2;
-	spr3.Size = { 15 , 15 };
-	spr3.Pivot = { 5, 6 };
-	spr3.SortingOrder = 4;
-	spr3.Attribute = FOREGROUND_GREEN | FOREGROUND_INTENSITY;
-	spr3.Flip = false;
-
-	INIT_TIME();
-
-	float sx = 0.0f, sy = 0.0f;
-	float speed = 12.0f;
-	
-	float timer = 0;
-	float viewCenterX = 0, viewCenterY = 0;
-
-	//Engine::Initialize(160, 60);
-
-	//Engine::GetInstance()->Run();
-
-	COORD sprPos;
-	sprPos.X = (SHORT)(render.GetScreenWidth() / 2);
-	sprPos.Y = (SHORT)(render.GetScreenHeight() / 2);
-
-	float plyX = 0, plyY = 0;
-	plyX = sprPos.X;
-	plyY = sprPos.Y;
-
-	while (1)
-	{
-		UPDATE_TIME();
-		SCAN_KEY();
-
-		auto hInput = ((float)GET_KEY(VK_RIGHT) - (float)GET_KEY(VK_LEFT)) * speed * GET_DELTATIME();
-		auto vInput = ((float)GET_KEY(VK_DOWN) - (float)GET_KEY(VK_UP)) * speed * GET_DELTATIME();
-		
-		if (GET_KEY_DOWN(VK_SPACE))
-		{
-			hInput += hInput != 0 ? sign_f(hInput) * 20 : 0;
-			vInput += vInput != 0 ? sign_f(vInput) * 10 : 0;
-		}
-		
-		if(hInput != 0)
-			spr.Flip = hInput > 0 ? true : false;
-		
-		plyX += hInput;
-		plyY += vInput;
-
-		sprPos.X = std::round(plyX);
-		sprPos.Y = std::round(plyY);
-
-		int angleSet = 4;
-
-		for (int i = 0; i < angleSet; i++)
-		{
-			float rad = 360.0f / angleSet * DEG_TO_RAD;
-
-			float fourX = plyX + sinf(-GET_TOTALTIME() * PI_F * 1.2f + rad * i) * 8.0f;
-			float fourY = plyY + cosf(-GET_TOTALTIME() * PI_F * 1.2f + rad * i) * 4.0f;
-
-			render.AddSpriteDrawCall({ (SHORT)std::round(fourX) , (SHORT)std::round(fourY) }, &spr2);
-		}
-
-		render.AddStringDrawCall({ 43, 32 }, L"안녕하세요 이 프로그램은 한글을 지원합니다");
-		render.AddSpriteDrawCall({ 9 , 22 }, &spr3);
-		render.AddSpriteDrawCall(sprPos, &spr);
-
-		render.Render();
-
-		float targetX = plyX - (SHORT)(render.GetScreenWidth() / 2);
-		float targetY = plyY - (SHORT)(render.GetScreenHeight() / 2);
-		float minMovementThreshold = 0.5f;
-		if (std::abs(targetX - sx) > minMovementThreshold ||
-			std::abs(targetY - sy) > minMovementThreshold) {
-			sx = lerp_f(sx, targetX, 3.2f * GET_DELTATIME());
-			sy = lerp_f(sy, targetY, 3.2f * GET_DELTATIME());
-		}
-
-		render.SetViewPortCenter(std::round(sx), std::round(sy));
-
-	}
+	Engine::GetInstance()->GetSceneManager()->AddScene(&menuScene);
+	Engine::GetInstance()->Run();
 
 	return 0;
 }
