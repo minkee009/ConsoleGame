@@ -1,20 +1,8 @@
 #include <unordered_map>
 #include "console_renderer.hpp"
-#include "SceneManager.hpp"
+#include "scene_manager.hpp"
 #include "input.hpp"
 #include "time.hpp"
-
-//Console Renderer
-#define GET_SCREEN_WIDTH Engine::GetInstance()->GetConsoleRenderer()->GetScreenWidth
-#define GET_SCREEN_HEIGHT Engine::GetInstance()->GetConsoleRenderer()->GetScreenHeight
-#define GET_ANCHOR_POS Engine::GetInstance()->GetConsoleRenderer()->GetViewPortAnchor
-
-//Scnene Manager
-#define ADD_SCENE Engine::GetInstance()->GetSceneManager()->AddScene
-#define CHANGE_SCENE Engine::GetInstance()->GetSceneManager()->ChangeScene
-
-//Engine
-#define ENGINE_EXIT Engine::GetInstance()->Exit
 
 namespace MyGame
 {
@@ -43,3 +31,17 @@ namespace MyGame
 		void Render();
 	};
 }
+
+//Console Renderer
+#define GET_SCREEN_WIDTH Engine::GetInstance()->GetConsoleRenderer()->GetScreenWidth
+#define GET_SCREEN_HEIGHT Engine::GetInstance()->GetConsoleRenderer()->GetScreenHeight
+#define GET_ANCHOR_POS Engine::GetInstance()->GetConsoleRenderer()->GetViewPortAnchor
+#define RENDER_SPR Engine::GetInstance()->GetConsoleRenderer()->SpriteDraw
+#define RENDER_STR Engine::GetInstance()->GetConsoleRenderer()->WStringDraw
+
+//Scnene Manager
+#define ADD_SCENE Engine::GetInstance()->GetSceneManager()->AddScene
+#define CHANGE_SCENE Engine::GetInstance()->GetSceneManager()->ChangeScene
+
+//Engine
+#define ENGINE_EXIT Engine::GetInstance()->Exit

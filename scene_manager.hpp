@@ -24,9 +24,9 @@ namespace MyGame
             m_currentScene->Update();
         }
 
-        void CollectDrawCall()
+        void RenderScene()
         {
-            m_currentScene->CreateDrawCall();
+            m_currentScene->Render();
         }
 
         void ChangeScene(SceneState state)

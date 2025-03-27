@@ -19,24 +19,23 @@ class PlayScene : public IScene
 public:
 	void Initialize() override;
 	void Update() override;
-	void CreateDrawCall() override;
+	void Render() override;
 	SceneState& GetSceneState() override { return m_sceneState; };
 
 private:
-	static constexpr const WCHAR* playerShape1[PLAYER_SPR_SIZE_Y] = {
+	static constexpr const WCHAR* m_playerShape1[PLAYER_SPR_SIZE_Y] = {
 	L"\0\0/\\_/\\ ",
 	L"\0( -.- )",
 	L"~(U    )\0",
 	};
-	static constexpr const WCHAR* playerShape2[PLAYER_SPR_SIZE_Y] = {
+	static constexpr const WCHAR* m_playerShape2[PLAYER_SPR_SIZE_Y] = {
 	L"\0\0/\\_/\\\0\0",
 	L"\0( -.- )",
 	L"-( U   )",
 	};
-	static const WORD playerShapeColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+	static const WORD m_commonShapeColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
 
-
-	static constexpr const char* map01[MAP01_SIZE_Y] = {
+	static constexpr const char* m_map01[MAP01_SIZE_Y] = {
 		".........ggd.................................",
 		".............................................",
 		".............................................",
@@ -47,17 +46,19 @@ private:
 		"gdggggdgggdggggddggggggdgg..gggggggdggggggggg"
 	};
 
-	static constexpr const WCHAR* map01_gShape[MAP01_SPR_SIZE_Y] = {
+	static constexpr const WCHAR* m_map01_gShape[MAP01_SPR_SIZE_Y] = {
 	L"▓▓██▓▓",
 	L"██▒▒██",
 	L"█▒▒▓▓█",
 	};
 
-	static constexpr const WCHAR* map01_dShape[MAP01_SPR_SIZE_Y] = {
+	static constexpr const WCHAR* m_map01_dShape[MAP01_SPR_SIZE_Y] = {
 	L"▓▓█▒▒▓",
 	L"█▓▓▓██",
 	L"▒███▓▓",
 	};
+
+	WCHAR m_renderedMap[MAP01_SIZE_Y * MAP01_SPR_SIZE_Y][MAP01_SIZE_X * MAP01_SPR_SIZE_X];
 
 	float m_playerPosX;
 	float m_playerPosY;

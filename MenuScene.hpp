@@ -8,7 +8,7 @@ class MenuScene : public IScene
 public:
 	void Initialize() override;
 	void Update() override;
-	void CreateDrawCall() override;
+	void Render() override;
 	SceneState& GetSceneState() override { return m_sceneState; };
 
 private:

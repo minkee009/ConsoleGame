@@ -7,7 +7,6 @@ typedef struct _SPRITE
 {
 	COORD Size;
 	COORD Pivot;
-	SHORT SortingOrder;
 	const WCHAR* const* ShapeString;
 	WORD Attribute;
 	BOOL Flip;

@@ -56,8 +56,9 @@ void MyGame::Engine::Update()
 
 void MyGame::Engine::Render()
 {
-	m_sceneManager.CollectDrawCall();
-	m_consoleRenderer.Render();
+	m_consoleRenderer.Clear();
+	m_sceneManager.RenderScene();
+	m_consoleRenderer.Swap();
 }
 
 void MyGame::Engine::Exit()

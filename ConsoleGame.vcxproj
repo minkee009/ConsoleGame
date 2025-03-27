@@ -147,7 +147,7 @@
     <ClInclude Include="IScene.hpp" />
     <ClInclude Include="MenuScene.hpp" />
     <ClInclude Include="PlayScene.hpp" />
-    <ClInclude Include="SceneManager.hpp" />
+    <ClInclude Include="scene_manager.hpp" />
     <ClInclude Include="time.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

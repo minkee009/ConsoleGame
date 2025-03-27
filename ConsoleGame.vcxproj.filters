@@ -37,8 +37,8 @@
     <Filter Include="소스 파일\내 게임\씬">
       <UniqueIdentifier>{a6d9dac5-13b0-4949-9bbf-fa32849b70cd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\내 게임\툴 및 랩퍼">
-      <UniqueIdentifier>{216d2441-db85-4a83-b638-050cdc3171bd}</UniqueIdentifier>
+    <Filter Include="소스 파일\툴 및 랩퍼">
+      <UniqueIdentifier>{31f90cc6-0d05-4011-890e-66a7db8727b4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -67,7 +67,7 @@
       <Filter>소스 파일\내 게임\씬</Filter>
     </ClCompile>
     <ClCompile Include="char_check.c">
-      <Filter>소스 파일\내 게임\툴 및 랩퍼</Filter>
+      <Filter>소스 파일\툴 및 랩퍼</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -95,7 +95,7 @@
     <ClInclude Include="MenuScene.hpp">
       <Filter>헤더 파일\내 게임\씬</Filter>
     </ClInclude>
-    <ClInclude Include="SceneManager.hpp">
+    <ClInclude Include="scene_manager.hpp">
       <Filter>헤더 파일\엔진</Filter>
     </ClInclude>
     <ClInclude Include="PlayScene.hpp">

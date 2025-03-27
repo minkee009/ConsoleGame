@@ -34,12 +34,15 @@ int main()
 {
 	Engine::Initialize(120, 40);
 
-	MenuScene menuScene;
-	PlayScene playScene;
+	MenuScene* menuScene = new MenuScene;
+	PlayScene* playScene = new PlayScene;
 
-	ADD_SCENE(&menuScene);
-	ADD_SCENE(&playScene);
+	ADD_SCENE(menuScene);
+	ADD_SCENE(playScene);
 	Engine::GetInstance()->Run();
+
+	delete playScene;
+	delete menuScene;
 
 	return 0;
 }

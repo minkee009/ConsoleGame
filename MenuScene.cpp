@@ -42,7 +42,7 @@ void MenuScene::Update()
 	}
 }
 
-void MenuScene::CreateDrawCall()
+void MenuScene::Render()
 {
 	SHORT menuPointerY = 0;
 
@@ -57,9 +57,9 @@ void MenuScene::CreateDrawCall()
 	}
 
 	//드로우콜
-	DRAW_CALL_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 5), menuPointerY }, L">");
-	DRAW_CALL_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 3), 3 }, L"게임 시작");
-	DRAW_CALL_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 3), 5 }, L"게임 종료");
+	RENDER_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 5), menuPointerY }, L">");
+	RENDER_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 3), 3 }, L"게임 시작");
+	RENDER_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 3), 5 }, L"게임 종료");
 }
 
 
