@@ -4,8 +4,17 @@
 #include "input.hpp"
 #include "time.hpp"
 
+//Console Renderer
 #define GET_SCREEN_WIDTH Engine::GetInstance()->GetConsoleRenderer()->GetScreenWidth
 #define GET_SCREEN_HEIGHT Engine::GetInstance()->GetConsoleRenderer()->GetScreenHeight
+#define GET_ANCHOR_POS Engine::GetInstance()->GetConsoleRenderer()->GetViewPortAnchor
+
+//Scnene Manager
+#define ADD_SCENE Engine::GetInstance()->GetSceneManager()->AddScene
+#define CHANGE_SCENE Engine::GetInstance()->GetSceneManager()->ChangeScene
+
+//Engine
+#define ENGINE_EXIT Engine::GetInstance()->Exit
 
 namespace MyGame
 {

@@ -38,6 +38,7 @@ MyGame::SceneManager* MyGame::Engine::GetSceneManager()
 
 void MyGame::Engine::Run()
 {
+	INIT_TIME();
 	while (!m_engineIsExit)
 	{
 		Update();
@@ -55,6 +56,7 @@ void MyGame::Engine::Update()
 
 void MyGame::Engine::Render()
 {
+	m_sceneManager.CollectDrawCall();
 	m_consoleRenderer.Render();
 }
 

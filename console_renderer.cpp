@@ -1,6 +1,7 @@
 #include "console_renderer.hpp"
-#include "char_width_check.h"
+#include "char_check.h"
 #include <cstring>
+#include "char_check.c"
 
 MyGame::ConsoleRenderer::ConsoleRenderer(SHORT width, SHORT height)
 {
@@ -120,7 +121,7 @@ void MyGame::ConsoleRenderer::Draw()
 
 		for (int i = minY; i < maxY; i++)
 		{
-			auto flipX = maxX - minX - 1;
+			auto flipIdx = maxX - minX - 1;
 
 			for (int j = minX, cursorX = minX; j < maxX && cursorX < m_width; j++,cursorX++)
 			{
@@ -128,12 +129,12 @@ void MyGame::ConsoleRenderer::Draw()
 				auto wchar_y = i - biasY;
 
 				//뒤집기 처리
-				wchar_x = dc->Flip ? flipX : wchar_x;
-				flipX--;
-				flipX = flipX < 0 ? 0 : flipX;
+				wchar_x = dc->Flip ? flipIdx : wchar_x;
+				flipIdx--;
+				flipIdx = flipIdx < 0 ? 0 : flipIdx;
 
-				//널문자 및 공백 체크
-				if (dc->ShapeString[wchar_y][wchar_x] == 0 || dc->ShapeString[wchar_y][wchar_x] == L' ')
+				//널문자 체크 (알파 체크)
+				if (dc->ShapeString[wchar_y][wchar_x] == 0)//|| dc->ShapeString[wchar_y][wchar_x] == L' ')
 					continue;
 
 				COORD screenPos = { (cursorX), (i) };
@@ -153,7 +154,7 @@ void MyGame::ConsoleRenderer::Draw()
 				if (dc->SortingOrder > m_depthBuffer[screen_idx])
 				{
 					//드로잉 가능
-					bRval = WriteConsoleOutputCharacterW(m_screenBuffer[m_screenBufferIndex], &dc->ShapeString[wchar_y][wchar_x], 1, screenPos, &dwCharsWritten);
+					bRval = WriteConsoleOutputCharacterW(m_screenBuffer[m_screenBufferIndex], dc->Flip && isSpecialCharacter(dc->ShapeString[wchar_y][wchar_x]) ? flipSpecialCharacter(dc->ShapeString[wchar_y][wchar_x]) : &dc->ShapeString[wchar_y][wchar_x], 1, screenPos, &dwCharsWritten);
 					if (bRval == false) OutputDebugStringA("Error, WriteConsoleOutputCharacterW()\n");
 					bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], dc->Attribute, 1, screenPos, &dwCharsWritten);
 					if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
@@ -192,8 +193,8 @@ void MyGame::ConsoleRenderer::Draw()
 			{
 				auto wchar_x = j - biasX;
 
-				//널문자 및 공백 체크
-				if (dc[wchar_x] == 0 || dc[wchar_x] == L' ')
+				//널문자 체크(알파 체크)
+				if (dc[wchar_x] == 0)
 					continue;
 
 				COORD screenPos = { (cursorX), (biasY) };

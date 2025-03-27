@@ -15,8 +15,9 @@ enum SceneState
 class IScene
 {
 public:
-	virtual void Update() = 0;
 	virtual void Initialize() = 0;
+	virtual void Update() = 0;
+	virtual void CreateDrawCall() = 0;
 	virtual SceneState& GetSceneState() = 0;
 
 	virtual ~IScene() = default;
