@@ -145,7 +145,7 @@ void MyGame::ConsoleRenderer::SpriteDraw(COORD pos, const SPRITE* sprite)
 
 			bRval = FillConsoleOutputAttribute(
 				m_screenBuffer[m_screenBufferIndex],
-				FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
+				sprite->Attribute,
 				rowToDraw.size(),
 				{ (SHORT)(biasX + startX), (SHORT)(biasY + y) },
 				&dwCharsWritten

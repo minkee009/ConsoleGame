@@ -5,10 +5,15 @@
 #define PLAYER_SPR_SIZE_Y 3
 #define PLAYER_SPR_PIVOT_X 0
 #define PLAYER_SPR_PIVOT_Y 0
+
 #define PLAYER_SPR_ANIM_MAXFRAME 2
 #define PLAYER_STEPRATE 0.3
 
-#define MAP01_SIZE_X 45
+#define PLAYER_ACCEL 35
+#define PLAYER_MAXSPEED 24
+#define PLAYER_DECEL 40
+
+#define MAP01_SIZE_X 90
 #define MAP01_SIZE_Y 8
 
 #define MAP01_SPR_SIZE_X 6
@@ -21,6 +26,9 @@ public:
 	void Update() override;
 	void Render() override;
 	SceneState& GetSceneState() override { return m_sceneState; };
+
+	PlayScene();
+	~PlayScene();
 
 private:
 	static constexpr const WCHAR* m_playerShape1[PLAYER_SPR_SIZE_Y] = {
@@ -36,14 +44,14 @@ private:
 	static const WORD m_commonShapeColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
 
 	static constexpr const char* m_map01[MAP01_SIZE_Y] = {
-		".........ggd.................................",
-		".............................................",
-		".............................................",
-		"........gg.g.................................",
-		"................gg...........................",
-		"...............ggd.....gg....................",
-		"...g.........Egdgg....ggdg....gdgg.....gg....",
-		"gdggggdgggdggggddggggggdgg..gggggggdggggggggg"
+		".........ggd..............................................................................",
+		"..........................................................................................",
+		"..........................................................................................",
+		"........gg.g..............................................................................",
+		"................gg........................................................................",
+		"...............ggd.....gg.................................................................",
+		"...g.........Egdgg....ggdg....gdgg.....gg.................................................",
+		"gdggggdgggdggggddggggggdgg..gggggggdgggggg.gg.dg.ggd.ggdg.ggddggggggdgg..gggggggdggggggggg"
 	};
 
 	static constexpr const WCHAR* m_map01_gShape[MAP01_SPR_SIZE_Y] = {
@@ -58,13 +66,18 @@ private:
 	L"▒███▓▓",
 	};
 
-	WCHAR m_renderedMap[MAP01_SIZE_Y * MAP01_SPR_SIZE_Y][MAP01_SIZE_X * MAP01_SPR_SIZE_X];
+	WCHAR** m_renderedMap; //[MAP01_SIZE_Y * MAP01_SPR_SIZE_Y][MAP01_SIZE_X * MAP01_SPR_SIZE_X];
 
 	float m_playerPosX;
 	float m_playerPosY;
 
 	float m_playerStep;
 	short m_currentSprNum;
+
+	float m_isGrounded;
+
+	float m_player_velX;
+	float m_player_velY;
 
 	SPRITE m_playerSpr;
 

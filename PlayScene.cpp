@@ -5,19 +5,24 @@
 using MyGame::Engine;
 
 wchar_t DebugMsg[1024];
-wchar_t DebugMsg2[1024];
-wchar_t DebugMsg3[1024];
-wchar_t DebugMsg4[1024];
-wchar_t DebugMsg5[1024];
 
-float num_p = 0;
+COORD DebugPos = { 0, 0 };
+
+PlayScene::PlayScene()
+{
+	m_renderedMap = new WCHAR*[MAP01_SPR_SIZE_Y * MAP01_SIZE_Y];
+	for (int i = 0; i < MAP01_SPR_SIZE_Y * MAP01_SIZE_Y; i++)
+		m_renderedMap[i] = new WCHAR[MAP01_SPR_SIZE_X * MAP01_SIZE_X + 1];
+}
 
 void PlayScene::Initialize()
 {
 	Engine::GetInstance()->GetConsoleRenderer()->SetViewPortCenter(0, -16);
 
+	m_isGrounded = true;
+
 	m_playerPosX = 0;
-	m_playerPosY = 0;
+	m_playerPosY = 18;
 
 	m_playerStep = 0.0f;
 
@@ -85,10 +90,18 @@ void PlayScene::Update()
 	auto vInput = (GET_KEY(VK_DOWN) ? 1 : 0) - (GET_KEY(VK_UP) ? 1 : 0);
 
 	if (hInput != 0)
+	{
 		m_playerSpr.Flip = hInput > 0 ? false : true;
-
-	m_playerPosX += hInput * 20.0f * GET_DELTATIME();
-	m_playerPosY += vInput * 20.0f * GET_DELTATIME();
+		m_player_velX += hInput * PLAYER_ACCEL * ((hInput * m_player_velX < 0) ? 2.0f : 1.0f) * (GET_KEY(VK_LSHIFT) ? 2.0f : 1.0f) * GET_DELTATIME();
+		m_player_velX = max(-PLAYER_MAXSPEED * (GET_KEY(VK_LSHIFT) ? 2.0f : 1.0f), min(PLAYER_MAXSPEED * (GET_KEY(VK_LSHIFT) ? 2.0f : 1.0f), m_player_velX));
+	}
+	else
+	{
+		m_player_velX = m_player_velX > 0 ? max(0.0f, m_player_velX - PLAYER_DECEL * GET_DELTATIME()) : min(0.0f, m_player_velX + PLAYER_DECEL * GET_DELTATIME());
+	}
+		
+	m_playerPosX += m_player_velX * GET_DELTATIME();
+	m_playerPosY += vInput * 12.0f * GET_DELTATIME();
 
 	if (hInput != 0)
 		m_playerStep += GET_DELTATIME();
@@ -115,9 +128,8 @@ void PlayScene::Update()
 	int playerMapXidx = (int)(m_playerPosX < 0.0f ? m_playerPosX - MAP01_SPR_SIZE_X : m_playerPosX) / MAP01_SPR_SIZE_X;
 	int playerMapYidx = (int)(m_playerPosY < 0.0f ? m_playerPosY - MAP01_SPR_SIZE_Y : m_playerPosY) / MAP01_SPR_SIZE_Y;
 
-
-
-	int check = 0;
+	float debugA = m_playerPosY;
+	float debugB = 0.0f;
 
 	for (int i = playerMapYidx; i <= playerMapYidx + 2; i++)
 		for (int j = playerMapXidx; j <= playerMapXidx + 2; j++)
@@ -131,9 +143,8 @@ void PlayScene::Update()
 					|| (m_playerPosY + PLAYER_SPR_SIZE_Y < i * MAP01_SPR_SIZE_Y)
 					|| (m_playerPosY > (i + 1) * MAP01_SPR_SIZE_Y)))
 			{
-				check++;
 
-				//보정
+				//침투 계산
 				float penetrationX = min(m_playerPosX + PLAYER_SPR_SIZE_X - j * MAP01_SPR_SIZE_X, (j + 1) * MAP01_SPR_SIZE_X - m_playerPosX);
 				float penetrationY = min(m_playerPosY + PLAYER_SPR_SIZE_Y - i * MAP01_SPR_SIZE_Y, (i + 1) * MAP01_SPR_SIZE_Y - m_playerPosY);
 
@@ -148,33 +159,40 @@ void PlayScene::Update()
 					}
 					else
 						m_playerPosX += penetrationX; // 오른쪽으로 밀기
+
+					if (m_playerPosY + PLAYER_SPR_SIZE_Y - 0.5 >= i * MAP01_SPR_SIZE_Y
+						&& m_playerPosY + 0.5 < (i + 1) * MAP01_SPR_SIZE_Y)
+						m_player_velX = 0.0f;
+
 				}
 				else {
-					if (m_playerPosY < i* MAP01_SPR_SIZE_Y)
+					if (m_playerPosY < i * MAP01_SPR_SIZE_Y)
 					{
 						m_playerPosY = i * MAP01_SPR_SIZE_Y - PLAYER_SPR_SIZE_Y;// 아래로 밀기
 					}
 					else
 						m_playerPosY += penetrationY; // 위로 밀기
-				}
+				}					
+				
+				debugA = m_playerPosY + 0.5;
+				debugB = (i + 1) * MAP01_SPR_SIZE_Y;
 			}
 		}
 
-	m_playerSpr.Attribute = check > 0 ? FOREGROUND_RED : FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+	DebugPos = { (SHORT)playerMapXidx * MAP01_SPR_SIZE_X,(short)playerMapYidx * MAP01_SPR_SIZE_Y };
+	swprintf_s(DebugMsg, 1024, L"█ <- { %f , %f} ", debugA, debugB);
 
-
-
-
-
-
-	if ((SHORT)(ceil(m_playerPosX)) > GET_ANCHOR_POS().X)
+	//뷰포트 이동
+	if ((SHORT)m_playerPosX + (m_playerSpr.Size.X >> 1) - GET_ANCHOR_POS().X > (GET_SCREEN_WIDTH() >> 1))
 	{
-
+		SET_ANCHOR_POS((SHORT)m_playerPosX + (m_playerSpr.Size.X >> 1) - (GET_SCREEN_WIDTH() >> 1), GET_ANCHOR_POS().Y);
 	}
 
-	if (GET_KEY('D'))
-		num_p += 16.0f * GET_DELTATIME();
-	Engine::GetInstance()->GetConsoleRenderer()->SetViewPortCenter(num_p, -16);
+	//뷰포트 왼쪽 벽 처리
+	if ((SHORT)m_playerPosX < GET_ANCHOR_POS().X)
+	{
+		m_playerPosX = GET_ANCHOR_POS().X;
+	}
 }
 
 
@@ -185,13 +203,22 @@ void PlayScene::Render()
 		COORD pos = { 0, (short)i };
 		const wchar_t* d = m_renderedMap[i];
 
-		Engine::GetInstance()->GetConsoleRenderer()->WStringDraw(pos, d,270);
+		Engine::GetInstance()->GetConsoleRenderer()->WStringDraw(pos, d, MAP01_SIZE_X * MAP01_SPR_SIZE_X);
 	}
 
-	swprintf_s(DebugMsg, 1024, L"█ <- %f fps", 1 / GET_DELTATIME());
-	RENDER_STR({ 0, -2 }, DebugMsg);
 
 	RENDER_SPR({ (SHORT)(ceil(m_playerPosX)), (SHORT)(ceil(m_playerPosY)) }, &m_playerSpr);
+
+
+	RENDER_STR(DebugPos, DebugMsg);
+}
+	
+	
+
+PlayScene::~PlayScene()
+{
+	if (m_renderedMap)
+		delete[] m_renderedMap;
 }
 
 
