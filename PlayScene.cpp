@@ -5,8 +5,14 @@
 using MyGame::Engine;
 
 wchar_t DebugMsg[1024];
+wchar_t DebugMsg1[1024];
+wchar_t DebugMsg2[1024];
+wchar_t DebugMsg3[1024];
 
 COORD DebugPos = { 0, 0 };
+COORD DebugPos1 = { 0, 0 };
+COORD DebugPos2 = { 0, 0 };
+COORD DebugPos3 = { 0, 0 };
 
 PlayScene::PlayScene()
 {
@@ -22,7 +28,7 @@ void PlayScene::Initialize()
 	m_isGrounded = true;
 
 	m_playerPosX = 0;
-	m_playerPosY = 18;
+	m_playerPosY = 0;
 
 	m_playerStep = 0.0f;
 
@@ -86,22 +92,70 @@ void PlayScene::Initialize()
 
 void PlayScene::Update()
 {
+	int playerMapXidx = (int)(m_playerPosX < 0.0f ? m_playerPosX - MAP01_SPR_SIZE_X : m_playerPosX) / MAP01_SPR_SIZE_X;
+	int playerMapYidx = (int)(m_playerPosY < 0.0f ? m_playerPosY - MAP01_SPR_SIZE_Y : m_playerPosY) / MAP01_SPR_SIZE_Y;
+
+	//바닥 체크
+	//발 밑 3칸중 땅이 있는지 체크 후 발과 땅의 거리 계산
+	m_isGrounded = false;
+	float playerFootY = m_playerPosY + PLAYER_SPR_SIZE_Y;
+
+	if (m_player_velY >= -0.001f)
+	for (int i = playerMapYidx + 1; i <= playerMapYidx + 2; i++)
+		for (int j = playerMapXidx; j <= playerMapXidx + 2; j++)
+		{
+			if (i > MAP01_SIZE_Y - 1 || i < 0 || j > MAP01_SIZE_X - 1 || j < 0)
+				continue;
+
+			auto pickY = (i) * MAP01_SPR_SIZE_Y - 0.02f;//타일의 y좌표
+			auto pick = m_map01[i][j];	 //현재 타일
+			auto pickXMin = j * MAP01_SPR_SIZE_X;        //타일의 x좌표 최소값
+			auto pickXMax = (j + 1) * MAP01_SPR_SIZE_X;  //타일의 x좌표 최대값
+
+			if ((pick == 'g' || pick == 'd') 
+				&& ((pickXMax > m_playerPosX && pickXMin < m_playerPosX + PLAYER_SPR_SIZE_X)
+				|| (pickXMin < m_playerPosX + PLAYER_SPR_SIZE_X && pickXMax >= m_playerPosX))
+				&& pickY < m_playerPosY + PLAYER_SPR_SIZE_Y)
+			{
+				m_isGrounded = true;
+				m_player_velY = 0.0f;
+				break;
+			}
+		}
+
+
+	swprintf_s(DebugMsg, 1024, L"{ %s } ", m_isGrounded ? L"true" : L"false");
+
+	//속도 계산
 	auto hInput = (GET_KEY(VK_RIGHT) ? 1 : 0) - (GET_KEY(VK_LEFT) ? 1 : 0);
 	auto vInput = (GET_KEY(VK_DOWN) ? 1 : 0) - (GET_KEY(VK_UP) ? 1 : 0);
 
-	if (hInput != 0)
+	if (m_isGrounded)
 	{
-		m_playerSpr.Flip = hInput > 0 ? false : true;
-		m_player_velX += hInput * PLAYER_ACCEL * ((hInput * m_player_velX < 0) ? 2.0f : 1.0f) * (GET_KEY(VK_LSHIFT) ? 2.0f : 1.0f) * GET_DELTATIME();
-		m_player_velX = max(-PLAYER_MAXSPEED * (GET_KEY(VK_LSHIFT) ? 2.0f : 1.0f), min(PLAYER_MAXSPEED * (GET_KEY(VK_LSHIFT) ? 2.0f : 1.0f), m_player_velX));
+		if (hInput != 0)
+		{
+			m_playerSpr.Flip = hInput > 0 ? false : true;
+			m_player_velX += hInput * PLAYER_ACCEL * ((hInput * m_player_velX < 0) ? 2.0f : 1.0f) * (GET_KEY(VK_LSHIFT) ? 2.0f : 1.0f) * GET_DELTATIME();
+			m_player_velX = max(-PLAYER_MAXSPEED * (GET_KEY(VK_LSHIFT) ? 2.0f : 1.0f), min(PLAYER_MAXSPEED * (GET_KEY(VK_LSHIFT) ? 2.0f : 1.0f), m_player_velX));
+		}
+		else
+		{
+			m_player_velX = m_player_velX > 0 ? max(0.0f, m_player_velX - PLAYER_DECEL * GET_DELTATIME()) : min(0.0f, m_player_velX + PLAYER_DECEL * GET_DELTATIME());
+		}
+
+		if (GET_KEY_DOWN(VK_SPACE))
+			m_player_velY = -PLAYER_JUMPPOWER;
 	}
-	else
+	else 
 	{
-		m_player_velX = m_player_velX > 0 ? max(0.0f, m_player_velX - PLAYER_DECEL * GET_DELTATIME()) : min(0.0f, m_player_velX + PLAYER_DECEL * GET_DELTATIME());
+		m_player_velX += hInput * PLAYER_AIR_ACCEL * GET_DELTATIME();
+		m_player_velY += PLAYER_GRAVITY * GET_DELTATIME();
+		m_player_velY = min(PLAYER_MAXFALLSPEED, m_player_velY);
 	}
+
 		
 	m_playerPosX += m_player_velX * GET_DELTATIME();
-	m_playerPosY += vInput * 12.0f * GET_DELTATIME();
+	m_playerPosY += m_player_velY * GET_DELTATIME();
 
 	if (hInput != 0)
 		m_playerStep += GET_DELTATIME();
@@ -125,8 +179,8 @@ void PlayScene::Update()
 	}
 
 	//맵 충돌 체크
-	int playerMapXidx = (int)(m_playerPosX < 0.0f ? m_playerPosX - MAP01_SPR_SIZE_X : m_playerPosX) / MAP01_SPR_SIZE_X;
-	int playerMapYidx = (int)(m_playerPosY < 0.0f ? m_playerPosY - MAP01_SPR_SIZE_Y : m_playerPosY) / MAP01_SPR_SIZE_Y;
+	playerMapXidx = (int)(m_playerPosX < 0.0f ? m_playerPosX - MAP01_SPR_SIZE_X : m_playerPosX) / MAP01_SPR_SIZE_X;
+	playerMapYidx = (int)(m_playerPosY < 0.0f ? m_playerPosY - MAP01_SPR_SIZE_Y : m_playerPosY) / MAP01_SPR_SIZE_Y;
 
 	float debugA = m_playerPosY;
 	float debugB = 0.0f;
@@ -179,8 +233,8 @@ void PlayScene::Update()
 			}
 		}
 
-	DebugPos = { (SHORT)playerMapXidx * MAP01_SPR_SIZE_X,(short)playerMapYidx * MAP01_SPR_SIZE_Y };
-	swprintf_s(DebugMsg, 1024, L"█ <- { %f , %f} ", debugA, debugB);
+	//DebugPos = { (SHORT)playerMapXidx * MAP01_SPR_SIZE_X,(short)playerMapYidx * MAP01_SPR_SIZE_Y };
+	//swprintf_s(DebugMsg, 1024, L"█ <- { %f , %f} ", debugA, debugB);
 
 	//뷰포트 이동
 	if ((SHORT)m_playerPosX + (m_playerSpr.Size.X >> 1) - GET_ANCHOR_POS().X > (GET_SCREEN_WIDTH() >> 1))

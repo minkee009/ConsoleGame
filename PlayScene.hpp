@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "IScene.hpp"
 
-#define PLAYER_SPR_SIZE_X 8
+#define PLAYER_SPR_SIZE_X 6
 #define PLAYER_SPR_SIZE_Y 3
 #define PLAYER_SPR_PIVOT_X 0
 #define PLAYER_SPR_PIVOT_Y 0
@@ -12,6 +12,11 @@
 #define PLAYER_ACCEL 35
 #define PLAYER_MAXSPEED 24
 #define PLAYER_DECEL 40
+#define PLAYER_MAXFALLSPEED 40
+
+#define PLAYER_AIR_ACCEL 20
+#define PLAYER_GRAVITY 80
+#define PLAYER_JUMPPOWER 30
 
 #define MAP01_SIZE_X 90
 #define MAP01_SIZE_Y 8
@@ -32,14 +37,14 @@ public:
 
 private:
 	static constexpr const WCHAR* m_playerShape1[PLAYER_SPR_SIZE_Y] = {
-	L"\0\0/\\_/\\ ",
-	L"\0( -.- )",
-	L"~(U    )\0",
+	L"\0/\\/\\",
+	L"\0(-.-)",
+	L"~U   )\0",
 	};
 	static constexpr const WCHAR* m_playerShape2[PLAYER_SPR_SIZE_Y] = {
-	L"\0\0/\\_/\\\0\0",
-	L"\0( -.- )",
-	L"-( U   )",
+	L"\0/\\/\\",
+	L"\0(-.-)",
+	L"-(U  )",
 	};
 	static const WORD m_commonShapeColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
 
@@ -48,8 +53,8 @@ private:
 		"..........................................................................................",
 		"..........................................................................................",
 		"........gg.g..............................................................................",
-		"................gg........................................................................",
-		"...............ggd.....gg.................................................................",
+		"g...............gg........................................................................",
+		".g.............ggd.....gg.................................................................",
 		"...g.........Egdgg....ggdg....gdgg.....gg.................................................",
 		"gdggggdgggdggggddggggggdgg..gggggggdgggggg.gg.dg.ggd.ggdg.ggddggggggdgg..gggggggdggggggggg"
 	};
