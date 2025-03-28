@@ -1,6 +1,7 @@
 #include "console_renderer.hpp"
 #include "char_check.h"
 #include <cstring>
+#include <algorithm> 
 
 MyGame::ConsoleRenderer::ConsoleRenderer(SHORT width, SHORT height)
 {
@@ -80,60 +81,206 @@ MyGame::ConsoleRenderer::~ConsoleRenderer()
 	}
 }
 
-void MyGame::ConsoleRenderer::SpriteDraw(COORD pos,const SPRITE* sprite)
+void MyGame::ConsoleRenderer::SpriteDraw(COORD pos, const SPRITE* sprite)
 {
-	auto sizeX = sprite->Size.X;
-
 	SHORT biasY = pos.Y - sprite->Pivot.Y - m_viewportY;
+	SHORT minY = max((SHORT)0, -biasY);
+	SHORT maxY = min(sprite->Size.Y, m_height - biasY);
 
-	SHORT minY = biasY < 0 ? -biasY : 0;
-	SHORT maxY = biasY + sprite->Size.Y > m_height ? biasY - m_height : sprite->Size.Y;
+	SHORT biasX = pos.X - sprite->Pivot.X - m_viewportX;
+	SHORT minX = max((SHORT)0, -biasX);
+	SHORT maxX = min(sprite->Size.X, m_width - biasX);
 
-	auto movedX = pos.X - m_viewportX - sprite->Pivot.X;
-	auto clampX = movedX < 0 ? 0 : (movedX > m_width ? m_width : movedX);
-	auto minBiasX = movedX < 0 ? movedX : 0;
-	auto maxBiasX = movedX > m_width ? movedX + sprite->Size.X - m_width : 0;
-
-	for (int i = minY; i < maxY; i++)
+	for (int y = minY; y < maxY; ++y)
 	{
-		BOOL	bRval = FALSE;
-		DWORD	dwCharsWritten;
+		BOOL bRval = FALSE;
+		DWORD dwCharsWritten;
 
-		bRval = WriteConsoleOutputCharacterW(m_screenBuffer[m_screenBufferIndex], sprite->ShapeString[i] - minBiasX - maxBiasX, sprite->Size.X + minBiasX, { (short)(clampX),(short)biasY + (short)i}, &dwCharsWritten);
-		if (bRval == false) OutputDebugStringA("Error, WriteConsoleOutputCharacterW()\n");
-		bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY, sprite->Size.X, { (short)(clampX) , (short)i }, &dwCharsWritten);
-		if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
+		// Calculate the visible range in the sprite's row
+		SHORT startX = max((SHORT)0, -biasX);
+		SHORT endX = min(sprite->Size.X, m_width - biasX);
+
+		if (startX < endX)
+		{
+			std::wstring rowToDraw;
+			if (sprite->Flip)
+			{
+				for (int x = sprite->Size.X - 1; x >= 0; --x)
+				{
+					wchar_t ch = sprite->ShapeString[y][x];
+					if (isSpecialCharacter(ch))
+					{
+						rowToDraw.push_back(*flipSpecialCharacter(ch));
+					}
+					else
+					{
+						rowToDraw.push_back(ch);
+					}
+				}
+
+				// Adjust the rowToDraw to fit within the screen boundaries
+				if (biasX < 0)
+				{
+					rowToDraw = rowToDraw.substr(-biasX, rowToDraw.size() + biasX);
+				}
+				else if (biasX + sprite->Size.X > m_width)
+				{
+					rowToDraw = rowToDraw.substr(0, m_width - biasX);
+				}
+			}
+			else
+			{
+				rowToDraw.assign(sprite->ShapeString[y] + startX, sprite->ShapeString[y] + endX);
+			}
+
+			// Write the visible part of the (possibly flipped) sprite's row
+			bRval = WriteConsoleOutputCharacterW(
+				m_screenBuffer[m_screenBufferIndex],
+				rowToDraw.c_str(),
+				rowToDraw.size(),
+				{ (SHORT)(biasX + startX), (SHORT)(biasY + y) },
+				&dwCharsWritten
+			);
+			if (bRval == FALSE) OutputDebugStringA("Error, WriteConsoleOutputCharacterW()\n");
+
+			bRval = FillConsoleOutputAttribute(
+				m_screenBuffer[m_screenBufferIndex],
+				FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
+				rowToDraw.size(),
+				{ (SHORT)(biasX + startX), (SHORT)(biasY + y) },
+				&dwCharsWritten
+			);
+			if (bRval == FALSE) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
+		}
 	}
 }
 
-void MyGame::ConsoleRenderer::WStringDraw(COORD pos,const WCHAR* string)
+
+void MyGame::ConsoleRenderer::WStringDraw(COORD pos, const WCHAR* string)
 {
 	auto length = (int)(wcslen(string));
-
-	auto movedX = pos.X - m_viewportX;
-	auto clampX = movedX < 0 ? 0 : (movedX > m_width ? m_width : movedX);
-	auto minBiasX = movedX < 0 ? movedX : 0;
-
-	//auto clampX = pos.X - m_viewportX < 0 ? 0 : (pos.X - m_viewportX > m_width ? m_width : pos.X - m_viewportX);
-	//auto minBiasX = pos.X - m_viewportX < 0 ? pos.X - m_viewportX : 0;
-	//auto maxBiasX = pos.X - m_viewportX + length > m_width ? pos.X + length - m_width : 0;
-
-	//length += minBiasX - maxBiasX;
-
 	SHORT biasY = pos.Y - m_viewportY;
 
-	if (biasY <= m_height && biasY >= 0 || clampX == m_width)
+	// Y축 완전히 벗어난 경우 그리지 않음
+	if (biasY < 0 || biasY >= m_height)
 	{
-		BOOL	bRval = FALSE;
-		DWORD	dwCharsWritten;
-
-		bRval = WriteConsoleOutputCharacterW(m_screenBuffer[m_screenBufferIndex], string - minBiasX, length + minBiasX, { (short)(clampX), biasY}, &dwCharsWritten);
-		if (bRval == false) OutputDebugStringA("Error, WriteConsoleOutputCharacterW()\n");
-		bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY, length, { pos.X , biasY }, &dwCharsWritten);
-		if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
+		OutputDebugStringA("Y-axis out of bounds\n");
+		return;
 	}
-}
 
+	// X축 클리핑
+	SHORT startX = pos.X - m_viewportX;
+	SHORT clippedLength = length;
+
+	// 왼쪽 클리핑
+	if (startX < 0)
+	{
+		clippedLength += startX;
+		if (clippedLength <= 0)
+		{
+			return; // 클리핑된 길이가 0 이하이면 그리지 않음
+		}
+		string -= startX;
+		startX = 0;
+	}
+
+	// 오른쪽 클리핑 (한 줄을 넘어가지 않도록)
+	if (startX + clippedLength > m_width)
+	{
+		clippedLength = m_width - startX;
+	}
+
+	// 클리핑된 길이가 0 이하면 그리지 않음
+	if (clippedLength <= 0)
+	{
+		return;
+	}
+
+	BOOL bRval = FALSE;
+	DWORD dwCharsWritten;
+
+	// 클리핑된 문자열과 좌표로 출력
+	bRval = WriteConsoleOutputCharacterW(
+		m_screenBuffer[m_screenBufferIndex],
+		string,
+		clippedLength,
+		{ startX, biasY },
+		&dwCharsWritten
+	);
+	if (!bRval) OutputDebugStringA("Error, WriteConsoleOutputCharacterW()\n");
+
+	bRval = FillConsoleOutputAttribute(
+		m_screenBuffer[m_screenBufferIndex],
+		FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
+		clippedLength,
+		{ startX, biasY },
+		&dwCharsWritten
+	);
+	if (!bRval) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
+}
+void MyGame::ConsoleRenderer::WStringDraw(COORD pos, const WCHAR* string, int length)
+{
+	SHORT biasY = pos.Y - m_viewportY;
+
+	// Y축 완전히 벗어난 경우 그리지 않음
+	if (biasY < 0 || biasY >= m_height)
+	{
+		OutputDebugStringA("Y-axis out of bounds\n");
+		return;
+	}
+
+	// X축 클리핑
+	SHORT startX = pos.X - m_viewportX;
+	SHORT clippedLength = length;
+
+	// 왼쪽 클리핑
+	if (startX < 0)
+	{
+		clippedLength += startX;
+		if (clippedLength <= 0)
+		{
+			OutputDebugStringA("Left clipping resulted in zero or negative length\n");
+			return; // 클리핑된 길이가 0 이하이면 그리지 않음
+		}
+		string -= startX;
+		startX = 0;
+	}
+
+	// 오른쪽 클리핑 (한 줄을 넘어가지 않도록)
+	if (startX + clippedLength > m_width)
+	{
+		clippedLength = m_width - startX;
+	}
+
+	// 클리핑된 길이가 0 이하면 그리지 않음
+	if (clippedLength <= 0)
+	{
+		OutputDebugStringA("Right clipping resulted in zero or negative length\n");
+		return;
+	}
+
+	BOOL bRval = FALSE;
+	DWORD dwCharsWritten;
+
+	// 클리핑된 문자열과 좌표로 출력
+	bRval = WriteConsoleOutputCharacterW(
+		m_screenBuffer[m_screenBufferIndex],
+		string,
+		clippedLength,
+		{ startX, biasY },
+		&dwCharsWritten
+	);
+	if (bRval == false) OutputDebugStringA("Error, WriteConsoleOutputCharacterW()\n");
+
+	bRval = FillConsoleOutputAttribute(
+		m_screenBuffer[m_screenBufferIndex],
+		FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
+		clippedLength,
+		{ startX, biasY },
+		&dwCharsWritten
+	);
+	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
+}
 
 void MyGame::ConsoleRenderer::Clear()
 {
@@ -148,120 +295,3 @@ void MyGame::ConsoleRenderer::Swap()
 	m_screenBufferIndex++;
 	m_screenBufferIndex %= SCREEN_BUFFER_MAXCOUNT;
 }
-
-//void MyGame::ConsoleRenderer::Draw()
-//{
-//	//SetConsoleActiveScreenBuffer(m_hConsole);
-//
-//	//스프라이트 콜
-//	while (m_spriteDrawCalls.size() > 0)
-//	{
-//		COORD pos = m_spriteDrawCalls.front().first;
-//		const SPRITE* dc = m_spriteDrawCalls.front().second;
-//
-//		SHORT biasX = pos.X - dc->Pivot.X - m_viewportX;
-//		SHORT biasY = pos.Y - dc->Pivot.Y - m_viewportY;
-//
-//		SHORT minX = biasX < 0 ? 0 : biasX;
-//		SHORT maxX = biasX + dc->Size.X > m_width ? m_width : biasX + dc->Size.X;
-//		SHORT minY = biasY < 0 ? 0 : biasY;
-//		SHORT maxY = biasY + dc->Size.Y > m_height ? m_height : biasY + dc->Size.Y;
-//
-//		for (int i = minY; i < maxY; i++)
-//		{
-//			auto flipIdx = maxX - minX - 1;
-//
-//			for (int j = minX, cursorX = minX; j < maxX && cursorX < m_width; j++,cursorX++)
-//			{
-//				auto wchar_x = j - biasX;
-//				auto wchar_y = i - biasY;
-//
-//				//뒤집기 처리
-//				wchar_x = dc->Flip ? flipIdx : wchar_x;
-//				flipIdx--;
-//				flipIdx = flipIdx < 0 ? 0 : flipIdx;
-//
-//				//널문자 체크 (알파 체크)
-//				if (dc->ShapeString[wchar_y][wchar_x] == 0)//|| dc->ShapeString[wchar_y][wchar_x] == L' ')
-//					continue;
-//
-//				COORD screenPos = { (cursorX), (i) };
-//				BOOL isWideFont = IsDoubleWidthCharacter(dc->ShapeString[wchar_y][wchar_x]);
-//
-//				if (cursorX + isWideFont >= m_width)
-//				{
-//					cursorX += isWideFont;
-//					continue;
-//				}
-//
-//				auto screen_idx = i * m_width + cursorX;
-//				BOOL	bRval = FALSE;
-//				DWORD	dwCharsWritten;
-//
-//				//깊이 버퍼 확인
-//				if (dc->SortingOrder > m_depthBuffer[screen_idx])
-//				{
-//					//드로잉 가능
-//					bRval = WriteConsoleOutputCharacterW(m_screenBuffer[m_screenBufferIndex], dc->Flip && isSpecialCharacter(dc->ShapeString[wchar_y][wchar_x]) ? flipSpecialCharacter(dc->ShapeString[wchar_y][wchar_x]) : &dc->ShapeString[wchar_y][wchar_x], 1, screenPos, &dwCharsWritten);
-//					if (bRval == false) OutputDebugStringA("Error, WriteConsoleOutputCharacterW()\n");
-//					bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], dc->Attribute, 1, screenPos, &dwCharsWritten);
-//					if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
-//
-//					cursorX += isWideFont;
-//				}
-//			}
-//		}
-//
-//		m_spriteDrawCalls.pop();
-//	}
-//
-//
-//	//문자열 콜 - 최상위 드로우
-//	while (m_stringDrawCalls.size() > 0)
-//	{
-//		COORD pos = m_stringDrawCalls.front().first;
-//		const WCHAR* dc = m_stringDrawCalls.front().second;
-//		auto sizeX = (int)(wcslen(dc) + 1);
-//
-//		SHORT biasX = pos.X - m_viewportX;
-//		SHORT biasY = pos.Y - m_viewportY;
-//
-//		SHORT minX = biasX < 0 ? 0 : biasX;
-//		SHORT maxX = biasX + sizeX > m_width ? m_width : biasX + sizeX;
-//
-//		if (biasY <= m_height && biasY >= 0)
-//		{
-//			for (int j = minX, cursorX = minX; j < maxX && cursorX < m_width; j++, cursorX++)
-//			{
-//				auto wchar_x = j - biasX;
-//
-//				//널문자 체크(알파 체크)
-//				if (dc[wchar_x] == 0)
-//					continue;
-//
-//				COORD screenPos = { (cursorX), (biasY) };
-//				BOOL isWideFont = IsDoubleWidthCharacter(dc[wchar_x]);
-//
-//				if (cursorX + isWideFont >= m_width)
-//				{
-//					cursorX += isWideFont;
-//					continue;
-//				}
-//
-//				auto screen_idx = biasY + cursorX;
-//				BOOL	bRval = FALSE;
-//				DWORD	dwCharsWritten;
-//
-//				bRval = WriteConsoleOutputCharacterW(m_screenBuffer[m_screenBufferIndex], &dc[wchar_x], 1, screenPos, &dwCharsWritten);
-//				if (bRval == false) OutputDebugStringA("Error, WriteConsoleOutputCharacterW()\n");
-//				bRval = FillConsoleOutputAttribute(m_screenBuffer[m_screenBufferIndex], FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY, 1, screenPos, &dwCharsWritten);
-//				if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
-//
-//				cursorX += isWideFont;
-//			}
-//		}
-//
-//		m_stringDrawCalls.pop();
-//	}
-//}
-

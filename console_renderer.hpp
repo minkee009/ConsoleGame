@@ -24,6 +24,7 @@ namespace MyGame
 		void SpriteDraw(COORD pos, const SPRITE* sprite);
 
 		void WStringDraw(COORD pos, const WCHAR* sprite);
+		void WStringDraw(COORD pos, const WCHAR* sprite, int length);
 
 		void Clear();
 		void Swap();

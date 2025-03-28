@@ -165,27 +165,49 @@ void PlayScene::Update()
 
 
 
-	num_p += 8.0f * GET_DELTATIME();
+
 
 	if ((SHORT)(ceil(m_playerPosX)) > GET_ANCHOR_POS().X)
 	{
 
 	}
 
-	//Engine::GetInstance()->GetConsoleRenderer()->SetViewPortCenter(num_p, -16);
+	if (GET_KEY('D'))
+		num_p += 16.0f * GET_DELTATIME();
+	Engine::GetInstance()->GetConsoleRenderer()->SetViewPortCenter(num_p, -16);
 }
+
 
 void PlayScene::Render()
 {
-
 	for (int i = 0; i < MAP01_SPR_SIZE_Y * MAP01_SIZE_Y; i++)
-		RENDER_STR({ 0,(short)i }, m_renderedMap[i]);
+	{
+		COORD pos = { 0, (short)i };
+		const wchar_t* d = m_renderedMap[i];
+
+		Engine::GetInstance()->GetConsoleRenderer()->WStringDraw(pos, d,270);
+	}
 
 	swprintf_s(DebugMsg, 1024, L"█ <- %f fps", 1 / GET_DELTATIME());
 	RENDER_STR({ 0, -2 }, DebugMsg);
 
 	RENDER_SPR({ (SHORT)(ceil(m_playerPosX)), (SHORT)(ceil(m_playerPosY)) }, &m_playerSpr);
 }
+
+
+//void PlayScene::Render()
+//{
+//
+//	const wchar_t* de = m_renderedMap[MAP01_SPR_SIZE_Y * MAP01_SIZE_Y - 1];
+//		RENDER_STR({ 0,(short)MAP01_SPR_SIZE_Y * MAP01_SIZE_Y - 1 }, de);;
+//	/*for (int i = 0; i < MAP01_SPR_SIZE_Y * MAP01_SIZE_Y; i++)
+//		RENDER_STR({ 0,(short)i }, m_renderedMap[i]);*/
+//
+//	//swprintf_s(DebugMsg, 1024, L"█ <- %f fps", 1 / GET_DELTATIME());
+//	RENDER_STR({ 0, -2 }, DebugMsg);
+//
+//	//RENDER_SPR({ (SHORT)(ceil(m_playerPosX)), (SHORT)(ceil(m_playerPosY)) }, &m_playerSpr);
+//}
 
 
 
