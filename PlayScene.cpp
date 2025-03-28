@@ -23,7 +23,7 @@ PlayScene::PlayScene()
 
 void PlayScene::Initialize()
 {
-	Engine::GetInstance()->GetConsoleRenderer()->SetViewPortCenter(0, -16);
+	Engine::GetInstance()->GetConsoleRenderer()->SetViewPortAnchor(0, -16);
 
 	m_isGrounded = true;
 	m_jumpTimer = 0.0f;
@@ -62,22 +62,88 @@ void PlayScene::Initialize()
 		false
 	};
 
+	m_map01_pipe0Spr =
+	{
+		{ MAP01_SPR_SIZE_X, MAP01_SPR_SIZE_Y },
+		{ 0, 0 },
+		m_map01_pipe0Shape,
+		FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
+		false
+	};
+
+	m_map01_pipe1Spr =
+	{
+		{ MAP01_SPR_SIZE_X, MAP01_SPR_SIZE_Y },
+		{ 0, 0 },
+		m_map01_pipe1Shape,
+		FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
+		false
+	};
+
+	m_map01_pipe2Spr =
+	{
+		{ MAP01_SPR_SIZE_X, MAP01_SPR_SIZE_Y },
+		{ 0, 0 },
+		m_map01_pipe2Shape,
+		FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
+		false
+	};
+
+	m_map01_pipe3Spr =
+	{
+		{ MAP01_SPR_SIZE_X, MAP01_SPR_SIZE_Y },
+		{ 0, 0 },
+		m_map01_pipe3Shape,
+		FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
+		false
+	};
+
+	m_map01_solidBlockSpr =
+	{
+		{ MAP01_SPR_SIZE_X, MAP01_SPR_SIZE_Y },
+		{ 0, 0 },
+		m_map01_solidBlock,
+		FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
+		false
+	};
+
 	// 사전 렌더링
 	for (int i = 0; i < MAP01_SIZE_Y; i++) {
 		for (int j = 0; j < MAP01_SIZE_X; j++) {
 			switch (m_map01[i][j]) {
 			case 'g':
-				// 'g'일 경우
 				for (int k = 0; k < MAP01_SPR_SIZE_Y; k++) {
-					// 각 행에 'g' 관련 데이터를 복사
 					wmemcpy(&m_renderedMap[i * MAP01_SPR_SIZE_Y + k][j * MAP01_SPR_SIZE_X], m_map01_groundSpr.ShapeString[k], MAP01_SPR_SIZE_X);
 				}
 				break;
 			case 'd':
-				// 'd'일 경우
 				for (int k = 0; k < MAP01_SPR_SIZE_Y; k++) {
-					// 각 행에 'd' 관련 데이터를 복사
 					wmemcpy(&m_renderedMap[i * MAP01_SPR_SIZE_Y + k][j * MAP01_SPR_SIZE_X], m_map01_dgroundSpr.ShapeString[k], MAP01_SPR_SIZE_X);
+				}
+				break;
+			case 'y':
+				for (int k = 0; k < MAP01_SPR_SIZE_Y; k++) {
+					wmemcpy(&m_renderedMap[i * MAP01_SPR_SIZE_Y + k][j * MAP01_SPR_SIZE_X], m_map01_pipe0Spr.ShapeString[k], MAP01_SPR_SIZE_X);
+				}
+				break;
+			case 'u':
+				for (int k = 0; k < MAP01_SPR_SIZE_Y; k++) {
+					wmemcpy(&m_renderedMap[i * MAP01_SPR_SIZE_Y + k][j * MAP01_SPR_SIZE_X], m_map01_pipe1Spr.ShapeString[k], MAP01_SPR_SIZE_X);
+				}
+				break;
+			case 'j':
+				for (int k = 0; k < MAP01_SPR_SIZE_Y; k++) {
+					wmemcpy(&m_renderedMap[i * MAP01_SPR_SIZE_Y + k][j * MAP01_SPR_SIZE_X], m_map01_pipe2Spr.ShapeString[k], MAP01_SPR_SIZE_X);
+				}
+				break;
+			case 'k':
+				for (int k = 0; k < MAP01_SPR_SIZE_Y; k++) {
+					wmemcpy(&m_renderedMap[i * MAP01_SPR_SIZE_Y + k][j * MAP01_SPR_SIZE_X], m_map01_pipe3Spr.ShapeString[k], MAP01_SPR_SIZE_X);
+				}
+				break;
+			case 's':
+				for (int k = 0; k < MAP01_SPR_SIZE_Y; k++) {
+					wmemcpy(&m_renderedMap[i * MAP01_SPR_SIZE_Y + k][j * MAP01_SPR_SIZE_X], m_map01_solidBlockSpr.ShapeString[k], MAP01_SPR_SIZE_X);
 				}
 				break;
 			default:
@@ -98,6 +164,7 @@ void PlayScene::Update()
 
 	//바닥 체크
 	//발 밑 3칸중 땅이 있는지 체크 후 발과 땅의 거리 계산
+	auto lastGrounded = m_isGrounded;
 	m_isGrounded = false;
 	float playerFootY = m_playerPosY + PLAYER_SPR_SIZE_Y;
 
@@ -113,7 +180,7 @@ void PlayScene::Update()
 			auto pickXMin = j * MAP01_SPR_SIZE_X;        //타일의 x좌표 최소값
 			auto pickXMax = (j + 1) * MAP01_SPR_SIZE_X;  //타일의 x좌표 최대값
 
-			if ((pick == 'g' || pick == 'd') 
+			if ((CheckTileCollision(pick))
 				&& ((pickXMax > m_playerPosX && pickXMin < m_playerPosX + PLAYER_SPR_SIZE_X)
 				|| (pickXMin < m_playerPosX + PLAYER_SPR_SIZE_X && pickXMax >= m_playerPosX))
 				&& pickY < m_playerPosY + PLAYER_SPR_SIZE_Y)
@@ -124,6 +191,8 @@ void PlayScene::Update()
 			}
 		}
 
+	if (!lastGrounded && m_isGrounded)
+		m_playerSpr.ShapeString = m_playerShape1;
 
 	//속도 계산
 	auto hInput = (GET_KEY(VK_RIGHT) ? 1 : 0) - (GET_KEY(VK_LEFT) ? 1 : 0);
@@ -131,8 +200,26 @@ void PlayScene::Update()
 
 	if (m_isGrounded)
 	{
+		if (m_playerStep > PLAYER_STEPRATE)
+		{
+			m_currentSprNum++;
+			m_currentSprNum %= PLAYER_SPR_ANIM_MAXFRAME;
+
+			switch (m_currentSprNum)
+			{
+			case 0:
+				m_playerSpr.ShapeString = m_playerShape1;
+				break;
+			case 1:
+				m_playerSpr.ShapeString = m_playerShape2;
+				break;
+			}
+
+			m_playerStep = 0.0f;
+		}
 		if (hInput != 0)
 		{
+			m_playerStep += GET_DELTATIME();
 			m_playerSpr.Flip = hInput > 0 ? false : true;
 			m_player_velX += hInput * PLAYER_ACCEL * ((hInput * m_player_velX < 0) ? 2.0f : 1.0f) * (GET_KEY(VK_LSHIFT) ? 2.0f : 1.0f) * GET_DELTATIME();
 			m_player_velX = max(-PLAYER_MAXSPEED * (GET_KEY(VK_LSHIFT) ? 2.0f : 1.0f), min(PLAYER_MAXSPEED * (GET_KEY(VK_LSHIFT) ? 2.0f : 1.0f), m_player_velX));
@@ -146,6 +233,7 @@ void PlayScene::Update()
 		{
 			m_jumpTrigger = true;
 			m_player_velY = -PLAYER_JUMPVEL;
+			m_playerSpr.ShapeString = m_playerShape3;
 		}
 	}
 	else 
@@ -171,26 +259,6 @@ void PlayScene::Update()
 	m_playerPosX += m_player_velX * GET_DELTATIME();
 	m_playerPosY += m_player_velY * GET_DELTATIME();
 
-	if (hInput != 0)
-		m_playerStep += GET_DELTATIME();
-
-	if (m_playerStep > PLAYER_STEPRATE)
-	{
-		m_currentSprNum++;
-		m_currentSprNum %= PLAYER_SPR_ANIM_MAXFRAME;
-
-		switch (m_currentSprNum)
-		{
-		case 0:
-			m_playerSpr.ShapeString = m_playerShape1;
-			break;
-		case 1:
-			m_playerSpr.ShapeString = m_playerShape2;
-			break;
-		}
-
-		m_playerStep = 0.0f;
-	}
 
 	//맵 충돌 체크
 	playerMapXidx = (int)(m_playerPosX < 0.0f ? m_playerPosX - MAP01_SPR_SIZE_X : m_playerPosX) / MAP01_SPR_SIZE_X;
@@ -205,7 +273,7 @@ void PlayScene::Update()
 			if (i > MAP01_SIZE_Y - 1 || i < 0 || j > MAP01_SIZE_X - 1 || j < 0)
 				continue;
 
-			if ((m_map01[i][j] == 'g' || m_map01[i][j] == 'd') &&
+			if (CheckTileCollision(m_map01[i][j]) &&
 				!((m_playerPosX + PLAYER_SPR_SIZE_X < j * MAP01_SPR_SIZE_X)
 					|| (m_playerPosX > (j + 1) * MAP01_SPR_SIZE_X)
 					|| (m_playerPosY + PLAYER_SPR_SIZE_Y < i * MAP01_SPR_SIZE_Y)
@@ -236,10 +304,15 @@ void PlayScene::Update()
 				else {
 					if (m_playerPosY < i * MAP01_SPR_SIZE_Y)
 					{
-						m_playerPosY = i * MAP01_SPR_SIZE_Y - PLAYER_SPR_SIZE_Y;// 아래로 밀기
+						m_playerPosY = i * MAP01_SPR_SIZE_Y - PLAYER_SPR_SIZE_Y;// 위로 밀기
 					}
 					else
-						m_playerPosY += penetrationY; // 위로 밀기
+					{
+						m_playerPosY += penetrationY; // 아래로 밀기
+						m_jumpTrigger = false;
+						m_jumpTimer = 0.0f;
+						m_player_velY = 0.0f;
+					}
 				}					
 				
 				debugA = m_playerPosY + 0.5;
@@ -251,15 +324,29 @@ void PlayScene::Update()
 	//swprintf_s(DebugMsg, 1024, L"█ <- { %f , %f} ", debugA, debugB);
 
 	//뷰포트 이동
+
+	//플레이어가 화면 중앙을 넘어갈 경우 뷰포트 이동
 	if ((SHORT)m_playerPosX + (m_playerSpr.Size.X >> 1) - GET_ANCHOR_POS().X > (GET_SCREEN_WIDTH() >> 1))
 	{
 		SET_ANCHOR_POS((SHORT)m_playerPosX + (m_playerSpr.Size.X >> 1) - (GET_SCREEN_WIDTH() >> 1), GET_ANCHOR_POS().Y);
+	}
+
+	//맵의 끝이 화면 오른쪽에 있는 경우 뷰포트 제한
+	if (MAP01_SIZE_X * MAP01_SPR_SIZE_X - GET_ANCHOR_POS().X < GET_SCREEN_WIDTH())
+	{
+		SET_ANCHOR_POS(MAP01_SIZE_X * MAP01_SPR_SIZE_X - GET_SCREEN_WIDTH(), GET_ANCHOR_POS().Y);
 	}
 
 	//뷰포트 왼쪽 벽 처리
 	if ((SHORT)m_playerPosX < GET_ANCHOR_POS().X)
 	{
 		m_playerPosX = GET_ANCHOR_POS().X;
+	}
+
+	//뷰포트 오른쪽 벽 처리
+	if ((SHORT)m_playerPosX + PLAYER_SPR_SIZE_X > GET_ANCHOR_POS().X + GET_SCREEN_WIDTH() - 1)
+	{
+		m_playerPosX = GET_ANCHOR_POS().X + GET_SCREEN_WIDTH() - PLAYER_SPR_SIZE_X - 1;
 	}
 }
 
@@ -279,8 +366,8 @@ void PlayScene::Render()
 
 
 
-	swprintf_s(DebugMsg, 1024, L"{ %f } ",1 / GET_DELTATIME());
-	RENDER_STR(DebugPos, DebugMsg);
+	//swprintf_s(DebugMsg, 1024, L"{ %f } ",1 / GET_DELTATIME());
+	//RENDER_STR(DebugPos, DebugMsg);
 }
 	
 	
@@ -290,21 +377,5 @@ PlayScene::~PlayScene()
 	if (m_renderedMap)
 		delete[] m_renderedMap;
 }
-
-
-//void PlayScene::Render()
-//{
-//
-//	const wchar_t* de = m_renderedMap[MAP01_SPR_SIZE_Y * MAP01_SIZE_Y - 1];
-//		RENDER_STR({ 0,(short)MAP01_SPR_SIZE_Y * MAP01_SIZE_Y - 1 }, de);;
-//	/*for (int i = 0; i < MAP01_SPR_SIZE_Y * MAP01_SIZE_Y; i++)
-//		RENDER_STR({ 0,(short)i }, m_renderedMap[i]);*/
-//
-//	//swprintf_s(DebugMsg, 1024, L"█ <- %f fps", 1 / GET_DELTATIME());
-//	RENDER_STR({ 0, -2 }, DebugMsg);
-//
-//	//RENDER_SPR({ (SHORT)(ceil(m_playerPosX)), (SHORT)(ceil(m_playerPosY)) }, &m_playerSpr);
-//}
-
 
 

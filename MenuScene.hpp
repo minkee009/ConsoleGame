@@ -14,6 +14,4 @@ public:
 private:
 	int m_menuPointer;
 	SceneState m_sceneState = Menu;
-
-
 };

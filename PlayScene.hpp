@@ -26,6 +26,10 @@
 #define MAP01_SPR_SIZE_X 6
 #define MAP01_SPR_SIZE_Y 3
 
+
+#define GOAL_FLAG_SPR_SIZE_X 2
+#define GOAL_FLAG_SPR_SIZE_Y 16
+
 class PlayScene : public IScene
 {
 public:
@@ -48,30 +52,83 @@ private:
 	L"\0(-.-)",
 	L"-(U  )",
 	};
+	static constexpr const WCHAR* m_playerShape3[PLAYER_SPR_SIZE_Y] = {
+	L"\0/\\/\\",
+	L"\0(-.-O",
+	L"^(   )",
+	};
+
 	static const WORD m_commonShapeColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
 
 	static constexpr const char* m_map01[MAP01_SIZE_Y] = {
-		".........ggd..............................................................................",
 		"..........................................................................................",
 		"..........................................................................................",
-		"........gg.g..............................................................................",
-		"g...............gg........................................................................",
-		".g.............ggd.....gg.................................................................",
-		"...g.........Egdgg....ggdg....gdgg.....gg.................................................",
-		"gdggggdgggdggggddggggggdgg..gggggggdgggggg.gg.dg.ggd.ggdg.ggddggggggdgg..gggggggdggggggggg"
+		"..........................................................................................",
+		"..................................yu......................................................",
+		"...........................yu.....jk......................................................",
+		"...................yu......jk.....jk...............ss.....................................",
+		"...................jk......jk.....jk...gg.........ssss....................................",
+		"gdggggdgggdggggddggggggdgggggggggggdgggggggdggdgdggddggdgdggddggggggdggddgggggggdggggggggg",
 	};
 
 	static constexpr const WCHAR* m_map01_gShape[MAP01_SPR_SIZE_Y] = {
-	L"▓▓██▓▓",
-	L"██▒▒██",
-	L"█▒▒▓▓█",
+		L"▓▓██▓▓",
+		L"██▒▒██",
+		L"█▒▒▓▓█",
 	};
 
 	static constexpr const WCHAR* m_map01_dShape[MAP01_SPR_SIZE_Y] = {
-	L"▓▓█▒▒▓",
-	L"█▓▓▓██",
-	L"▒███▓▓",
+		L"▓▓█▒▒▓",
+		L"█▓▓▓██",
+		L"▒███▓▓",
 	};
+
+	static constexpr const WCHAR* m_map01_pipe0Shape[MAP01_SPR_SIZE_Y] = {
+		L"▓▓████",
+		L" ▒▒▓██",
+		L" ▒▒▓██",
+	};
+	static constexpr const WCHAR* m_map01_pipe1Shape[MAP01_SPR_SIZE_Y] = {
+		L"████▓▓",
+		L"██▓▒  ",
+		L"██▓▒  ",
+	};
+	static constexpr const WCHAR* m_map01_pipe2Shape[MAP01_SPR_SIZE_Y] = {
+		L" ▒▒▓██",
+		L" ▒▒▓██",
+		L" ▒▒▓██",
+	};
+	static constexpr const WCHAR* m_map01_pipe3Shape[MAP01_SPR_SIZE_Y] = {
+		L"██▓▒  ",
+		L"██▓▒  ",
+		L"██▓▒  ",
+	};
+
+	static constexpr const WCHAR* m_map01_solidBlock[MAP01_SPR_SIZE_Y] = {
+		L"█████ ",
+		L"██▓▓    ",
+		L"█     ",
+	};
+
+	static constexpr const WCHAR* m_goalShape[GOAL_FLAG_SPR_SIZE_Y] = {
+	L"█▓",
+	L"█▓",
+	L"█▓",
+	L"█▓",
+	L"█▓",
+	L"█▓",
+	L"█▓",
+	L"█▓",
+	L"█▓",
+	L"█▓",
+	L"█▓",
+	L"█▓",
+	L"█▓",
+	L"█▓",
+	L"█▓",
+	L"█▓",
+	};
+
 
 	WCHAR** m_renderedMap; //[MAP01_SIZE_Y * MAP01_SPR_SIZE_Y][MAP01_SIZE_X * MAP01_SPR_SIZE_X];
 
@@ -93,5 +150,22 @@ private:
 	SPRITE m_map01_groundSpr;
 	SPRITE m_map01_dgroundSpr;
 
+	SPRITE m_map01_pipe0Spr;
+	SPRITE m_map01_pipe1Spr;
+	SPRITE m_map01_pipe2Spr;
+	SPRITE m_map01_pipe3Spr;
+	SPRITE m_map01_solidBlockSpr;
+
+	SPRITE m_goalFlagSpr;
+
 	SceneState m_sceneState = Play;
+
+
+	bool CheckTileCollision(char c)
+	{
+		return c == 'g' || c == 'd' || c == 'y' || c == 'u' || c == 'j' || c == 'k' || c == 's';
+	}
 };
+
+
+

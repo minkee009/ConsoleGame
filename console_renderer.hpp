@@ -19,7 +19,7 @@ namespace MyGame
 
 		COORD GetViewPortAnchor() { return { m_viewportX, m_viewportY }; };
 
-		void SetViewPortCenter(SHORT x, SHORT y) { m_viewportX = x; m_viewportY = y; }
+		void SetViewPortAnchor(SHORT x, SHORT y) { m_viewportX = x; m_viewportY = y; }
 
 		void SpriteDraw(COORD pos, const SPRITE* sprite);
 

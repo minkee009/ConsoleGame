@@ -39,6 +39,7 @@ int main()
 
 	ADD_SCENE(menuScene);
 	ADD_SCENE(playScene);
+
 	Engine::GetInstance()->Run();
 
 	delete playScene;
