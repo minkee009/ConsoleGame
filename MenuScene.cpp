@@ -3,7 +3,7 @@
 
 using MyGame::Engine;
 
-void MenuScene::Initialize()
+void MyGame::MenuScene::Initialize()
 {
 	/*COORD Size;
 	COORD Pivot;
@@ -16,7 +16,7 @@ void MenuScene::Initialize()
 
 }
 
-void MenuScene::Update()
+void MyGame::MenuScene::Update()
 {
 	//포인터 위치
 	if (GET_KEY_DOWN(VK_UP))
@@ -42,7 +42,7 @@ void MenuScene::Update()
 	}
 }
 
-void MenuScene::Render()
+void MyGame::MenuScene::Render()
 {
 	SHORT menuPointerY = 0;
 

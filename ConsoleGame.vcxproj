@@ -137,6 +137,7 @@
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="sprite.h" />
     <ClCompile Include="time.cpp" />
+    <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="char_check.h" />
@@ -146,6 +147,7 @@
     <ClInclude Include="input.hpp" />
     <ClInclude Include="IScene.hpp" />
     <ClInclude Include="MenuScene.hpp" />
+    <ClInclude Include="Player.hpp" />
     <ClInclude Include="PlayScene.hpp" />
     <ClInclude Include="scene_manager.hpp" />
     <ClInclude Include="time.hpp" />

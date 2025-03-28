@@ -40,6 +40,12 @@
     <Filter Include="소스 파일\툴 및 랩퍼">
       <UniqueIdentifier>{31f90cc6-0d05-4011-890e-66a7db8727b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\내 게임\오브젝트">
+      <UniqueIdentifier>{1cf702f1-61f4-4853-9607-01d468464a6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\내 게임\오브젝트">
+      <UniqueIdentifier>{9997eb3b-a2da-490d-baa4-dbe81c618927}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="console_renderer.cpp">
@@ -68,6 +74,9 @@
     </ClCompile>
     <ClCompile Include="char_check.c">
       <Filter>소스 파일\툴 및 랩퍼</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>소스 파일\내 게임\오브젝트</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -100,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="PlayScene.hpp">
       <Filter>헤더 파일\내 게임\씬</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.hpp">
+      <Filter>헤더 파일\내 게임\오브젝트</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
