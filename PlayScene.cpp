@@ -26,7 +26,8 @@ void PlayScene::Initialize()
 	Engine::GetInstance()->GetConsoleRenderer()->SetViewPortCenter(0, -16);
 
 	m_isGrounded = true;
-
+	m_jumpTimer = 0.0f;
+	m_jumpTrigger = false;
 	m_playerPosX = 0;
 	m_playerPosY = 0;
 
@@ -124,8 +125,6 @@ void PlayScene::Update()
 		}
 
 
-	swprintf_s(DebugMsg, 1024, L"{ %s } ", m_isGrounded ? L"true" : L"false");
-
 	//속도 계산
 	auto hInput = (GET_KEY(VK_RIGHT) ? 1 : 0) - (GET_KEY(VK_LEFT) ? 1 : 0);
 	auto vInput = (GET_KEY(VK_DOWN) ? 1 : 0) - (GET_KEY(VK_UP) ? 1 : 0);
@@ -144,13 +143,28 @@ void PlayScene::Update()
 		}
 
 		if (GET_KEY_DOWN(VK_SPACE))
-			m_player_velY = -PLAYER_JUMPPOWER;
+		{
+			m_jumpTrigger = true;
+			m_player_velY = -PLAYER_JUMPVEL;
+		}
 	}
 	else 
 	{
 		m_player_velX += hInput * PLAYER_AIR_ACCEL * GET_DELTATIME();
-		m_player_velY += PLAYER_GRAVITY * GET_DELTATIME();
-		m_player_velY = min(PLAYER_MAXFALLSPEED, m_player_velY);
+		if (m_jumpTrigger)
+		{
+			m_jumpTimer += GET_DELTATIME();
+			if (m_jumpTimer > PLAYER_JUMPTIME || GET_KEY_UP(VK_SPACE))
+			{
+				m_jumpTrigger = false;
+				m_jumpTimer = 0.0f;
+			}
+		}
+		else
+		{
+			m_player_velY += PLAYER_GRAVITY * GET_DELTATIME();
+			m_player_velY = min(PLAYER_MAXFALLSPEED, m_player_velY);
+		}
 	}
 
 		
@@ -264,6 +278,8 @@ void PlayScene::Render()
 	RENDER_SPR({ (SHORT)(ceil(m_playerPosX)), (SHORT)(ceil(m_playerPosY)) }, &m_playerSpr);
 
 
+
+	swprintf_s(DebugMsg, 1024, L"{ %f } ",1 / GET_DELTATIME());
 	RENDER_STR(DebugPos, DebugMsg);
 }
 	

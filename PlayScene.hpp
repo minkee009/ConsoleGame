@@ -12,11 +12,13 @@
 #define PLAYER_ACCEL 35
 #define PLAYER_MAXSPEED 24
 #define PLAYER_DECEL 40
-#define PLAYER_MAXFALLSPEED 40
 
-#define PLAYER_AIR_ACCEL 20
-#define PLAYER_GRAVITY 80
-#define PLAYER_JUMPPOWER 30
+#define PLAYER_AIR_ACCEL 35
+#define PLAYER_GRAVITY 150
+#define PLAYER_MAXFALLSPEED 50
+#define PLAYER_JUMPVEL 30
+#define PLAYER_JUMPVEL_MAX 32
+#define PLAYER_JUMPTIME 0.3f
 
 #define MAP01_SIZE_X 90
 #define MAP01_SIZE_Y 8
@@ -80,6 +82,8 @@ private:
 	short m_currentSprNum;
 
 	float m_isGrounded;
+	float m_jumpTimer;
+	bool m_jumpTrigger;
 
 	float m_player_velX;
 	float m_player_velY;
