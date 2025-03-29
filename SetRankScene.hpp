@@ -34,15 +34,19 @@ namespace MyGame
 
 		int m_current_char_idx;
 
-		const wchar_t* m_alphabets[4] = {
+		const wchar_t* m_alphabets[5] = {
 			L"ABCDEFG",
 			L"HIJKLMN",
-			L"QRSTUVW",
-			L"XYZ_ "
+			L"OPQRSTU",
+			L"VWXYZ_ ",
+			L"감사합니다"
 		};
 
 		int m_cursorX;
 		int m_cursorY;
+		std::vector<Ranking> m_rankings;
+		wchar_t score_txt[100];
+		wchar_t high_score_txt[100];
 
 		SceneState m_sceneState = SetRank;
         std::vector<MyGame::Ranking> LoadRankingFromFile(const std::string& filename);
