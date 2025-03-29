@@ -46,6 +46,18 @@
     <Filter Include="헤더 파일\내 게임\오브젝트">
       <UniqueIdentifier>{9997eb3b-a2da-490d-baa4-dbe81c618927}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\내 게임\오브젝트\적">
+      <UniqueIdentifier>{1921cbbb-5f09-4254-9be4-dbf3ca347cf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\내 게임\오브젝트\아이템">
+      <UniqueIdentifier>{79b2c43e-3079-43b0-9291-1fb1ec389534}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\내 게임\오브젝트\타일">
+      <UniqueIdentifier>{24bc721b-844c-4674-abf4-0b16b3cafc18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\내 게임\오브젝트\타일">
+      <UniqueIdentifier>{6d665fe9-f7a0-4d78-b3dd-e066ecb665a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="console_renderer.cpp">
@@ -77,6 +89,12 @@
     </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>소스 파일\내 게임\오브젝트</Filter>
+    </ClCompile>
+    <ClCompile Include="GoalPole.cpp">
+      <Filter>소스 파일\내 게임\오브젝트\타일</Filter>
+    </ClCompile>
+    <ClCompile Include="math.cpp">
+      <Filter>소스 파일\툴 및 랩퍼</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -112,6 +130,24 @@
     </ClInclude>
     <ClInclude Include="Player.hpp">
       <Filter>헤더 파일\내 게임\오브젝트</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.hpp">
+      <Filter>헤더 파일\내 게임\오브젝트</Filter>
+    </ClInclude>
+    <ClInclude Include="GoomBa.hpp">
+      <Filter>헤더 파일\내 게임\오브젝트\적</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.hpp">
+      <Filter>헤더 파일\내 게임\오브젝트</Filter>
+    </ClInclude>
+    <ClInclude Include="GoalPole.hpp">
+      <Filter>헤더 파일\내 게임\오브젝트\타일</Filter>
+    </ClInclude>
+    <ClInclude Include="Tile.hpp">
+      <Filter>헤더 파일\내 게임\오브젝트</Filter>
+    </ClInclude>
+    <ClInclude Include="math.hpp">
+      <Filter>헤더 파일\툴 및 랩퍼</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -20,6 +20,11 @@
 #define PLAYER_JUMPVEL_MAX 32
 #define PLAYER_JUMPTIME 0.3f
 
+#define PLAYER_SPR_S_WALK1 0
+#define PLAYER_SPR_S_WALK2 1
+#define PLAYER_SPR_S_JUMP 2
+#define PLAYER_SPR_S_GRAB 3
+#define PLAYER_SPR_S_DIE 4
 
 namespace MyGame
 {
@@ -29,16 +34,30 @@ namespace MyGame
 	public:
 		Player(PlayScene* scene);
 		~Player();
-		void SetPosition(float x, float y) { m_posX = x; m_posY = y; };
-		void SetActive(bool active) { m_active = active; }
+
 		void Initialize();
+
+		void SetPosition(float x, float y) { m_posX = x; m_posY = y; }
+		void SetActive(bool active) { m_active = active; }
+		void SetForceInput(bool use, short xInput, bool dashInput) { m_forceInput = use; m_forceInputX = xInput; m_forceInputDash = dashInput; }
+		void SetVelocity(float x, float y) { m_velX = x, m_velY = y; }
+
 		void UpdateMovement();
-		void UpdateCollision();
+		void MoveViewport();
+		void ClampPosToViewport();
+
+		void CheckGround();
+		bool IsGround() { return m_isGrounded; }
+
+		void CheckCollision();
+		void OnlyCheckStaticCollision();
+
 		float GetPosX() { return m_posX; }
 		float GetPosY() { return m_posY; }
 		bool GetJumpTrigger() { return m_jumpTrigger; }
-		float GetJumpTimer() { return m_jumpTimer; };
+		float GetJumpTimer() { return m_jumpTimer; }
 		const SPRITE* GetSprite() { return &m_spr; }
+		void ForceChangePlayerShape(int idx);
 	private:
 		static constexpr const WCHAR* m_playerShape1[PLAYER_SPR_SIZE_Y] = {
 		L"\0/\\/\\",
@@ -55,6 +74,11 @@ namespace MyGame
 		L"\0(-.-O",
 		L"^(   )",
 		};
+		static constexpr const WCHAR* m_playerGrabShape[PLAYER_SPR_SIZE_Y] = {
+		L"\0/\\/\\",
+		L"\0(o.o)",
+		L"~(   >",
+		};
 		static constexpr const WCHAR* m_playerDieShape[PLAYER_SPR_SIZE_Y] = {
 		L"\0/\\/\\",
 		L"\0(x.x)",
@@ -64,6 +88,10 @@ namespace MyGame
 		bool m_active;
 
 		PlayScene* m_scene = nullptr;
+
+		bool m_forceInput;
+		float m_forceInputX;
+		float m_forceInputDash;
 
 		SPRITE m_spr;
 		float m_posX;
@@ -75,5 +103,6 @@ namespace MyGame
 		bool m_jumpTrigger;
 		float m_velX;
 		float m_velY;
+
 	};
 }
