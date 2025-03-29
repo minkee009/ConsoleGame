@@ -22,9 +22,8 @@ namespace MyGame
 		void SetViewPortAnchor(SHORT x, SHORT y) { m_viewportX = x; m_viewportY = y; }
 
 		void SpriteDraw(COORD pos, const SPRITE* sprite);
-
-		void WStringDraw(COORD pos, const WCHAR* sprite);
-		void WStringDraw(COORD pos, const WCHAR* sprite, int length);
+		void WStringDraw(COORD pos, const WCHAR* string);
+		void WStringDraw(COORD pos, const WCHAR* string, int length);
 
 		void Clear();
 		void Swap();

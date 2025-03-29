@@ -1,6 +1,8 @@
 ﻿#include "PlayScene.hpp"
 #include "engine.hpp"
 #include "GoalPole.hpp"
+#include "GoalFlag.hpp"
+#include "SetRankScene.hpp"
 #include <cwchar>
 #include <algorithm> 
 
@@ -87,9 +89,18 @@ MyGame::PlayScene::PlayScene()
 				goalPole->SetPosition(spawnPosX, spawnPosY);
 				goalPole->Initialize();
 
+
 				m_tiles.push_back({ goalPole, false });
+
+				auto goalFlag = new GoalFlag(this);
+				spawnPosX += 2;
+				goalFlag->setSpawnPos(spawnPosX, spawnPosY);
+				goalFlag->SetPosition(spawnPosX, spawnPosY);
+				goalFlag->Initialize();
+
+				m_tiles.push_back({ goalFlag, false });
 			}
-				break;
+			break;
 			}
 		}
 	}
@@ -107,14 +118,15 @@ void MyGame::PlayScene::Initialize()
 			tile = m_tiles.erase(tile);  // 원소 삭제 후 반복문 인덱스 조정
 		}
 		else {
+			tile->first->Initialize();
 			++tile;
 		}
 	}
 	m_goalTimer = 0;
 	m_goalIncount = 0;
 	m_score = 0.0f;
-	m_player->SetPosition(2, 26);
 	m_player->Initialize();
+	m_player->SetPosition(2, 26);
 
 	m_timer = 0;
 
@@ -188,6 +200,14 @@ void MyGame::PlayScene::Update()
 			m_player->CheckGround();
 			m_player->OnlyCheckStaticCollision();
 
+			for (auto tile : m_tiles)
+			{
+				if (!tile.first->GetActive())
+					continue;
+
+				tile.first->Update();
+			}
+
 			if (m_player->IsGround())
 				m_goalIncount++;
 		}
@@ -203,7 +223,7 @@ void MyGame::PlayScene::Update()
 		}
 		else if (m_goalIncount == 3)
 		{
-			m_player->SetForceInput(true, 1,true);
+			m_player->SetForceInput(true, 1, true);
 			m_player->UpdateMovement();
 			m_player->MoveViewport();
 
@@ -224,20 +244,18 @@ void MyGame::PlayScene::Update()
 			m_goalTimer += GET_DELTATIME();
 			if (m_goalTimer > PLAY_GOALINCOUNT_02_TIMER)
 			{
-				Initialize();
-				gameState = PrintLife;
+				//골 종료
+				m_goalIncount++;
+				SET_ANCHOR_POS(0, 0);
+				dynamic_cast<SetRankScene*>(GET_SCENE(SetRank))->SetCurrentScore((int)m_score);
+				CHANGE_SCENE(SetRank);
 			}
-
-
 		}
-
-
-
 
 		break;
 	}
 	}
-	
+
 }
 
 
@@ -272,14 +290,17 @@ void MyGame::PlayScene::Render()
 			}
 		}
 
+
+
 		RENDER_SPR({ (SHORT)(ceil(m_player->GetPosX())), (SHORT)(ceil(m_player->GetPosY())) }, m_player->GetSprite());
 
-		swprintf_s(DebugMsg, 1024, L"{ %f } ", 1 / GET_DELTATIME());
-		RENDER_STR(DebugPos, DebugMsg);
+		//swprintf_s(DebugMsg, 1024, L"{ %f } ", 1 / GET_DELTATIME());
+		//RENDER_STR(DebugPos, DebugMsg);
 
-		RENDER_STR({ GET_ANCHOR_POS().X, -9}, L"    점수                                                                                                       시간    ");
-		swprintf_s(m_msgBuffer, 1024, L"  %08d                                                                                                     %04d    ", m_score,(int)m_timer);
+		RENDER_STR({ GET_ANCHOR_POS().X, -9 }, L"    점수                                                                                                       시간    ");
+		swprintf_s(m_msgBuffer, 1024, L"  %08d                                                                                                     %04d    ", (int)m_score, (int)m_timer);
 		RENDER_STR({ GET_ANCHOR_POS().X, -8 }, m_msgBuffer);
+
 		break;
 	}
 	case Goal:
@@ -301,10 +322,13 @@ void MyGame::PlayScene::Render()
 			}
 		}
 
+
+
 		RENDER_SPR({ (SHORT)(ceil(m_player->GetPosX())), (SHORT)(ceil(m_player->GetPosY())) }, m_player->GetSprite());
 
 		swprintf_s(DebugMsg, 1024, L"{ %f } ", 1 / GET_DELTATIME());
 		RENDER_STR(DebugPos, DebugMsg);
+
 
 		RENDER_STR({ GET_ANCHOR_POS().X, -9 }, L"    점수                                                                                                       시간    ");
 		swprintf_s(m_msgBuffer, 1024, L"  %08d                                                                                                     %04d    ", (int)m_score, (int)m_timer);
@@ -313,14 +337,16 @@ void MyGame::PlayScene::Render()
 	}
 	}
 }
-	
-	
+
+
 
 MyGame::PlayScene::~PlayScene()
 {
-	if (m_renderedMap)
-		delete[] m_renderedMap;
-
+	for (int i = 0; i < TILE_SPR_SIZE_Y * MAP01_SIZE_Y; i++) {
+		delete[] m_renderedMap[i];  // 내부 배열 해제
+	}
+	delete[] m_renderedMap;  // 외부 배열 해제
+	
 	for (auto tile = m_tiles.begin(); tile != m_tiles.end(); ) {
 		if (tile->second) {
 			//인스턴스인 경우 삭제
@@ -331,7 +357,7 @@ MyGame::PlayScene::~PlayScene()
 			++tile;
 		}
 	}
-	delete m_msgBuffer;
+	delete[] m_msgBuffer;
 	delete m_player;
 }
 

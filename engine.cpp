@@ -1,6 +1,6 @@
 #include "engine.hpp"
 
-MyGame::Engine* MyGame::Engine::m_instance = nullptr;
+std::unique_ptr<MyGame::Engine> MyGame::Engine::m_instance = nullptr;
 
 MyGame::Engine::Engine(int screenWidth, int screenHeight) : m_consoleRenderer(screenWidth, screenHeight)
 {
@@ -11,7 +11,7 @@ bool MyGame::Engine::Initialize(int screenWidth, int screenHeight)
 {
 	if (!m_instance) {
 		try {
-			m_instance = new Engine(screenWidth, screenHeight);
+			m_instance = std::unique_ptr<Engine>(new Engine(screenWidth, screenHeight));
 			return true;
 		}
 		catch (...) {
@@ -23,7 +23,7 @@ bool MyGame::Engine::Initialize(int screenWidth, int screenHeight)
 
 MyGame::Engine* MyGame::Engine::GetInstance()
 {
-	return m_instance;
+	return m_instance.get();
 }
 
 MyGame::ConsoleRenderer* MyGame::Engine::GetConsoleRenderer()

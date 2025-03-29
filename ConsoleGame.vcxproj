@@ -131,12 +131,14 @@
     <ClCompile Include="char_check.c" />
     <ClCompile Include="console_renderer.cpp" />
     <ClCompile Include="engine.cpp" />
+    <ClCompile Include="GoalFlag.cpp" />
     <ClCompile Include="GoalPole.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math.cpp" />
     <ClCompile Include="MenuScene.cpp" />
     <ClCompile Include="PlayScene.cpp" />
+    <ClCompile Include="SetRankScene.cpp" />
     <ClCompile Include="sprite.h" />
     <ClCompile Include="time.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -147,6 +149,7 @@
     <ClInclude Include="delegate.hpp" />
     <ClInclude Include="Enemy.hpp" />
     <ClInclude Include="engine.hpp" />
+    <ClInclude Include="GoalFlag.hpp" />
     <ClInclude Include="GoomBa.hpp" />
     <ClInclude Include="input.hpp" />
     <ClInclude Include="IScene.hpp" />
@@ -156,6 +159,7 @@
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="PlayScene.hpp" />
     <ClInclude Include="scene_manager.hpp" />
+    <ClInclude Include="SetRankScene.hpp" />
     <ClInclude Include="Tile.hpp" />
     <ClInclude Include="time.hpp" />
     <ClInclude Include="GoalPole.hpp" />

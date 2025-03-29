@@ -11,9 +11,8 @@ namespace MyGame
 	{
 	public:
 		GoalPole(PlayScene* scene);
-		~GoalPole();
 		//void Initialize() override;
-		void Update() override;
+		//void Update() override;
 		void CallInteract(int collisionFlag) override;
 	private:
 		static constexpr const WCHAR* m_goalPoleShape[GOAL_POLE_SPR_SIZE_Y] = {

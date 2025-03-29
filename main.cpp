@@ -13,6 +13,7 @@
 //Scene
 #include "MenuScene.hpp"
 #include "PlayScene.hpp"
+#include "SetRankScene.hpp"
 
 using namespace MyGame;
 
@@ -36,14 +37,17 @@ int main()
 
 	MenuScene* menuScene = new MenuScene;
 	PlayScene* playScene = new PlayScene;
+	SetRankScene* setRankScene = new SetRankScene;
 
 	ADD_SCENE(menuScene);
 	ADD_SCENE(playScene);
+	ADD_SCENE(setRankScene);
 
 	Engine::GetInstance()->Run();
 
 	delete playScene;
 	delete menuScene;
+	delete setRankScene;
 
 	return 0;
 }

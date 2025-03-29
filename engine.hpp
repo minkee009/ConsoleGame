@@ -1,4 +1,5 @@
 #include <unordered_map>
+#include <memory>
 #include "console_renderer.hpp"
 #include "scene_manager.hpp"
 #include "input.hpp"
@@ -20,7 +21,7 @@ namespace MyGame
 		void Run();
 		void Exit();
 	private:
-		static Engine* m_instance;
+		static std::unique_ptr<Engine> m_instance;
 		Engine(int screenWidth, int screenHeight);
 
 		bool m_engineIsExit;
@@ -43,6 +44,7 @@ namespace MyGame
 //Scnene Manager
 #define ADD_SCENE Engine::GetInstance()->GetSceneManager()->AddScene
 #define CHANGE_SCENE Engine::GetInstance()->GetSceneManager()->ChangeScene
+#define GET_SCENE Engine::GetInstance()->GetSceneManager()->GetScene
 
 //Engine
 #define ENGINE_EXIT Engine::GetInstance()->Exit

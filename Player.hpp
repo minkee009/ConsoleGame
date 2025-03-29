@@ -52,11 +52,11 @@ namespace MyGame
 		void CheckCollision();
 		void OnlyCheckStaticCollision();
 
-		float GetPosX() { return m_posX; }
-		float GetPosY() { return m_posY; }
-		bool GetJumpTrigger() { return m_jumpTrigger; }
-		float GetJumpTimer() { return m_jumpTimer; }
-		const SPRITE* GetSprite() { return &m_spr; }
+		float GetPosX() const { return m_posX; }
+		float GetPosY() const { return m_posY; }
+		bool GetJumpTrigger() const { return m_jumpTrigger; }
+		float GetJumpTimer() const { return m_jumpTimer; }
+		const SPRITE* GetSprite() const { return &m_spr; }
 		void ForceChangePlayerShape(int idx);
 	private:
 		static constexpr const WCHAR* m_playerShape1[PLAYER_SPR_SIZE_Y] = {
@@ -103,6 +103,5 @@ namespace MyGame
 		bool m_jumpTrigger;
 		float m_velX;
 		float m_velY;
-
 	};
 }

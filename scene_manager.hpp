@@ -51,6 +51,6 @@ namespace MyGame
         IScene* m_currentScene;
 
         SceneState m_currentSceneState = None;
-        SceneState m_nextSceneState = Menu;
+        SceneState m_nextSceneState = SetRank;
     };
 }

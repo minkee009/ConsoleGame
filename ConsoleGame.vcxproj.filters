@@ -96,6 +96,12 @@
     <ClCompile Include="math.cpp">
       <Filter>소스 파일\툴 및 랩퍼</Filter>
     </ClCompile>
+    <ClCompile Include="GoalFlag.cpp">
+      <Filter>소스 파일\내 게임\오브젝트\타일</Filter>
+    </ClCompile>
+    <ClCompile Include="SetRankScene.cpp">
+      <Filter>소스 파일\내 게임\씬</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="console_renderer.hpp">
@@ -148,6 +154,12 @@
     </ClInclude>
     <ClInclude Include="math.hpp">
       <Filter>헤더 파일\툴 및 랩퍼</Filter>
+    </ClInclude>
+    <ClInclude Include="GoalFlag.hpp">
+      <Filter>헤더 파일\내 게임\오브젝트\타일</Filter>
+    </ClInclude>
+    <ClInclude Include="SetRankScene.hpp">
+      <Filter>헤더 파일\내 게임\씬</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

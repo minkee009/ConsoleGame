@@ -14,16 +14,27 @@ MyGame::GoalPole::GoalPole(PlayScene* scene)
 	};
 }
 
-MyGame::GoalPole::~GoalPole()
-{
-}
-
-void MyGame::GoalPole::Update()
-{
-
-}
-
 void MyGame::GoalPole::CallInteract(int collisionFlag)
 {
+	//게임상태 -> 골
 	m_scene->gameState = Goal;
+	m_scene->GetPlayer()->SetPosition(m_posX - PLAYER_SPR_SIZE_X, m_scene->GetPlayer()->GetPosY());
+
+	//높이에 따라 점수 주기
+	if (m_scene->GetPlayer()->GetPosY() - m_posY < 0)
+	{
+		m_scene->AddScore(5000);
+	}
+	else if (m_scene->GetPlayer()->GetPosY() - m_posY < 12)
+	{
+		m_scene->AddScore(2000);
+	}
+	else if (m_scene->GetPlayer()->GetPosY() - m_posY < 22)
+	{
+		m_scene->AddScore(1000);
+	}
+	else 
+	{
+		m_scene->AddScore(500);
+	}
 }

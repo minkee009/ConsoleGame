@@ -25,8 +25,8 @@ void MyGame::MenuScene::Update()
 	if (GET_KEY_DOWN(VK_DOWN))
 		m_menuPointer++;
 
-	m_menuPointer = m_menuPointer < 0 ? 0 : m_menuPointer;
-	m_menuPointer %= MENUSENE_MENUPOINTER_MAXROW;
+	m_menuPointer = m_menuPointer < 0 ? MENUSCENE_MENUPOINTER_MAXROW - 1 : m_menuPointer;
+	m_menuPointer %= MENUSCENE_MENUPOINTER_MAXROW;
 
 	if (GET_KEY_DOWN(VK_RETURN))
 	{

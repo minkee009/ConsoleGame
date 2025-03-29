@@ -31,6 +31,7 @@ void MyGame::Player::Initialize()
 	m_jumpTimer = 0.0f;
 	m_jumpTrigger = false;
 	m_forceInput = false;
+	m_forceInputDash = false;
 	m_posX = 0;
 	m_posY = 0;
 	m_velX = 0.0f;
@@ -84,7 +85,7 @@ void MyGame::Player::UpdateMovement()
 		}
 		if (hInput != 0)
 		{
-			m_step += GET_DELTATIME();
+			m_step += (GET_KEY(VK_LSHIFT) || m_forceInputDash ? 2.0f : 1.0f) * GET_DELTATIME();
 			m_spr.Flip = hInput > 0 ? false : true;
 			m_velX += hInput * PLAYER_ACCEL * ((hInput * m_velX < 0) ? 3.0f : 1.0f) * (GET_KEY(VK_LSHIFT) || m_forceInputDash ? 2.0f : 1.0f) * GET_DELTATIME();
 			m_velX = max(-PLAYER_MAXSPEED * (GET_KEY(VK_LSHIFT) || m_forceInputDash ? 2.0f : 1.0f), min(PLAYER_MAXSPEED * (GET_KEY(VK_LSHIFT) || m_forceInputDash ? 2.0f : 1.0f), m_velX));
@@ -231,7 +232,6 @@ void MyGame::Player::CheckCollision()
 			{
 				m_jumpTrigger = false;
 				m_jumpTimer = 0.0f;
-				m_velY = 0.0f;
 			}
 		}
 
@@ -317,7 +317,6 @@ void MyGame::Player::OnlyCheckStaticCollision()
 			{
 				m_jumpTrigger = false;
 				m_jumpTimer = 0.0f;
-				m_velY = 0.0f;
 			}
 		}
 }

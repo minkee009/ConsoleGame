@@ -9,7 +9,9 @@ namespace MyGame
 		None = 0,
 		Menu,
 		Play,
-		End
+		GameOver,
+		SetRank,
+		ViewRank
 	};
 
 	class IScene
