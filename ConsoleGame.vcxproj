@@ -139,6 +139,7 @@
     <ClCompile Include="math.cpp" />
     <ClCompile Include="MenuScene.cpp" />
     <ClCompile Include="PlayScene.cpp" />
+    <ClCompile Include="PointPrinter.cpp" />
     <ClCompile Include="SetRankScene.cpp" />
     <ClCompile Include="sprite.h" />
     <ClCompile Include="time.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="MenuScene.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="PlayScene.hpp" />
+    <ClInclude Include="PointPrinter.hpp" />
     <ClInclude Include="ranking_save_loader.hpp" />
     <ClInclude Include="scene_manager.hpp" />
     <ClInclude Include="SetRankScene.hpp" />

@@ -24,17 +24,21 @@ void MyGame::GoalPole::CallInteract(int collisionFlag)
 	if (m_scene->GetPlayer()->GetPosY() - m_posY < 0)
 	{
 		m_scene->AddScore(5000);
+		m_scene->PrintPoint(L"5000", m_posX + GOAL_POLE_SPR_SIZE_X + 1, m_scene->GetPlayer()->GetPosY());
 	}
 	else if (m_scene->GetPlayer()->GetPosY() - m_posY < 12)
 	{
 		m_scene->AddScore(2000);
+		m_scene->PrintPoint(L"2000", m_posX + GOAL_POLE_SPR_SIZE_X + 1, m_scene->GetPlayer()->GetPosY());
 	}
 	else if (m_scene->GetPlayer()->GetPosY() - m_posY < 22)
 	{
 		m_scene->AddScore(1000);
+		m_scene->PrintPoint(L"1000", m_posX + GOAL_POLE_SPR_SIZE_X + 1, m_scene->GetPlayer()->GetPosY());
 	}
 	else 
 	{
 		m_scene->AddScore(500);
+		m_scene->PrintPoint(L"500", m_posX + GOAL_POLE_SPR_SIZE_X + 1, m_scene->GetPlayer()->GetPosY());
 	}
 }

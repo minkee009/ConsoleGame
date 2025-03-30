@@ -106,6 +106,7 @@ MyGame::PlayScene::PlayScene()
 	}
 
 	m_player = new MyGame::Player(this);
+	m_pointPrinter = new PointPrinter;
 }
 
 void MyGame::PlayScene::Initialize()
@@ -133,10 +134,13 @@ void MyGame::PlayScene::Initialize()
 	m_timer = 0;
 
 	gameState = PrintLife;
+
+	m_pointPrinter->ClearAllPoints();
 }
 
 void MyGame::PlayScene::Update()
 {
+
 	if (m_life == 0)
 	{
 		//게임 오버
@@ -160,6 +164,9 @@ void MyGame::PlayScene::Update()
 	}
 	case Playing:
 	{
+		if (GET_KEY_DOWN('S'))
+			PrintPoint(L"100", m_player->GetPosX(), m_player->GetPosY());
+
 		m_timer -= GET_DELTATIME() * 2.0f;
 		//각 오브젝트 배열을 돌면서 m_active관리와 업데이트 관리를 시도
 
@@ -325,7 +332,6 @@ void MyGame::PlayScene::Update()
 
 void MyGame::PlayScene::Render()
 {
-
 	switch (gameState)
 	{
 	case PrintLife:
@@ -339,6 +345,8 @@ void MyGame::PlayScene::Render()
 	case PlayerDead:
 	case Goal:
 	{
+		m_pointPrinter->UpdatePoints();
+
 		for (int i = 0; i < TILE_SPR_SIZE_Y * MAP01_SIZE_Y; i++)
 		{
 			COORD pos = { 0, (short)i };
@@ -354,6 +362,11 @@ void MyGame::PlayScene::Render()
 			{
 				RENDER_SPR({ (SHORT)(ceil(tile.first->GetPosX())), (SHORT)(ceil(tile.first->GetPosY())) }, tile.first->GetSprite());
 			}
+		}
+
+		for (auto point : *m_pointPrinter->GetPoints())
+		{
+			RENDER_STR({ (SHORT)ceil(point.posX), (SHORT)ceil(point.posY) }, point.point);
 		}
 
 		RENDER_SPR({ (SHORT)(ceil(m_player->GetPosX())), (SHORT)(ceil(m_player->GetPosY())) }, m_player->GetSprite());
@@ -389,6 +402,7 @@ MyGame::PlayScene::~PlayScene()
 
 	delete[] m_msgBuffer;
 	delete m_player;
+	delete m_pointPrinter;
 }
 
 

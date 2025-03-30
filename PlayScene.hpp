@@ -2,6 +2,7 @@
 #include "IScene.hpp"
 #include "Player.hpp"
 #include "Tile.hpp"
+#include "PointPrinter.hpp"
 #include <vector>
 #include <utility>
 
@@ -19,6 +20,8 @@
 
 #define PLAY_DEADINCOUNT_00_TIMER 0.7f
 #define PLAY_DEADINCOUNT_01_TIMER 2.5f
+
+#define PRINTPOINT_VELY 15.0f
 
 
 namespace MyGame
@@ -53,6 +56,7 @@ namespace MyGame
 
 		void AddTile(Tile* tile) { m_tiles.push_back({ tile,true }); };
 		void AddScore(float score) { m_score += score; }
+		void PrintPoint(const wchar_t* point, float posX, float posY) { m_pointPrinter->CreatePoint(point, 0.5f,posX,posY, 0.0f, -PRINTPOINT_VELY); }
 		const std::vector<std::pair<Tile*, bool>>* GetTiles() { return &m_tiles; }
 
 		static constexpr const char* const* GetTilemap() { return m_map01; }
@@ -142,7 +146,7 @@ namespace MyGame
 
 
 		WCHAR** m_renderedMap; //[MAP01_SIZE_Y * MAP01_SPR_SIZE_Y][MAP01_SIZE_X * MAP01_SPR_SIZE_X];
-
+		PointPrinter* m_pointPrinter = nullptr;
 		Player* m_player = nullptr;
 
 		SceneState m_sceneState = Play;
