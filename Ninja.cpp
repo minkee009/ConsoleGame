@@ -140,7 +140,7 @@ void MyGame::Ninja::Update()
 			if (m_actIdx == 3)
 			{
 				m_actIdx = m_randAct[m_randActIdx++] ? 4 : 5;
-
+				m_randActIdx %= NINJA_MAX_RANDACT;
 				if (m_actIdx == 5)
 				{
 					m_spr.Flip = m_scene->GetPlayer()->GetPosX() > m_posX ? false : true;
@@ -182,6 +182,7 @@ void MyGame::Ninja::Update()
 			m_actTimer = 0.0f;
 			m_spr.ShapeString = m_ninjaShape1;
 			m_randActIdx++;
+			m_randActIdx %= NINJA_MAX_RANDACT;
 			break;
 		}
 		break;
