@@ -1,5 +1,6 @@
 #pragma once
 #include <Windows.h>
+#include "bbox.hpp"
 
 #define MATH_COL_FLAG_PUSHLEFT 1
 #define MATH_COL_FLAG_PUSHRIGHT 2
@@ -20,6 +21,12 @@ namespace MyGame
 
 	int CalcPenetration(float maxX, float maxY, float minX, float minY,
 		float maxX2, float maxY2, float minX2, float minY2);
+
+	bool CheckAABB(Bbox a, Bbox b);
+
+	int ApplyPenetration(float* posX, float* posY, Bbox a, Bbox b);
+
+	int CalcPenetration(Bbox a, Bbox b);
 
 	float Distance(float ax, float ay, float bx, float by);
 

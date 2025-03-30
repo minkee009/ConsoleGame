@@ -36,6 +36,7 @@ namespace MyGame
 //Console Renderer
 #define GET_SCREEN_WIDTH Engine::GetInstance()->GetConsoleRenderer()->GetScreenWidth
 #define GET_SCREEN_HEIGHT Engine::GetInstance()->GetConsoleRenderer()->GetScreenHeight
+#define GET_SCREEN_BBOX Engine::GetInstance()->GetConsoleRenderer()->GetViewPortBbox
 #define GET_ANCHOR_POS Engine::GetInstance()->GetConsoleRenderer()->GetViewPortAnchor
 #define SET_ANCHOR_POS Engine::GetInstance()->GetConsoleRenderer()->SetViewPortAnchor
 #define RENDER_SPR Engine::GetInstance()->GetConsoleRenderer()->SpriteDraw

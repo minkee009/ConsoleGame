@@ -134,6 +134,7 @@
     <ClCompile Include="GameOverScene.cpp" />
     <ClCompile Include="GoalFlag.cpp" />
     <ClCompile Include="GoalPole.cpp" />
+    <ClCompile Include="GoomBa.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math.cpp" />
@@ -147,6 +148,7 @@
     <ClCompile Include="ViewRankScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bbox.hpp" />
     <ClInclude Include="char_check.h" />
     <ClInclude Include="console_renderer.hpp" />
     <ClInclude Include="delegate.hpp" />

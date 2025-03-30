@@ -3,6 +3,7 @@
 #include <queue>
 #include <Windows.h>
 #include "sprite.h"
+#include "bbox.hpp"
 
 #define SCREEN_BUFFER_MAXCOUNT 2
 
@@ -18,6 +19,7 @@ namespace MyGame
 		int GetScreenHeight() { return m_height; };
 
 		COORD GetViewPortAnchor() { return { m_viewportX, m_viewportY }; };
+		Bbox GetViewPortBbox() { return { (float)(m_viewportX + m_width),(float)(m_viewportY + m_height),(float)(m_viewportX),(float)(m_viewportY) }; }
 
 		void SetViewPortAnchor(SHORT x, SHORT y) { m_viewportX = x; m_viewportY = y; }
 

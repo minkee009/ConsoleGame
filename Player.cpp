@@ -240,38 +240,25 @@ void MyGame::Player::CheckCollision()
 			}
 		}
 
+	Bbox p_checkBox = { m_posX - PLAYER_SPR_SIZE_X + (PLAYER_SPR_SIZE_X << 1), m_posY - PLAYER_SPR_SIZE_Y + (PLAYER_SPR_SIZE_X << 1) , m_posX - PLAYER_SPR_SIZE_X , m_posY - PLAYER_SPR_SIZE_Y };
+
 	//타일 충돌
-	for (auto tile : *(m_scene->GetTiles()))
+	for (auto& tile : *(m_scene->GetTiles()))
 	{
 		if (!tile.first->GetActive())
 			continue;
 
-		float p_minX = m_posX - PLAYER_SPR_SIZE_X;
-		float p_minY = m_posY - PLAYER_SPR_SIZE_Y;
-		float p_maxX = p_minX + (PLAYER_SPR_SIZE_X << 1);
-		float p_maxY = p_minY + (PLAYER_SPR_SIZE_X << 1);
-
-		float t_minX = tile.first->GetPosX();
-		float t_minY = tile.first->GetPosY();
-		float t_maxX = t_minX + tile.first->GetSprite()->Size.X;
-		float t_maxY = t_minY + tile.first->GetSprite()->Size.Y;
-
 		//경계범위 체크
-		if (CheckAABB(p_maxX, p_maxY, p_minX, p_minY,
-			t_maxX, t_maxY, t_minX, t_minY))
+		if (CheckAABB(p_checkBox,
+			tile.first->GetBbox()))
 		{
-			p_minX = m_posX;
-			p_maxX = m_posX + PLAYER_SPR_SIZE_X;
-			p_minY = m_posY;
-			p_maxY = m_posY + PLAYER_SPR_SIZE_Y;
-
-			bool isCollide = CheckAABB(p_maxX, p_maxY, p_minX, p_minY,
-				t_maxX, t_maxY, t_minX, t_minY);
+			bool isCollide = CheckAABB(GetBbox(),
+				tile.first->GetBbox());
 
 			if (isCollide)
 			{
-				tile.first->CallInteract(ApplyPenetration(&m_posX, &m_posY, p_maxX, p_maxY, p_minX, p_minY,
-					t_maxX, t_maxY, t_minX, t_minY));
+				tile.first->CallInteract(ApplyPenetration(&m_posX, &m_posY, GetBbox(),
+					tile.first->GetBbox()));
 			}
 		}
 	}
@@ -279,6 +266,42 @@ void MyGame::Player::CheckCollision()
 	//아이템 충돌
 
 	//적 충돌
+	for (auto& enemy : *(m_scene->GetEnemys()))
+	{
+		if (!enemy.first->GetActive() 
+			|| enemy.first->IsActtacked()
+			|| !enemy.first->IsAlive())
+			continue;
+
+		//경계범위 체크
+		if (CheckAABB(p_checkBox,
+			enemy.first->GetBbox()))
+		{
+			bool isCollide = CheckAABB(GetBbox(),
+				enemy.first->GetBbox());
+
+			if (isCollide)
+			{
+				auto collisionFlag = CalcPenetration(GetBbox(),
+					enemy.first->GetBbox());
+				enemy.first->CallInteract(collisionFlag);
+
+				if (collisionFlag & (MATH_COL_FLAG_PUSHRIGHT | MATH_COL_FLAG_PUSHLEFT | MATH_COL_FLAG_PUSHDOWN))
+				{
+					m_scene->gameState = PlayerDead;
+					break;
+				}
+
+				if (collisionFlag & MATH_COL_FLAG_PUSHUP)
+				{
+					m_velY = -(PLAYER_JUMPVEL);
+					m_jumpTrigger = false;
+					m_jumpTimer = 0.0f;
+					break;
+				}
+			}
+		}
+	}
 }
 
 void MyGame::Player::OnlyCheckStaticCollision()

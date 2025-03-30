@@ -1,10 +1,14 @@
 ﻿#include "PlayScene.hpp"
 #include "engine.hpp"
-#include "GoalPole.hpp"
-#include "GoalFlag.hpp"
 #include "SetRankScene.hpp"
 #include <cwchar>
 #include <algorithm> 
+#include "math.hpp"
+
+//오브젝트
+#include "GoalPole.hpp"
+#include "GoalFlag.hpp"
+#include "GoomBa.hpp"
 
 using MyGame::Engine;
 
@@ -85,7 +89,7 @@ MyGame::PlayScene::PlayScene()
 				auto goalPole = new GoalPole(this);
 				auto spawnPosX = j * TILE_SPR_SIZE_X + 2;
 				auto spawnPosY = i * TILE_SPR_SIZE_Y + CorrectPosY(goalPole->GetSprite()->Size.Y);
-				goalPole->setSpawnPos(spawnPosX, spawnPosY);
+				goalPole->SetSpawnPos(spawnPosX, spawnPosY);
 				goalPole->SetPosition(spawnPosX, spawnPosY);
 				goalPole->Initialize();
 
@@ -94,13 +98,26 @@ MyGame::PlayScene::PlayScene()
 
 				auto goalFlag = new GoalFlag(this);
 				spawnPosX += 2;
-				goalFlag->setSpawnPos(spawnPosX, spawnPosY);
+				goalFlag->SetSpawnPos(spawnPosX, spawnPosY);
 				goalFlag->SetPosition(spawnPosX, spawnPosY);
 				goalFlag->Initialize();
 
 				m_tiles.push_back({ goalFlag, false });
+				break;
 			}
-			break;
+			case 'e':
+			{
+				auto goomba = new GoomBa(this);
+				auto spawnPosX = j * TILE_SPR_SIZE_X + 2;
+				auto spawnPosY = i * TILE_SPR_SIZE_Y + CorrectPosY(goomba->GetSprite()->Size.Y);
+				
+				goomba->SetSpawnPos(spawnPosX, spawnPosY);
+				goomba->SetPosition(spawnPosX, spawnPosY);
+				goomba->Initialize();
+
+				m_enemys.push_back({ goomba, false });
+				break;
+			}
 			}
 		}
 	}
@@ -112,6 +129,9 @@ MyGame::PlayScene::PlayScene()
 void MyGame::PlayScene::Initialize()
 {
 	Engine::GetInstance()->GetConsoleRenderer()->SetViewPortAnchor(0, -10);
+	
+	//메모리 관리 (해제) 및 초기화
+	//타일
 	for (auto tile = m_tiles.begin(); tile != m_tiles.end(); ) {
 		if (tile->second) {
 			//인스턴스인 경우 삭제
@@ -123,6 +143,21 @@ void MyGame::PlayScene::Initialize()
 			++tile;
 		}
 	}
+	//아이템
+	//에너미
+	for (auto enemy = m_enemys.begin(); enemy != m_enemys.end(); ) {
+		if (enemy->second) {
+			//인스턴스인 경우 삭제
+			delete enemy->first;  // 메모리 해제
+			enemy = m_enemys.erase(enemy);  // 원소 삭제 후 반복문 인덱스 조정
+		}
+		else {
+			enemy->first->Initialize();
+			++enemy;
+		}
+	}
+
+	//게임 변수 초기화
 	m_goalTimer = 0;
 	m_goalIncount = 0;
 	m_deadIncount = 0;
@@ -132,9 +167,7 @@ void MyGame::PlayScene::Initialize()
 	m_player->SetPosition(2, 26);
 
 	m_timer = 0;
-
 	gameState = PrintLife;
-
 	m_pointPrinter->ClearAllPoints();
 }
 
@@ -168,7 +201,6 @@ void MyGame::PlayScene::Update()
 			PrintPoint(L"100", m_player->GetPosX(), m_player->GetPosY());
 
 		m_timer -= GET_DELTATIME() * 2.0f;
-		//각 오브젝트 배열을 돌면서 m_active관리와 업데이트 관리를 시도
 
 		if (m_timer < 0.0f)
 		{
@@ -187,13 +219,12 @@ void MyGame::PlayScene::Update()
 		m_player->MoveViewport();
 		m_player->ClampPosToViewport();
 
-		//오브젝트 m_active관리
-
+	////--오브젝트 m_active관리
 		//타일 관리
-		for (auto tile : m_tiles)
+		for (auto& tile : m_tiles)
 		{
 			//타일이 화면안에 들어오는지 체크
-			if (tile.first->GetPosX() + tile.first->GetSprite()->Size.X < Engine::GetInstance()->GetConsoleRenderer()->GetViewPortAnchor().X)
+			if (!CheckAABB(tile.first->GetBbox(),GET_SCREEN_BBOX()))
 			{
 				tile.first->SetActive(false);
 			}
@@ -203,10 +234,57 @@ void MyGame::PlayScene::Update()
 			}
 		}
 
-		//오브젝트 업데이트
+		//적 관리
+		for (auto& enemy : m_enemys)
+		{
+			if (!enemy.first->IsAlive())
+			{
+				enemy.first->SetActive(false);
+				continue;
+			}
+
+			//적이 화면안에 들어오는지 체크
+			if (!CheckAABB(enemy.first->GetBbox(), GET_SCREEN_BBOX()))
+			{
+				enemy.first->SetActive(false);
+			}
+			else
+			{
+				enemy.first->SetActive(true);
+			}
+		}
 
 
-		//충돌체크
+
+	////--오브젝트 업데이트
+
+		//타일 업데이트
+		for (auto& tile : m_tiles)
+		{
+			if (tile.first->GetActive())
+				tile.first->Update();
+		}
+
+		//아이템 업데이트
+
+		//적 업데이트
+		for (auto& enemy : m_enemys)
+		{
+			if (enemy.first->GetActive())
+				enemy.first->Update();
+		}
+
+	////--충돌체크
+
+		//아이템
+
+		//적
+		for (auto& enemy : m_enemys)
+		{
+			if (enemy.first->GetActive())
+				enemy.first->CheckCollision();
+		}
+
 		m_player->CheckCollision();
 
 		break;
@@ -255,6 +333,7 @@ void MyGame::PlayScene::Update()
 		{
 			m_player->SetVelocity(0, 0);
 			m_player->ForceChangePlayerShape(PLAYER_SPR_S_GRAB);
+			m_player->SetSpriteFlip(false);
 			m_goalTimer += GET_DELTATIME();
 
 			if (m_goalTimer > PLAY_GOALINCOUNT_00_TIMER)
@@ -356,15 +435,22 @@ void MyGame::PlayScene::Render()
 		}
 
 		//m_acitve가 true인 오브젝트만 렌더링
-		for (auto tile : m_tiles)
+		for (auto& tile : m_tiles)
 		{
 			if (tile.first->GetActive())
 			{
 				RENDER_SPR({ (SHORT)(ceil(tile.first->GetPosX())), (SHORT)(ceil(tile.first->GetPosY())) }, tile.first->GetSprite());
 			}
 		}
+		for (auto& enemy : m_enemys)
+		{
+			if (enemy.first->GetActive() && enemy.first->IsAlive())
+			{
+				RENDER_SPR({ (SHORT)(ceil(enemy.first->GetPosX())), (SHORT)(ceil(enemy.first->GetPosY())) }, enemy.first->GetSprite());
+			}
+		}
 
-		for (auto point : *m_pointPrinter->GetPoints())
+		for (auto& point : *m_pointPrinter->GetPoints())
 		{
 			RENDER_STR({ (SHORT)ceil(point.posX), (SHORT)ceil(point.posY) }, point.point);
 		}
@@ -372,7 +458,7 @@ void MyGame::PlayScene::Render()
 		RENDER_SPR({ (SHORT)(ceil(m_player->GetPosX())), (SHORT)(ceil(m_player->GetPosY())) }, m_player->GetSprite());
 
 		DebugPos = { GET_ANCHOR_POS().X, 0 };
-		swprintf_s(DebugMsg, 1024, L"{ %f } ", m_player->GetVelX() + m_player->GetAdditionalVelX());
+		swprintf_s(DebugMsg, 1024, L"{ %f } ", 1 / GET_DELTATIME());
 		RENDER_STR(DebugPos, DebugMsg);
 
 
@@ -393,12 +479,20 @@ MyGame::PlayScene::~PlayScene()
 	}
 	delete[] m_renderedMap;  // 외부 배열 해제
 	
-	for (auto& tilePair : m_tiles) {
-		if (tilePair.first) {
-			delete tilePair.first;  // 동적 할당된 Tile*을 해제
-			tilePair.first = nullptr;  
+	for (auto& tile : m_tiles) {
+		if (tile.first) {
+			delete tile.first;  // 동적 할당된 Tile*을 해제
+			tile.first = nullptr;  
 		}
 	}
+
+	for (auto& enemy : m_enemys) {
+		if (enemy.first) {
+			delete enemy.first;  // 동적 할당된 Tile*을 해제
+			enemy.first = nullptr;
+		}
+	}
+
 
 	delete[] m_msgBuffer;
 	delete m_player;

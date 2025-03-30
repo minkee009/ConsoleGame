@@ -1,5 +1,6 @@
 #pragma once
 #include "PlayScene.hpp"
+#include "bbox.hpp"
 
 #define PLAYER_SPR_SIZE_X 6
 #define PLAYER_SPR_SIZE_Y 3
@@ -18,7 +19,6 @@
 #define PLAYER_GRAVITY 150
 #define PLAYER_MAXFALLSPEED 50
 #define PLAYER_JUMPVEL 30
-#define PLAYER_JUMPVEL_MAX 32
 #define PLAYER_JUMPTIME 0.3f
 
 #define PLAYER_SPR_S_WALK1 0
@@ -42,6 +42,7 @@ namespace MyGame
 		void SetActive(bool active) { m_active = active; }
 		void SetForceInput(bool use, short xInput, bool dashInput) { m_forceInput = use; m_forceInputX = xInput; m_forceInputDash = dashInput; }
 		void SetVelocity(float x, float y) { m_velX = x, m_velY = y; }
+		void SetSpriteFlip(bool flip) { m_spr.Flip = flip; }
 
 		void UpdateMovement();
 		void MoveViewport();
@@ -57,6 +58,15 @@ namespace MyGame
 		float GetPosY() const { return m_posY; }
 		float GetVelX() const { return m_velX; }
 		float GetVelY() const { return m_velY; }
+
+		Bbox GetCheckBBox() const { return { 
+			m_posX - m_spr.Size.X + (m_spr.Size.X << 1), 
+			m_posY - m_spr.Size.Y + (m_spr.Size.X << 1), 
+			m_posX - m_spr.Size.X, 
+			m_posY - m_spr.Size.Y }; }
+
+		Bbox GetBbox() const { return {m_posX + m_spr.Size.X,m_posY + m_spr.Size.Y,m_posX,m_posY}; }
+
 		float GetAdditionalVelX() const { return m_additianalVelX; }
 		bool GetJumpTrigger() const { return m_jumpTrigger; }
 		float GetJumpTimer() const { return m_jumpTimer; }
