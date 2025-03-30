@@ -36,7 +36,7 @@ void MyGame::Player::Initialize()
 	m_posY = 0;
 	m_velX = 0.0f;
 	m_velY = 0.0f;
-
+	m_additianalVelX = 0.0f;
 	m_step = 0.0f;
 
 	m_currentSprNum = 0;
@@ -66,6 +66,7 @@ void MyGame::Player::UpdateMovement()
 
 	if (m_isGrounded)
 	{
+		m_additianalVelX = 0;
 		if (m_step > PLAYER_STEPRATE)
 		{
 			m_currentSprNum++;
@@ -100,12 +101,14 @@ void MyGame::Player::UpdateMovement()
 			m_jumpTrigger = true;
 			m_velY = -PLAYER_JUMPVEL;
 			m_spr.ShapeString = m_playerShape3;
+			auto currentAddVelX = abs(m_velX) - PLAYER_MAXSPEED;
+			m_additianalVelX = abs(m_velX) > PLAYER_MAXSPEED ? (m_velX > 0 ? 1 : -1) * currentAddVelX : 0.0f;
 		}
 	}
 	else
 	{
 		m_velX += hInput * PLAYER_AIR_ACCEL * GET_DELTATIME();
-		m_velX = max(-PLAYER_MAXSPEED * 2.0f, min(PLAYER_MAXSPEED * 2.0f, m_velX));
+		m_velX = max(-PLAYER_MAXSPEED, min(PLAYER_MAXSPEED, m_velX));
 		if (m_jumpTrigger)
 		{
 			m_jumpTimer += GET_DELTATIME();
@@ -120,10 +123,12 @@ void MyGame::Player::UpdateMovement()
 			m_velY += PLAYER_GRAVITY * GET_DELTATIME();
 			m_velY = min(PLAYER_MAXFALLSPEED, m_velY);
 		}
+
+
 	}
 
 
-	m_posX += m_velX * GET_DELTATIME();
+	m_posX += m_velX * GET_DELTATIME() + (m_additianalVelX) * GET_DELTATIME();
 	m_posY += m_velY * GET_DELTATIME();
 }
 

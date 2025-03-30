@@ -272,37 +272,7 @@ void MyGame::PlayScene::Render()
 		break;
 	}
 	case Playing:
-	{
-		for (int i = 0; i < TILE_SPR_SIZE_Y * MAP01_SIZE_Y; i++)
-		{
-			COORD pos = { 0, (short)i };
-			const wchar_t* d = m_renderedMap[i];
-
-			Engine::GetInstance()->GetConsoleRenderer()->WStringDraw(pos, d, MAP01_SIZE_X * TILE_SPR_SIZE_X);
-		}
-
-		//m_acitve가 true인 오브젝트만 렌더링
-		for (auto tile : m_tiles)
-		{
-			if (tile.first->GetActive())
-			{
-				RENDER_SPR({ (SHORT)(ceil(tile.first->GetPosX())), (SHORT)(ceil(tile.first->GetPosY())) }, tile.first->GetSprite());
-			}
-		}
-
-
-
-		RENDER_SPR({ (SHORT)(ceil(m_player->GetPosX())), (SHORT)(ceil(m_player->GetPosY())) }, m_player->GetSprite());
-
-		//swprintf_s(DebugMsg, 1024, L"{ %f } ", 1 / GET_DELTATIME());
-		//RENDER_STR(DebugPos, DebugMsg);
-
-		RENDER_STR({ GET_ANCHOR_POS().X, -9 }, L"    점수                                                                                                       시간    ");
-		swprintf_s(m_msgBuffer, 1024, L"  %08d                                                                                                     %04d    ", (int)m_score, (int)m_timer);
-		RENDER_STR({ GET_ANCHOR_POS().X, -8 }, m_msgBuffer);
-
-		break;
-	}
+	case PlayerDead:
 	case Goal:
 	{
 		for (int i = 0; i < TILE_SPR_SIZE_Y * MAP01_SIZE_Y; i++)

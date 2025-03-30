@@ -54,6 +54,9 @@ namespace MyGame
 
 		float GetPosX() const { return m_posX; }
 		float GetPosY() const { return m_posY; }
+		float GetVelX() const { return m_velX; }
+		float GetVelY() const { return m_velY; }
+		float GetAdditionalVelX() const { return m_additianalVelX; }
 		bool GetJumpTrigger() const { return m_jumpTrigger; }
 		float GetJumpTimer() const { return m_jumpTimer; }
 		const SPRITE* GetSprite() const { return &m_spr; }
@@ -103,5 +106,6 @@ namespace MyGame
 		bool m_jumpTrigger;
 		float m_velX;
 		float m_velY;
+		float m_additianalVelX;
 	};
 }
