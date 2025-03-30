@@ -29,7 +29,7 @@ void MyGame::ViewRankScene::Update()
 
 void MyGame::ViewRankScene::Render()
 {
-    RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 7), 6 }, L"~ 명예의 전당 ~");
+    RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 7), 6 }, L"~ 명예의 전당 ~              ");
 
     if (m_rankings.empty())
     {

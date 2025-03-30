@@ -103,7 +103,7 @@ void MyGame::SetRankScene::Update()
 
 void MyGame::SetRankScene::Render()
 {
-    RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 7), 8 }, m_isHighScore ? L"최고기록 갱신!" : L" 당신의 기록");
+    RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 7), 8 }, m_isHighScore ? L"최고기록 갱신!             " : L" 당신의 기록           ");
     RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 10), 10 }, score_txt);
     RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 15), 12 }, m_isHighScore ? L"" : high_score_txt);
     RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 6), 14 }, m_nullchar);

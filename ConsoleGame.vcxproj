@@ -131,6 +131,7 @@
     <ClCompile Include="char_check.c" />
     <ClCompile Include="console_renderer.cpp" />
     <ClCompile Include="engine.cpp" />
+    <ClCompile Include="GameOverScene.cpp" />
     <ClCompile Include="GoalFlag.cpp" />
     <ClCompile Include="GoalPole.cpp" />
     <ClCompile Include="input.cpp" />
@@ -150,6 +151,7 @@
     <ClInclude Include="delegate.hpp" />
     <ClInclude Include="Enemy.hpp" />
     <ClInclude Include="engine.hpp" />
+    <ClInclude Include="GameOverScene.hpp" />
     <ClInclude Include="GoalFlag.hpp" />
     <ClInclude Include="GoomBa.hpp" />
     <ClInclude Include="input.hpp" />

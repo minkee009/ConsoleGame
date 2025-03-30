@@ -140,6 +140,10 @@ void MyGame::PlayScene::Update()
 	if (m_life == 0)
 	{
 		//게임 오버
+		CHANGE_SCENE(GameOver);
+		SET_ANCHOR_POS(0, 0);
+
+		m_life = 3;
 	}
 
 	switch (gameState)
@@ -307,6 +311,8 @@ void MyGame::PlayScene::Update()
 				SET_ANCHOR_POS(0, 0);
 				dynamic_cast<SetRankScene*>(GET_SCENE(SetRank))->SetCurrentScore((int)m_score);
 				CHANGE_SCENE(SetRank);
+
+				m_life = 3;
 			}
 		}
 

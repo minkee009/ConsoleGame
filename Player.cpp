@@ -227,13 +227,13 @@ void MyGame::Player::CheckCollision()
 					t_maxX, t_maxY, t_minX, t_minY);
 			}
 
-			if (collisionFlag == 1 || collisionFlag == 2)
+			if ( (MATH_COL_FLAG_PUSHLEFT | MATH_COL_FLAG_PUSHRIGHT) & collisionFlag)
 			{
 				if (p_maxY - 0.5 >= t_minY
 					&& p_minY + 0.5 < t_maxY)
 					m_velX = 0.0f;
 			}
-			if (collisionFlag == 4)
+			if (collisionFlag & MATH_COL_FLAG_PUSHDOWN)
 			{
 				m_jumpTrigger = false;
 				m_jumpTimer = 0.0f;

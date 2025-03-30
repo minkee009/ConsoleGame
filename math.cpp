@@ -2,6 +2,7 @@
 #include <cmath>
 #include <Windows.h>
 
+
 bool MyGame::CheckAABB(float maxX, float maxY, float minX, float minY,
 	float maxX2, float maxY2, float minX2, float minY2)
 {
@@ -22,24 +23,24 @@ int MyGame::ApplyPenetration(float* posX, float* posY,
 			if (abs(*posX - prevPosX) >= 0.000001)
 				*posX = round(*posX);
 
-			return 1;
+			return MATH_COL_FLAG_PUSHLEFT;
 		}
 		else
 		{
 			*posX += penetrationX; // 오른쪽으로 밀기
-			return 2;
+			return MATH_COL_FLAG_PUSHRIGHT;
 		}
 	}
 	else {
 		if (minY < minY2)
 		{
 			*posY = minY2 - ceil(maxY - minY);// 위로 밀기
-			return 3;
+			return MATH_COL_FLAG_PUSHUP;
 		}
 		else
 		{
 			*posY += penetrationY; // 아래로 밀기
-			return 4;
+			return MATH_COL_FLAG_PUSHDOWN;
 		}
 	}
 	return 0;
@@ -52,18 +53,18 @@ int MyGame::CalcPenetration(float maxX, float maxY, float minX, float minY, floa
 
 	if (penetrationX < penetrationY) {
 		if (minX < minX2)
-			return 1;
+			return MATH_COL_FLAG_PUSHLEFT;
 		else
-			return 2;
+			return MATH_COL_FLAG_PUSHRIGHT;
 	}
 	else {
 		if (minY < minY2)
 		{
-			return 3;
+			return MATH_COL_FLAG_PUSHUP;
 		}
 		else
 		{
-			return 4;
+			return MATH_COL_FLAG_PUSHDOWN;
 		}
 	}
 	return 0;
