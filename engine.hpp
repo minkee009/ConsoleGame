@@ -40,6 +40,7 @@ namespace MyGame
 #define SET_ANCHOR_POS Engine::GetInstance()->GetConsoleRenderer()->SetViewPortAnchor
 #define RENDER_SPR Engine::GetInstance()->GetConsoleRenderer()->SpriteDraw
 #define RENDER_STR Engine::GetInstance()->GetConsoleRenderer()->WStringDraw
+#define RENDER_STR_COLOR Engine::GetInstance()->GetConsoleRenderer()->WStringDrawColor
 
 //Scnene Manager
 #define ADD_SCENE Engine::GetInstance()->GetSceneManager()->AddScene

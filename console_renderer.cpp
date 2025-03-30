@@ -282,6 +282,69 @@ void MyGame::ConsoleRenderer::WStringDraw(COORD pos, const WCHAR* string, int le
 	if (bRval == false) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
 }
 
+void MyGame::ConsoleRenderer::WStringDrawColor(COORD pos, const WCHAR* string, WORD attribute)
+{
+	auto length = (int)(wcslen(string));
+	SHORT biasY = pos.Y - m_viewportY;
+
+	// Y축 완전히 벗어난 경우 그리지 않음
+	if (biasY < 0 || biasY >= m_height)
+	{
+		OutputDebugStringA("Y-axis out of bounds\n");
+		return;
+	}
+
+	// X축 클리핑
+	SHORT startX = pos.X - m_viewportX;
+	SHORT clippedLength = length;
+
+	// 왼쪽 클리핑
+	if (startX < 0)
+	{
+		clippedLength += startX;
+		if (clippedLength <= 0)
+		{
+			return; // 클리핑된 길이가 0 이하이면 그리지 않음
+		}
+		string -= startX;
+		startX = 0;
+	}
+
+	// 오른쪽 클리핑 (한 줄을 넘어가지 않도록)
+	if (startX + clippedLength > m_width)
+	{
+		clippedLength = m_width - startX;
+	}
+
+	// 클리핑된 길이가 0 이하면 그리지 않음
+	if (clippedLength <= 0)
+	{
+		return;
+	}
+
+	BOOL bRval = FALSE;
+	DWORD dwCharsWritten;
+
+	// 클리핑된 문자열과 좌표로 출력
+	bRval = WriteConsoleOutputCharacterW(
+		m_screenBuffer[m_screenBufferIndex],
+		string,
+		clippedLength,
+		{ startX, biasY },
+		&dwCharsWritten
+	);
+	if (!bRval) OutputDebugStringA("Error, WriteConsoleOutputCharacterW()\n");
+
+	bRval = FillConsoleOutputAttribute(
+		m_screenBuffer[m_screenBufferIndex],
+		attribute,
+		clippedLength,
+		{ startX, biasY },
+		&dwCharsWritten
+	);
+	if (!bRval) OutputDebugStringA("Error, FillConsoleOutputAttribute()\n");
+}
+
 void MyGame::ConsoleRenderer::Clear()
 {
 	COORD Coor = { 0, 0 };

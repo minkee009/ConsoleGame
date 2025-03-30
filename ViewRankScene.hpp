@@ -16,12 +16,10 @@ namespace MyGame
 		SceneState& GetSceneState() override { return m_sceneState; };
 	private:
 		int m_menuPointer;
-		bool m_cursor_visible;
-
+		wchar_t m_output_buffer[100];
 		std::vector<MyGame::Ranking> m_rankings;
-
 		SceneState m_sceneState = ViewRank;
-		//std::vector<MyGame::Ranking> LoadRankingFromFile(const std::string& filename);
-		//void SaveRankingToFile(const std::string& filename, const std::vector<MyGame::Ranking>& rankings);
+		bool m_cursor_visible;
+		float m_timer;
 	};
 }

@@ -36,6 +36,9 @@ void MyGame::MenuScene::Update()
 			CHANGE_SCENE(Play);
 			break;
 		case 1:
+			CHANGE_SCENE(ViewRank);
+			break;
+		case 2:
 			ENGINE_EXIT();
 			break;
 		}
@@ -44,22 +47,13 @@ void MyGame::MenuScene::Update()
 
 void MyGame::MenuScene::Render()
 {
-	SHORT menuPointerY = 0;
-
-	switch (m_menuPointer)
-	{
-	case 0:
-		menuPointerY = 3;
-		break;
-	case 1:
-		menuPointerY = 5;
-		break;
-	}
+	SHORT menuPointerY = 3 + 2 * m_menuPointer;
 
 	//드로우콜
 	RENDER_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 5), menuPointerY }, L">");
 	RENDER_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 3),3 }, L"게임 시작");
-	RENDER_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 3), 5 }, L"게임 종료");
+	RENDER_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 3),5 }, L"명예의 전당");
+	RENDER_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 3), 7 }, L"게임 종료");
 }
 
 

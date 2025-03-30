@@ -1,7 +1,7 @@
 #pragma once
 #include "IScene.hpp"
 
-#define MENUSCENE_MENUPOINTER_MAXROW 2
+#define MENUSCENE_MENUPOINTER_MAXROW 3
 
 namespace MyGame
 {
