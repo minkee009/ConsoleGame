@@ -142,6 +142,7 @@
     <ClCompile Include="sprite.h" />
     <ClCompile Include="time.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="ViewRankScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="char_check.h" />
@@ -158,11 +159,13 @@
     <ClInclude Include="MenuScene.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="PlayScene.hpp" />
+    <ClInclude Include="ranking_save_loader.hpp" />
     <ClInclude Include="scene_manager.hpp" />
     <ClInclude Include="SetRankScene.hpp" />
     <ClInclude Include="Tile.hpp" />
     <ClInclude Include="time.hpp" />
     <ClInclude Include="GoalPole.hpp" />
+    <ClInclude Include="ViewRankScene.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

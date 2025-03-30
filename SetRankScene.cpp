@@ -9,8 +9,6 @@
 #include <locale>
 #include <codecvt>
 
-
-
 void MyGame::SetRankScene::Initialize()
 {
     // 파일 이름 설정
@@ -105,9 +103,9 @@ void MyGame::SetRankScene::Update()
 
 void MyGame::SetRankScene::Render()
 {
-    RENDER_STR({(SHORT)((GET_SCREEN_WIDTH() >> 1) - 7), 8},m_isHighScore ? L"최고기록 갱신!" : L" 당신의 기록");
-    RENDER_STR({(SHORT)((GET_SCREEN_WIDTH() >> 1) - 10), 10},score_txt);
-    RENDER_STR({(SHORT)((GET_SCREEN_WIDTH() >> 1) - 15), 12}, m_isHighScore ? L"" : high_score_txt);
+    RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 7), 8 }, m_isHighScore ? L"최고기록 갱신!" : L" 당신의 기록");
+    RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 10), 10 }, score_txt);
+    RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 15), 12 }, m_isHighScore ? L"" : high_score_txt);
     RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 6), 14 }, m_nullchar);
     RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 6), 14 }, m_name);
     RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 6 + m_current_char_idx), 15 }, L"^");
@@ -116,48 +114,7 @@ void MyGame::SetRankScene::Render()
     RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 20), 22 }, L"H     I     J     K     L     M     N");
     RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 20), 25 }, L"O     P     Q     R     S     T     U");
     RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 20), 28 }, L"V     W     X     Y     Z     _     Spc");
-    RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 20), 31 }, L"감    사    합    니    다    Bck   End");
-    RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 22 +(m_cursorX * 6)), (SHORT)(19 + m_cursorY * 3)}, m_cursor_visible ? L">" : L" ");
+    RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 20), 31 }, L"인    재    원    7    기    Bck   End");
+    RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 22 + (m_cursorX * 6)), (SHORT)(19 + m_cursorY * 3) }, m_cursor_visible ? L">" : L" ");
 
-}
-
-// 랭킹 파일에서 불러오는 함수
-std::vector<MyGame::Ranking> MyGame::SetRankScene::LoadRankingFromFile(const std::string& filename) {
-    std::vector<Ranking> rankings;
-    std::ifstream inFile(filename);
-    if (!inFile) 
-        return rankings; // 빈 벡터 반환
-
-    std::string line;
-    while (std::getline(inFile, line)) {
-        std::istringstream iss(line);
-        std::string name;
-        int score;
-        if (std::getline(iss, name, ',') && (iss >> score)) {
-            rankings.push_back({ name, score });
-        }
-    }
-
-    inFile.close();
-
-    // 점수 기준으로 정렬
-    std::sort(rankings.begin(), rankings.end(), [](const Ranking& a, const Ranking& b) {
-        return b.score < a.score; // 내림차순 정렬
-        });
-
-    return rankings;
-}
-
-void MyGame::SetRankScene::SaveRankingToFile(const std::string& filename, const std::vector<MyGame::Ranking>& rankings)
-{
-    std::ofstream outFile(filename);
-    if (!outFile) 
-        return;
-
-
-    for (const auto& rank : rankings) {
-        outFile << rank.name << "," << rank.score << "\n";
-    }
-
-    outFile.close();
 }

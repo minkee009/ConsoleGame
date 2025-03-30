@@ -1,5 +1,6 @@
-#pragma once
+Ôªø#pragma once
 #include "IScene.hpp"
+#include "ranking_save_loader.hpp"
 #include <vector>
 #include <string>
 
@@ -9,11 +10,6 @@
 
 namespace MyGame
 {
-	struct Ranking {
-		std::string name;
-		int score;
-	};
-
 	class SetRankScene : public IScene
 	{
 	public:
@@ -39,7 +35,7 @@ namespace MyGame
 			L"HIJKLMN",
 			L"OPQRSTU",
 			L"VWXYZ_ ",
-			L"∞®ªÁ«’¥œ¥Ÿ"
+			L"Ïù∏Ïû¨Ïõê7Í∏∞"
 		};
 
 		int m_cursorX;
@@ -49,7 +45,5 @@ namespace MyGame
 		wchar_t high_score_txt[100];
 
 		SceneState m_sceneState = SetRank;
-        std::vector<MyGame::Ranking> LoadRankingFromFile(const std::string& filename);
-        void SaveRankingToFile(const std::string& filename, const std::vector<MyGame::Ranking>& rankings);
 	};
 }
