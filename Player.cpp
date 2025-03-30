@@ -284,7 +284,6 @@ void MyGame::Player::CheckCollision()
 			{
 				auto collisionFlag = CalcPenetration(GetBbox(),
 					enemy.first->GetBbox());
-				enemy.first->CallInteract(collisionFlag);
 
 				if (collisionFlag & (MATH_COL_FLAG_PUSHRIGHT | MATH_COL_FLAG_PUSHLEFT | MATH_COL_FLAG_PUSHDOWN) || enemy.first->IsDontPress())
 				{
@@ -299,6 +298,8 @@ void MyGame::Player::CheckCollision()
 					m_jumpTimer = 0.0f;
 					break;
 				}
+
+				enemy.first->CallInteract(collisionFlag);
 			}
 		}
 	}

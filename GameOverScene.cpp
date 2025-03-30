@@ -19,5 +19,5 @@ void MyGame::GameOverScene::Update()
 
 void MyGame::GameOverScene::Render()
 {
-	RENDER_STR({ 0,0 }, L"게임오버");
+	RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 2),(SHORT)((GET_SCREEN_HEIGHT() >> 1)) }, L"게임오버");
 }
