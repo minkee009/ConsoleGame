@@ -59,6 +59,10 @@ void MyGame::Player::UpdateMovement()
 	if (!lastGrounded && m_isGrounded)
 		m_spr.ShapeString = m_playerShape1;
 
+	//공중가속
+	if (lastGrounded && !m_isGrounded)
+		m_additianalVelX = GET_KEY(VK_LSHIFT);
+
 	//속도 계산
 	auto hInput = ((GET_KEY(VK_RIGHT) ? 1 : 0) - (GET_KEY(VK_LEFT) ? 1 : 0));
 	hInput = m_forceInput ? m_forceInputX : hInput;
@@ -66,7 +70,7 @@ void MyGame::Player::UpdateMovement()
 
 	if (m_isGrounded)
 	{
-		m_additianalVelX = 0;
+		m_additianalVelX = false;
 		if (m_step > PLAYER_STEPRATE)
 		{
 			m_currentSprNum++;
@@ -89,7 +93,7 @@ void MyGame::Player::UpdateMovement()
 			m_step += (GET_KEY(VK_LSHIFT) || m_forceInputDash ? 2.0f : 1.0f) * GET_DELTATIME();
 			m_spr.Flip = hInput > 0 ? false : true;
 			m_velX += hInput * PLAYER_ACCEL * ((hInput * m_velX < 0) ? 3.0f : 1.0f) * (GET_KEY(VK_LSHIFT) || m_forceInputDash ? 2.0f : 1.0f) * GET_DELTATIME();
-			m_velX = max(-PLAYER_MAXSPEED * (GET_KEY(VK_LSHIFT) || m_forceInputDash ? 2.0f : 1.0f), min(PLAYER_MAXSPEED * (GET_KEY(VK_LSHIFT) || m_forceInputDash ? 2.0f : 1.0f), m_velX));
+			m_velX = max(GET_KEY(VK_LSHIFT) || m_forceInputDash ? -PLAYER_DASH_MAXSPEED : -PLAYER_MAXSPEED, min((GET_KEY(VK_LSHIFT) || m_forceInputDash ? PLAYER_DASH_MAXSPEED : PLAYER_MAXSPEED), m_velX));
 		}
 		else
 		{
@@ -101,14 +105,12 @@ void MyGame::Player::UpdateMovement()
 			m_jumpTrigger = true;
 			m_velY = -PLAYER_JUMPVEL;
 			m_spr.ShapeString = m_playerShape3;
-			auto currentAddVelX = abs(m_velX) - PLAYER_MAXSPEED;
-			m_additianalVelX = abs(m_velX) > PLAYER_MAXSPEED ? (m_velX > 0 ? 1 : -1) * currentAddVelX : 0.0f;
 		}
 	}
 	else
 	{
 		m_velX += hInput * PLAYER_AIR_ACCEL * GET_DELTATIME();
-		m_velX = max(-PLAYER_MAXSPEED, min(PLAYER_MAXSPEED, m_velX));
+		m_velX = max(m_additianalVelX || m_forceInputDash ? -PLAYER_DASH_MAXSPEED : -PLAYER_MAXSPEED, min((m_additianalVelX || m_forceInputDash ? PLAYER_DASH_MAXSPEED : PLAYER_MAXSPEED), m_velX));
 		if (m_jumpTrigger)
 		{
 			m_jumpTimer += GET_DELTATIME();
@@ -123,12 +125,10 @@ void MyGame::Player::UpdateMovement()
 			m_velY += PLAYER_GRAVITY * GET_DELTATIME();
 			m_velY = min(PLAYER_MAXFALLSPEED, m_velY);
 		}
-
-
 	}
 
 
-	m_posX += m_velX * GET_DELTATIME() + (m_additianalVelX) * GET_DELTATIME();
+	m_posX += m_velX * GET_DELTATIME();
 	m_posY += m_velY * GET_DELTATIME();
 }
 

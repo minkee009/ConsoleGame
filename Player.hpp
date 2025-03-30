@@ -9,11 +9,12 @@
 #define PLAYER_SPR_ANIM_MAXFRAME 2
 #define PLAYER_STEPRATE 0.3
 
-#define PLAYER_ACCEL 35
-#define PLAYER_MAXSPEED 24
+#define PLAYER_ACCEL 55
+#define PLAYER_MAXSPEED 36
+#define PLAYER_DASH_MAXSPEED 52
 #define PLAYER_DECEL 40
 
-#define PLAYER_AIR_ACCEL 35
+#define PLAYER_AIR_ACCEL 45
 #define PLAYER_GRAVITY 150
 #define PLAYER_MAXFALLSPEED 50
 #define PLAYER_JUMPVEL 30
@@ -106,6 +107,6 @@ namespace MyGame
 		bool m_jumpTrigger;
 		float m_velX;
 		float m_velY;
-		float m_additianalVelX;
+		bool m_additianalVelX;
 	};
 }

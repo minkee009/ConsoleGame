@@ -296,7 +296,8 @@ void MyGame::PlayScene::Render()
 
 		RENDER_SPR({ (SHORT)(ceil(m_player->GetPosX())), (SHORT)(ceil(m_player->GetPosY())) }, m_player->GetSprite());
 
-		swprintf_s(DebugMsg, 1024, L"{ %f } ", 1 / GET_DELTATIME());
+		DebugPos = { GET_ANCHOR_POS().X, 0 };
+		swprintf_s(DebugMsg, 1024, L"{ %f } ", m_player->GetVelX() + m_player->GetAdditionalVelX());
 		RENDER_STR(DebugPos, DebugMsg);
 
 
