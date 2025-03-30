@@ -75,7 +75,7 @@ namespace MyGame
 		static const WORD m_commonShapeColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
 		
 		/// <summary>
-		/// { e : goomba }
+		/// { e : goomba } { F : jumper }
 		/// { g : ground } { d : dirt } { y : pipe0 } { u : pipe1 } { j : pipe2 } { k : pipe3 } { s : solid block } { i : goal flag }
 		/// </summary>
 		static constexpr const char* m_map01[MAP01_SIZE_Y] = {
@@ -87,7 +87,7 @@ namespace MyGame
 			"..........................................................................................",
 			"..................................yu................e.....................................",
 			"...........................yu.....jk...............ss.....................................",
-			"...................yu......jk.....jk...gg.........ssss.......................i............",
+			"...............F...yu......jk.....jk...gg.........ssss.......................i............",
 			"gdggggdgggdggggddggggggdgggggggggggdgggggggdggdgdggddggdgdggddgg...gdggddgggggggdggggggggg",
 		};
 

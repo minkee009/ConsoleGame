@@ -117,6 +117,9 @@
     <ClCompile Include="GoomBa.cpp">
       <Filter>소스 파일\내 게임\오브젝트\적</Filter>
     </ClCompile>
+    <ClCompile Include="Jumper.cpp">
+      <Filter>소스 파일\내 게임\오브젝트\적</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="console_renderer.hpp">
@@ -190,6 +193,9 @@
     </ClInclude>
     <ClInclude Include="bbox.hpp">
       <Filter>헤더 파일\내 게임\오브젝트</Filter>
+    </ClInclude>
+    <ClInclude Include="Jumper.hpp">
+      <Filter>헤더 파일\내 게임\오브젝트\적</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

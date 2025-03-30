@@ -136,6 +136,7 @@
     <ClCompile Include="GoalPole.cpp" />
     <ClCompile Include="GoomBa.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="Jumper.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math.cpp" />
     <ClCompile Include="MenuScene.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="input.hpp" />
     <ClInclude Include="IScene.hpp" />
     <ClInclude Include="Item.hpp" />
+    <ClInclude Include="Jumper.hpp" />
     <ClInclude Include="math.hpp" />
     <ClInclude Include="MenuScene.hpp" />
     <ClInclude Include="Player.hpp" />

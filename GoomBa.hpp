@@ -32,6 +32,11 @@ namespace MyGame
 			L"(@#@)",
 		};
 
+		static constexpr const WCHAR* m_goombaShapeDead[GOOMBA_SPR_SIZE_Y] = {
+			L"(---)",
+			L"(x x)",
+		};
+
 		float m_timer;
 		short m_sprIdx;
 		bool m_isGrounded;

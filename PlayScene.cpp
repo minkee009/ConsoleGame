@@ -9,6 +9,7 @@
 #include "GoalPole.hpp"
 #include "GoalFlag.hpp"
 #include "GoomBa.hpp"
+#include "Jumper.hpp"
 
 using MyGame::Engine;
 
@@ -108,7 +109,7 @@ MyGame::PlayScene::PlayScene()
 			case 'e':
 			{
 				auto goomba = new GoomBa(this);
-				auto spawnPosX = j * TILE_SPR_SIZE_X + 2;
+				auto spawnPosX = j * TILE_SPR_SIZE_X;
 				auto spawnPosY = i * TILE_SPR_SIZE_Y + CorrectPosY(goomba->GetSprite()->Size.Y);
 				
 				goomba->SetSpawnPos(spawnPosX, spawnPosY);
@@ -116,6 +117,19 @@ MyGame::PlayScene::PlayScene()
 				goomba->Initialize();
 
 				m_enemys.push_back({ goomba, false });
+				break;
+			}
+			case 'F':
+			{
+				auto jumper = new Jumper(this);
+				auto spawnPosX = j * TILE_SPR_SIZE_X + 2;
+				auto spawnPosY = i * TILE_SPR_SIZE_Y + CorrectPosY(jumper->GetSprite()->Size.Y);
+
+				jumper->SetSpawnPos(spawnPosX, spawnPosY);
+				jumper->SetPosition(spawnPosX, spawnPosY);
+				jumper->Initialize();
+
+				m_enemys.push_back({ jumper, false });
 				break;
 			}
 			}
@@ -197,9 +211,6 @@ void MyGame::PlayScene::Update()
 	}
 	case Playing:
 	{
-		if (GET_KEY_DOWN('S'))
-			PrintPoint(L"100", m_player->GetPosX(), m_player->GetPosY());
-
 		m_timer -= GET_DELTATIME() * 2.0f;
 
 		if (m_timer < 0.0f)
@@ -224,7 +235,7 @@ void MyGame::PlayScene::Update()
 		for (auto& tile : m_tiles)
 		{
 			//타일이 화면안에 들어오는지 체크
-			if (!CheckAABB(tile.first->GetBbox(),GET_SCREEN_BBOX()))
+			if (!CheckAABB(tile.first->GetBbox(), GET_SCREEN_BBOX()))
 			{
 				tile.first->SetActive(false);
 			}
@@ -233,6 +244,8 @@ void MyGame::PlayScene::Update()
 				tile.first->SetActive(true);
 			}
 		}
+
+		//아이템 관리
 
 		//적 관리
 		for (auto& enemy : m_enemys)
