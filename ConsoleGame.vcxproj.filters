@@ -215,5 +215,8 @@
     <ClInclude Include="DummyGoomba.hpp">
       <Filter>헤더 파일\내 게임\오브젝트\적</Filter>
     </ClInclude>
+    <ClInclude Include="Block.hpp">
+      <Filter>헤더 파일\내 게임\오브젝트\타일</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

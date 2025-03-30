@@ -153,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bbox.hpp" />
+    <ClInclude Include="Block.hpp" />
     <ClInclude Include="char_check.h" />
     <ClInclude Include="console_renderer.hpp" />
     <ClInclude Include="delegate.hpp" />
