@@ -165,6 +165,12 @@ void MyGame::PlayScene::Update()
 			return;
 		}
 
+		if (m_player->GetPosY() > GET_ANCHOR_POS().Y + GET_SCREEN_HEIGHT() + PLAYER_SPR_SIZE_Y + 3)
+		{
+			//추락 죽음
+			gameState = PlayerDead;
+		}
+
 		//플레이어 움직임을 먼저 업데이트
 		m_player->UpdateMovement();
 		m_player->MoveViewport();
@@ -344,8 +350,6 @@ void MyGame::PlayScene::Render()
 			}
 		}
 
-
-
 		RENDER_SPR({ (SHORT)(ceil(m_player->GetPosX())), (SHORT)(ceil(m_player->GetPosY())) }, m_player->GetSprite());
 
 		DebugPos = { GET_ANCHOR_POS().X, 0 };
@@ -370,16 +374,13 @@ MyGame::PlayScene::~PlayScene()
 	}
 	delete[] m_renderedMap;  // 외부 배열 해제
 	
-	for (auto tile = m_tiles.begin(); tile != m_tiles.end(); ) {
-		if (tile->second) {
-			//인스턴스인 경우 삭제
-			delete tile->first;  // 메모리 해제
-			tile = m_tiles.erase(tile);  // 원소 삭제 후 반복문 인덱스 조정
-		}
-		else {
-			++tile;
+	for (auto& tilePair : m_tiles) {
+		if (tilePair.first) {
+			delete tilePair.first;  // 동적 할당된 Tile*을 해제
+			tilePair.first = nullptr;  
 		}
 	}
+
 	delete[] m_msgBuffer;
 	delete m_player;
 }
