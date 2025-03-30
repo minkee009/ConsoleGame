@@ -291,6 +291,8 @@ void MyGame::Player::CheckCollision()
 					break;
 				}
 
+				enemy.first->CallInteract(collisionFlag);
+
 				if (collisionFlag & MATH_COL_FLAG_PUSHUP)
 				{
 					m_velY = -(PLAYER_JUMPVEL);
@@ -299,7 +301,6 @@ void MyGame::Player::CheckCollision()
 					break;
 				}
 
-				enemy.first->CallInteract(collisionFlag);
 			}
 		}
 	}
