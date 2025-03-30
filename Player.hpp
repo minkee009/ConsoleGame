@@ -42,6 +42,7 @@ namespace MyGame
 		void SetActive(bool active) { m_active = active; }
 		void SetForceInput(bool use, short xInput, bool dashInput) { m_forceInput = use; m_forceInputX = xInput; m_forceInputDash = dashInput; }
 		void SetVelocity(float x, float y) { m_velX = x, m_velY = y; }
+		void AddVelocity(float x, float y) { m_addVelX = x; m_addVelY = y; }
 		void SetSpriteFlip(bool flip) { m_spr.Flip = flip; }
 
 		void UpdateMovement();
@@ -117,6 +118,8 @@ namespace MyGame
 		bool m_jumpTrigger;
 		float m_velX;
 		float m_velY;
+		float m_addVelX;
+		float m_addVelY;
 		bool m_additianalVelX;
 	};
 }

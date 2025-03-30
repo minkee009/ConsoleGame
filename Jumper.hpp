@@ -69,16 +69,17 @@ namespace MyGame
 		};
 
 		static constexpr const WCHAR* m_jumperShapeDead[JUMPER_SPR_SIZE_Y] = {
-			L"!!!!",
-			L"!!!!",
-			L"!!!!",
-			L"!!!!",
-			L"!!!!",
-			L"!!!!",
-			L"!!!!",
-			L"!!!!",
-			L"!!!!",
-			L"!!!!",
+			L" > > ",
+			L" | | ",
+			L"I| |I",
+			L"(x.x)",
+			L"v--v "
+			L"^--^",
+			L"|   |",
+			L"|U U|",
+			L"(X.X)",
+			L"v--v ",
+
 		};
 
 		float m_timer;

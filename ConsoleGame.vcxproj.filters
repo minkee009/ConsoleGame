@@ -126,6 +126,9 @@
     <ClCompile Include="NinjaStar.cpp">
       <Filter>소스 파일\내 게임\오브젝트\타일</Filter>
     </ClCompile>
+    <ClCompile Include="DummyGoomba.cpp">
+      <Filter>소스 파일\내 게임\오브젝트\적</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="console_renderer.hpp">

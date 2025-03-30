@@ -130,6 +130,7 @@
   <ItemGroup>
     <ClCompile Include="char_check.c" />
     <ClCompile Include="console_renderer.cpp" />
+    <ClCompile Include="DummyGoomba.cpp" />
     <ClCompile Include="engine.cpp" />
     <ClCompile Include="GameOverScene.cpp" />
     <ClCompile Include="GoalFlag.cpp" />

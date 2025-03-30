@@ -11,6 +11,7 @@
 #include "GoomBa.hpp"
 #include "Jumper.hpp"
 #include "Ninja.hpp"
+#include "DummyGoomba.hpp"
 
 using MyGame::Engine;
 
@@ -144,6 +145,19 @@ MyGame::PlayScene::PlayScene()
 				ninja->Initialize();
 
 				m_enemys.push_back({ ninja, false });
+				break;
+			}
+			case 'D':
+			{
+				auto dgoomba = new DummyGoomBa(this);
+				auto spawnPosX = j * TILE_SPR_SIZE_X;
+				auto spawnPosY = i * TILE_SPR_SIZE_Y + CorrectPosY(dgoomba->GetSprite()->Size.Y);
+
+				dgoomba->SetSpawnPos(spawnPosX, spawnPosY);
+				dgoomba->SetPosition(spawnPosX, spawnPosY);
+				dgoomba->Initialize();
+
+				m_enemys.push_back({ dgoomba, false });
 				break;
 			}
 			}

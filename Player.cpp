@@ -128,6 +128,17 @@ void MyGame::Player::UpdateMovement()
 	}
 
 
+	if (m_addVelX != 0.0f)
+	{
+		m_velX += m_addVelX;
+		m_addVelX = 0.0f;
+	}
+	if (m_addVelY != 0.0f)
+	{
+		m_velY += m_addVelY;
+		m_addVelY = 0.0f;
+	}
+
 	m_posX += m_velX * GET_DELTATIME();
 	m_posY += m_velY * GET_DELTATIME();
 }
@@ -285,7 +296,7 @@ void MyGame::Player::CheckCollision()
 				auto collisionFlag = CalcPenetration(GetBbox(),
 					enemy.first->GetBbox());
 
-				if (collisionFlag & (MATH_COL_FLAG_PUSHRIGHT | MATH_COL_FLAG_PUSHLEFT | MATH_COL_FLAG_PUSHDOWN) || enemy.first->IsDontPress())
+				if (collisionFlag & (MATH_COL_FLAG_PUSHRIGHT | MATH_COL_FLAG_PUSHLEFT | MATH_COL_FLAG_PUSHDOWN))
 				{
 					m_scene->gameState = PlayerDead;
 					break;

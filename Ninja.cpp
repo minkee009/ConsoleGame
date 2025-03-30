@@ -231,11 +231,18 @@ void MyGame::Ninja::CallInteract(int collisionFlag)
 {
 	if (collisionFlag & MATH_COL_FLAG_PUSHUP)
 	{
-		m_timer = 0.0f;
-		m_pressed = true;
-		m_attacked = true;
-		m_spr.ShapeString = m_ninjaShapePress;
-		m_scene->PrintPoint(L"400", m_posX, m_posY);
-		m_scene->AddScore(400.0f);
+		if (m_dontPress)
+		{
+			m_scene->gameState = PlayerDead;
+		}
+		else
+		{
+			m_timer = 0.0f;
+			m_pressed = true;
+			m_attacked = true;
+			m_spr.ShapeString = m_ninjaShapePress;
+			m_scene->PrintPoint(L"400", m_posX, m_posY);
+			m_scene->AddScore(400.0f);
+		}
 	}
 }
