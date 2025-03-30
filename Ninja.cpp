@@ -1,22 +1,22 @@
-#include "Jumper.hpp"
+#include "Ninja.hpp"
 #include "engine.hpp"
 #include "math.hpp"
 
-MyGame::Jumper::Jumper(PlayScene* scene)
+MyGame::Ninja::Ninja(PlayScene* scene)
 {
 	m_scene = scene;
-
+	m_randActIdx = 0;
 	m_spr =
 	{
-		{JUMPER_SPR_SIZE_X,JUMPER_SPR_SIZE_Y},
+		{NINJA_SPR_SIZE_X,NINJA_SPR_SIZE_Y},
 		{ 0, 0 },
-		m_jumperShape1,
+		m_ninjaShape1,
 		FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
 		true
 	};
 }
 
-void MyGame::Jumper::Initialize()
+void MyGame::Ninja::Initialize()
 {
 	m_isAlive = true;
 	m_pressed = false;
@@ -27,11 +27,17 @@ void MyGame::Jumper::Initialize()
 	m_velX = -8.0f;
 	m_velY = 0.0f;
 	m_timer = 0.0f;
-	m_jumpTimer = 0.0f;
-	m_spr.ShapeString = m_jumperShape1;
+	m_actTimer = 0;
+	m_actIdx = 0;
+	m_sprIdx = 0;
+	m_spr.ShapeString = m_ninjaShape1;
+
+	m_ninjaStar = nullptr;
+	m_ninjaStar = new NinjaStar(m_scene);
+	m_scene->AddTile(m_ninjaStar);
 }
 
-void MyGame::Jumper::Update()
+void MyGame::Ninja::Update()
 {
 	if (!m_active || !m_isAlive) return;
 
@@ -53,7 +59,7 @@ void MyGame::Jumper::Update()
 
 	m_isGrounded = false;
 	if (m_velY >= -0.001f)
-		for (int i = goombaMapYidx - 1; i <= goombaMapYidx + 4; i++)
+		for (int i = goombaMapYidx; i <= goombaMapYidx + 2; i++)
 			for (int j = goombaMapXidx; j <= goombaMapXidx + 2; j++)
 			{
 				if (i > MAP01_SIZE_Y - 1 || i < 0 || j > MAP01_SIZE_X - 1 || j < 0)
@@ -65,63 +71,129 @@ void MyGame::Jumper::Update()
 				auto pickXMax = (j + 1) * TILE_SPR_SIZE_X;  //타일의 x좌표 최대값
 
 				if ((m_scene->CheckTileCollision(pick))
-					&& ((pickXMax > m_posX && pickXMin < m_posX + JUMPER_SPR_SIZE_X)
-						|| (pickXMin < m_posX + JUMPER_SPR_SIZE_X && pickXMax >= m_posX))
-					&& pickY < m_posY + JUMPER_SPR_SIZE_Y)
+					&& ((pickXMax > m_posX && pickXMin < m_posX + NINJA_SPR_SIZE_X)
+						|| (pickXMin < m_posX + NINJA_SPR_SIZE_X && pickXMax >= m_posX))
+					&& pickY < m_posY + NINJA_SPR_SIZE_Y)
 				{
 					m_isGrounded = true;
 					m_velY = 0.0f;
 					break;
 				}
 			}
-
-	if(!lastGrounded && m_isGrounded)
-		m_spr.ShapeString = m_jumperShape1;
-
 	if (!m_isGrounded)
 	{
 		m_velY += PLAYER_GRAVITY * GET_DELTATIME();
 		m_velY = min(PLAYER_MAXFALLSPEED, m_velY);
 	}
-	else 
+
+	switch (m_actIdx)
 	{
+	case 0:
+	case 2:
+	{
+		m_dontPress = false;
 		m_timer += GET_DELTATIME();
 
-		if (m_timer > 0.325f)
+		if (m_timer > 0.125f)
 		{
 			m_timer = 0.0f;
 			m_sprIdx++;
-			m_sprIdx %= JUMPER_SPR_ANIM_MAXFRAME;
+			m_sprIdx %= NINJA_SPR_ANIM_MAXFRAME;
 
 			switch (m_sprIdx)
 			{
 			case 0:
-				m_spr.ShapeString = m_jumperShape1;
+				m_spr.ShapeString = m_ninjaShape1;
 				break;
 			case 1:
-				m_spr.ShapeString = m_jumperShape2;
+				m_spr.ShapeString = m_ninjaShape2;
 				break;
 			}
 		}
 
-		m_jumpTimer += GET_DELTATIME();
+		bool dir = m_randAct[m_randActIdx];
 
-		if (m_jumpTimer > 1.5f)
+		m_spr.Flip = m_scene->GetPlayer()->GetPosX() > m_posX ? false : true;
+		m_velX = (dir ? 1 : -1) * 20.0f;
+		m_actTimer += GET_DELTATIME();
+		if (m_actTimer > 0.7f)
 		{
-			m_velY = -PLAYER_JUMPVEL * 2.0f;
-			m_jumpTimer = 0.0f;
-			m_spr.ShapeString = m_jumperShapeJump;
+			m_actIdx++;
+			m_actTimer = 0.0f;
+
+			m_randActIdx++;
+			m_randActIdx %= NINJA_MAX_RANDACT;
+			break;
 		}
+
+		break;
 	}
+	case 1:
+	case 3:
+	{
+		m_spr.Flip = m_scene->GetPlayer()->GetPosX() > m_posX ? false : true;
+		m_velX = 0.0f;
+		m_actTimer += GET_DELTATIME();
+		if (m_actTimer > 0.35f)
+		{
+			m_actTimer = 0.0f;
+			if (m_actIdx == 3)
+			{
+				m_actIdx = m_randAct[m_randActIdx++] ? 4 : 5;
 
-
+				if (m_actIdx == 5)
+				{
+					m_spr.Flip = m_scene->GetPlayer()->GetPosX() > m_posX ? false : true;
+					m_ninjaStar->SetActive(true);
+					m_ninjaStar->SetDirAndPos(m_spr.Flip, m_posX + (NINJA_SPR_SIZE_X * 0.5f), m_posY + 2.0f);
+				}
+					break;
+			}
+			else
+				m_actIdx++;
+		}
+		break;
+	}
+	case 4:
+	{
+		m_actTimer += GET_DELTATIME();
+		bool dir = m_randAct[m_randActIdx];
+		m_spr.Flip = dir ? false : true;
+		m_dontPress = true;
+		m_velX = (dir ? 1 : -1) * 120.0f;
+		m_spr.ShapeString = m_ninjaShapeDash;
+		if (m_actTimer > 0.2f)
+		{
+			m_actIdx = 0;
+			m_actTimer = 0.0f;
+			m_spr.ShapeString = m_ninjaShape1;
+			break;
+		}
+		break;
+	}
+	case 5:
+	{
+		m_spr.Flip = m_scene->GetPlayer()->GetPosX() > m_posX ? false : true;
+		m_actTimer += GET_DELTATIME();
+		m_spr.ShapeString = m_ninjaShapeShoot;
+		if (m_actTimer > 1.2f)
+		{
+			m_actIdx = 0;
+			m_actTimer = 0.0f;
+			m_spr.ShapeString = m_ninjaShape1;
+			m_randActIdx++;
+			break;
+		}
+		break;
+	}
+	}
 
 	m_posX += m_velX * GET_DELTATIME();
 	m_posY += m_velY * GET_DELTATIME();
 
 }
 
-void MyGame::Jumper::CheckCollision()
+void MyGame::Ninja::CheckCollision()
 {
 	int goombaMapXidx = (int)(m_posX < 0.0f ? m_posX - TILE_SPR_SIZE_X : m_posX) / TILE_SPR_SIZE_X;
 	int goombaMapYidx = (int)(m_posY < 0.0f ? m_posY - TILE_SPR_SIZE_Y : m_posY) / TILE_SPR_SIZE_Y;
@@ -133,9 +205,9 @@ void MyGame::Jumper::CheckCollision()
 				continue;
 
 			float p_minX = m_posX;
-			float p_maxX = m_posX + JUMPER_SPR_SIZE_X;
+			float p_maxX = m_posX + NINJA_SPR_SIZE_X;
 			float p_minY = m_posY;
-			float p_maxY = m_posY + JUMPER_SPR_SIZE_Y;
+			float p_maxY = m_posY + NINJA_SPR_SIZE_Y;
 
 			float t_minX = j * TILE_SPR_SIZE_X;
 			float t_maxX = (j + 1) * TILE_SPR_SIZE_X;
@@ -151,24 +223,18 @@ void MyGame::Jumper::CheckCollision()
 				collisionFlag = ApplyPenetration(&m_posX, &m_posY, p_maxX, p_maxY, p_minX, p_minY,
 					t_maxX, t_maxY, t_minX, t_minY);
 			}
-
-			if ((MATH_COL_FLAG_PUSHLEFT | MATH_COL_FLAG_PUSHRIGHT) & collisionFlag)
-			{
-				m_velX *= -1.0f;
-				m_spr.Flip = !m_spr.Flip;
-			}
 		}
 }
 
-void MyGame::Jumper::CallInteract(int collisionFlag)
+void MyGame::Ninja::CallInteract(int collisionFlag)
 {
 	if (collisionFlag & MATH_COL_FLAG_PUSHUP)
 	{
 		m_timer = 0.0f;
 		m_pressed = true;
 		m_attacked = true;
-		m_spr.ShapeString = m_jumperShapePress;
-		m_scene->PrintPoint(L"200", m_posX, m_posY);
-		m_scene->AddScore(200.0f);
+		m_spr.ShapeString = m_ninjaShapePress;
+		m_scene->PrintPoint(L"400", m_posX, m_posY);
+		m_scene->AddScore(400.0f);
 	}
 }

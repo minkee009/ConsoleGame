@@ -21,9 +21,10 @@ void MyGame::GoomBa::Initialize()
 	m_isAlive = true;
 	m_pressed = false;
 	m_attacked = false;
+	m_dontPress = false;
 	m_posX = m_spawnPosX;
 	m_posY = m_spawnPosY;
-	m_velX = -8.0f;
+	m_velX = -12.0f;
 	m_timer = 0.0f;
 	m_spr.ShapeString = m_goombaShape1;
 }

@@ -10,6 +10,7 @@
 #include "GoalFlag.hpp"
 #include "GoomBa.hpp"
 #include "Jumper.hpp"
+#include "Ninja.hpp"
 
 using MyGame::Engine;
 
@@ -130,6 +131,19 @@ MyGame::PlayScene::PlayScene()
 				jumper->Initialize();
 
 				m_enemys.push_back({ jumper, false });
+				break;
+			}
+			case 'N':
+			{
+				auto ninja = new Ninja(this);
+				auto spawnPosX = j * TILE_SPR_SIZE_X + 2;
+				auto spawnPosY = i * TILE_SPR_SIZE_Y + CorrectPosY(ninja->GetSprite()->Size.Y);
+
+				ninja->SetSpawnPos(spawnPosX, spawnPosY);
+				ninja->SetPosition(spawnPosX, spawnPosY);
+				ninja->Initialize();
+
+				m_enemys.push_back({ ninja, false });
 				break;
 			}
 			}

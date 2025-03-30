@@ -19,6 +19,7 @@ namespace MyGame
 		virtual void CallInteract(int collisionFlag) {}
 		float GetPosX() { return m_posX; }
 		float GetPosY() { return m_posY; }
+		bool IsDontPress() { return m_dontPress; }
 		Bbox GetCheckBBox() const {
 			return {
 			m_posX - m_spr.Size.X + (m_spr.Size.X << 1),
@@ -36,6 +37,7 @@ namespace MyGame
 		float m_velX;
 		float m_velY;
 		bool m_attacked;
+		bool m_dontPress;
 		bool m_active;
 		bool m_isAlive;
 		PlayScene* m_scene;

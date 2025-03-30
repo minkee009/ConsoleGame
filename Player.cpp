@@ -286,7 +286,7 @@ void MyGame::Player::CheckCollision()
 					enemy.first->GetBbox());
 				enemy.first->CallInteract(collisionFlag);
 
-				if (collisionFlag & (MATH_COL_FLAG_PUSHRIGHT | MATH_COL_FLAG_PUSHLEFT | MATH_COL_FLAG_PUSHDOWN))
+				if (collisionFlag & (MATH_COL_FLAG_PUSHRIGHT | MATH_COL_FLAG_PUSHLEFT | MATH_COL_FLAG_PUSHDOWN) || enemy.first->IsDontPress())
 				{
 					m_scene->gameState = PlayerDead;
 					break;

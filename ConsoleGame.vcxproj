@@ -140,6 +140,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math.cpp" />
     <ClCompile Include="MenuScene.cpp" />
+    <ClCompile Include="Ninja.cpp" />
+    <ClCompile Include="NinjaStar.cpp" />
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="PointPrinter.cpp" />
     <ClCompile Include="SetRankScene.cpp" />
@@ -164,6 +166,8 @@
     <ClInclude Include="Jumper.hpp" />
     <ClInclude Include="math.hpp" />
     <ClInclude Include="MenuScene.hpp" />
+    <ClInclude Include="Ninja.hpp" />
+    <ClInclude Include="NinjaStar.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="PlayScene.hpp" />
     <ClInclude Include="PointPrinter.hpp" />
