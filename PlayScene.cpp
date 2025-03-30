@@ -124,6 +124,8 @@ void MyGame::PlayScene::Initialize()
 	}
 	m_goalTimer = 0;
 	m_goalIncount = 0;
+	m_deadIncount = 0;
+	m_deadTimer = 0;
 	m_score = 0.0f;
 	m_player->Initialize();
 	m_player->SetPosition(2, 26);
@@ -135,6 +137,11 @@ void MyGame::PlayScene::Initialize()
 
 void MyGame::PlayScene::Update()
 {
+	if (m_life == 0)
+	{
+		//게임 오버
+	}
+
 	switch (gameState)
 	{
 	case PrintLife:
@@ -151,6 +158,12 @@ void MyGame::PlayScene::Update()
 	{
 		m_timer -= GET_DELTATIME() * 2.0f;
 		//각 오브젝트 배열을 돌면서 m_active관리와 업데이트 관리를 시도
+
+		if (m_timer < 0.0f)
+		{
+			gameState = PlayerDead;
+			return;
+		}
 
 		//플레이어 움직임을 먼저 업데이트
 		m_player->UpdateMovement();
@@ -178,6 +191,45 @@ void MyGame::PlayScene::Update()
 
 		//충돌체크
 		m_player->CheckCollision();
+
+		break;
+	}
+	case PlayerDead:
+	{
+		if (m_deadIncount == 0)
+		{
+			m_player->SetVelocity(0, 0);
+			m_player->ForceChangePlayerShape(PLAYER_SPR_S_DIE);
+			m_deadTimer += GET_DELTATIME();
+
+			if (m_deadTimer > PLAY_DEADINCOUNT_00_TIMER)
+			{
+				m_deadTimer = 0.0f;
+				m_deadIncount++;
+			}
+		}
+		if (m_deadIncount == 1)
+		{
+			m_deadTimer += GET_DELTATIME();
+			auto currentXpos = m_player->GetPosX();
+			auto currentYpos = m_player->GetPosY();
+			auto currentYvel = m_player->GetVelY();
+			if (m_deadTimer < 0.15f)
+			{
+				m_player->SetVelocity(0, currentYvel -= 480.0f * GET_DELTATIME());
+			}
+			currentYvel += PLAYER_GRAVITY * GET_DELTATIME();
+			currentYvel = min(PLAYER_MAXFALLSPEED, currentYvel);
+			m_player->SetVelocity(0, currentYvel);
+			m_player->SetPosition(currentXpos, currentYpos + currentYvel * GET_DELTATIME());
+
+			if (m_deadTimer > PLAY_DEADINCOUNT_01_TIMER)
+			{
+				m_deadTimer = 0.0f;
+				m_life--;
+				Initialize();
+			}
+		}
 		break;
 	}
 	case Goal:

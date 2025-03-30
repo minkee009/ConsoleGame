@@ -17,6 +17,10 @@
 #define PLAY_GOALINCOUNT_02_TIMER 1.2f
 #define PLAY_GOALINCOUNT_04_TIMER 2.0f
 
+#define PLAY_DEADINCOUNT_00_TIMER 0.7f
+#define PLAY_DEADINCOUNT_01_TIMER 2.5f
+
+
 namespace MyGame
 {
 	enum GameState
@@ -131,7 +135,7 @@ namespace MyGame
 			L"__)__)",
 		};
 
-		//타일 오브젝트 -> { 타일, 인스턴스 여부 }
+		//게임 오브젝트 -> { 오브젝트, 인스턴스 여부 }
 		std::vector<std::pair<Tile*, bool>> m_tiles;
 		std::vector<std::pair<Tile*, bool>> m_items;
 		std::vector<std::pair<Tile*, bool>> m_enemys;
@@ -145,6 +149,10 @@ namespace MyGame
 
 		short m_goalIncount;
 		float m_goalTimer;
+
+		short m_deadIncount;
+		float m_deadTimer;
+
 		int m_life = 3;
 		float m_score = 0;
 		float m_timer;
