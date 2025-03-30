@@ -34,6 +34,9 @@ void MyGame::ViewRankScene::Render()
     if (m_rankings.empty())
     {
         RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 28), 10 }, L"아직 도전하신 분이 없습니다. 지금 당장 게임을 하러가시죠!");
+
+        RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 8),(SHORT)(34) }, L"메뉴로 돌아가기");
+        RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 10),(SHORT)(34) }, m_cursor_visible ? L">" : L" ");
     }
     else 
     {
@@ -67,11 +70,11 @@ void MyGame::ViewRankScene::Render()
         if (m_rankings.size() > 10)
         {
             swprintf_s(m_output_buffer, 100, L"그 외의 %d분이 명예의 전당에 오르기 위해 사투를 벌였지만 안탑갑게도 등재되지 못했습니다...                                           ", m_rankings.size() - idx);
-            RENDER_STR({ 15,(SHORT)(11 + idx * 2) }, m_output_buffer);
+            RENDER_STR({ 15,(SHORT)(31) }, m_output_buffer);
         }
 
-        RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 8),(SHORT)(14 + idx * 2) }, L"메뉴로 돌아가기");
-        RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 10),(SHORT)(14 + idx * 2) }, m_cursor_visible ? L">" : L" ");
+        RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 8),(SHORT)(34) }, L"메뉴로 돌아가기");
+        RENDER_STR({ (SHORT)((GET_SCREEN_WIDTH() >> 1) - 10),(SHORT)(34) }, m_cursor_visible ? L">" : L" ");
     }
 }
 
