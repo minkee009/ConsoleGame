@@ -69,7 +69,7 @@ void MyGame::ViewRankScene::Render()
 
         if (m_rankings.size() > 10)
         {
-            swprintf_s(m_output_buffer, 100, L"그 외의 %d분이 명예의 전당에 오르기 위해 사투를 벌였지만 안탑갑게도 등재되지 못했습니다...                                           ", m_rankings.size() - idx);
+            swprintf_s(m_output_buffer, 100, L"그 외의 %d분이 명예의 전당에 오르기 위해 사투를 벌였지만 안탑깝게도 등재되지 못했습니다...                                           ", m_rankings.size() - idx);
             RENDER_STR({ 15,(SHORT)(31) }, m_output_buffer);
         }
 
