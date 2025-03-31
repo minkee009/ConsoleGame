@@ -20,6 +20,7 @@ namespace MyGame
 		void Update() override;
 		void CheckCollision() override;
 		void CallInteract(int collisionFlag) override;
+		Enemy* Clone() const override { return new DummyGoomBa(*this); }
 	private:
 		static constexpr const WCHAR* m_goombaShape1[GOOMBA_SPR_SIZE_Y] = {
 			L"(@ @)",
@@ -43,5 +44,6 @@ namespace MyGame
 		short m_sprIdx;
 		bool m_isGrounded;
 		bool m_pressed;
+		bool m_smashed;
 	};
 }

@@ -21,6 +21,7 @@ void MyGame::Ninja::Initialize()
 	m_isAlive = true;
 	m_pressed = false;
 	m_attacked = false;
+	m_smashed = false;
 	m_dontPress = false;
 	m_posX = m_spawnPosX;
 	m_posY = m_spawnPosY;
@@ -39,7 +40,7 @@ void MyGame::Ninja::Initialize()
 
 void MyGame::Ninja::Update()
 {
-	if (!m_active || !m_isAlive) return;
+	//if (!m_active || !m_isAlive) return;
 
 	if (m_pressed)
 	{
@@ -51,6 +52,15 @@ void MyGame::Ninja::Update()
 		return;
 	}
 
+	if (m_smashed)
+	{
+		m_velY += PLAYER_GRAVITY * GET_DELTATIME();
+		m_velY = min(PLAYER_MAXFALLSPEED, m_velY);
+		m_posX += m_velX * GET_DELTATIME();
+		m_posY += m_velY * GET_DELTATIME();
+		return;
+	}
+
 
 	int goombaMapXidx = (int)(m_posX < 0.0f ? m_posX - TILE_SPR_SIZE_X : m_posX) / TILE_SPR_SIZE_X;
 	int goombaMapYidx = (int)(m_posY < 0.0f ? m_posY - TILE_SPR_SIZE_Y : m_posY) / TILE_SPR_SIZE_Y;
@@ -59,6 +69,7 @@ void MyGame::Ninja::Update()
 
 	m_isGrounded = false;
 	if (m_velY >= -0.001f)
+	{
 		for (int i = goombaMapYidx; i <= goombaMapYidx + 2; i++)
 			for (int j = goombaMapXidx; j <= goombaMapXidx + 2; j++)
 			{
@@ -80,6 +91,25 @@ void MyGame::Ninja::Update()
 					break;
 				}
 			}
+
+		Bbox footbox = GetBbox();
+		footbox.maxY += 0.02f;
+
+		for (auto tile : *(m_scene->GetTiles()))
+		{
+			if (tile.first->GetActive()
+				&& tile.first->IsSolid()
+				&& CheckAABB(footbox,
+					tile.first->GetBbox())
+				&& MATH_COL_FLAG_PUSHUP & CalcPenetration(footbox, tile.first->GetBbox()))
+			{
+				m_isGrounded = true;
+				m_velY = 0.0f;
+				break;
+			}
+		}
+	}
+		
 	if (!m_isGrounded)
 	{
 		m_velY += PLAYER_GRAVITY * GET_DELTATIME();
@@ -225,6 +255,22 @@ void MyGame::Ninja::CheckCollision()
 					t_maxX, t_maxY, t_minX, t_minY);
 			}
 		}
+
+	//타일 충돌
+	for (auto& tile : *(m_scene->GetTiles()))
+	{
+		if (!tile.first->GetActive() || !tile.first->IsSolid())
+			continue;
+
+		//경계범위 체크
+		bool isCollide = CheckAABB(GetBbox(),
+			tile.first->GetBbox());
+
+		if (isCollide)
+		{
+			ApplyPenetration(&m_posX, &m_posY, GetBbox(), tile.first->GetBbox());
+		}
+	}
 }
 
 void MyGame::Ninja::CallInteract(int collisionFlag)
@@ -244,5 +290,16 @@ void MyGame::Ninja::CallInteract(int collisionFlag)
 			m_scene->PrintPoint(L"400", m_posX, m_posY);
 			m_scene->AddScore(400.0f);
 		}
+	}
+
+	else if (collisionFlag & MATH_COL_FLAG_PUSHDOWN)
+	{
+		m_timer = 0.0f;
+		m_attacked = true;
+		m_smashed = true;
+		m_spr.ShapeString = m_ninjaShapeDead;
+		m_scene->PrintPoint(L"400", m_posX, m_posY);
+		m_scene->AddScore(400.0f);
+		m_velY = -25.0f;
 	}
 }

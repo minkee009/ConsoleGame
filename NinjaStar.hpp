@@ -18,7 +18,7 @@ namespace MyGame
 		void SetDirAndPos(bool dir, float posX, float posY) { m_dir = dir; m_spr.Flip = !dir; m_posX = posX, m_posY = posY; }
 	private:
 		static constexpr const WCHAR* m_goalFlagShape[NINJASTAR_SPR_SIZE_Y] = {
-		L"##-     ",
+		L"##-\0\0\0\0\0",
 		};
 
 		bool m_dir;

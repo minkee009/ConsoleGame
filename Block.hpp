@@ -16,9 +16,9 @@ namespace MyGame
 		void CallInteract(int collisionFlag) override;
 	private:
 		static constexpr const WCHAR* m_blockShape[BLOCK_SPR_SIZE_Y] = {
-			L"▒██▒██",
-			L"██▒██▒",
-			L"▒██▒██",
+			L"⣿⣿⣿⣭⣭⣭",
+			L"⣭⣭⣭⣿⣿⣿",
+			L"⣿⣿⣿⣭⣭⣭",
 		};
 	};
 }

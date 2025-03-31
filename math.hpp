@@ -31,4 +31,6 @@ namespace MyGame
 	float Distance(float ax, float ay, float bx, float by);
 
 	float SqrtDistance(float ax, float ay, float bx, float by);
+
+	float lerp_s_f(float a, float b, float t);
 }

@@ -5,7 +5,9 @@
 #include "Enemy.hpp"
 #include "PointPrinter.hpp"
 #include <vector>
+#include <queue>
 #include <utility>
+#include "ObjectManager.hpp"
 
 #define MAP01_SIZE_X 90
 #define MAP01_SIZE_Y 10
@@ -57,11 +59,12 @@ namespace MyGame
 
 		void SetChildMode(bool mode) { m_childMode = mode; }
 
-		void AddTile(Tile* tile) { m_tiles.push_back({ tile,true }); };
+		void AddTile(Tile* tile) { m_objManager->addedTiles.push(tile); };
+		void AddEnemy(Enemy* enemy) { m_objManager->addedEnemys.push(enemy); };
 		void AddScore(float score) { m_score += score; }
 		void PrintPoint(const wchar_t* point, float posX, float posY) { m_pointPrinter->CreatePoint(point, 0.5f,posX,posY, 0.0f, -PRINTPOINT_VELY); }
-		const std::vector<std::pair<Tile*, bool>>* GetTiles() { return &m_tiles; }
-		const std::vector<std::pair<Enemy*, bool>>* GetEnemys() { return &m_enemys; }
+		const std::vector<std::pair<Tile*, bool>>* GetTiles() { return &m_objManager->tiles; }
+		const std::vector<std::pair<Enemy*, bool>>* GetEnemys() { return &m_objManager->enemys; }
 
 		static constexpr const char* const* GetTilemap() { return m_map01; }
 		Player* GetPlayer() { return m_player; }
@@ -77,21 +80,24 @@ namespace MyGame
 		static const WORD m_commonShapeColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
 		
 		/// <summary>
+		/// { B : block }
 		/// { e : goomba } { F : jumper } { N : ninja } { D : dummy goomba }
 		/// { g : ground } { d : dirt } { y : pipe0 } { u : pipe1 } { j : pipe2 } { k : pipe3 } { s : solid block } { i : goal flag }
 		/// </summary>
+
 		static constexpr const char* m_map01[MAP01_SIZE_Y] = {
 			".................cv.........cv................cv..........................................",
 			".........cv.........................cv......................cv.......cv...................",
 			"..........................................................................................",
 			"..........................................................................................",
 			"..............................................N...........................................",
-			"...................................e........ggggg.........................................",
+			".......M...........................e........BBBBB.........................................",
 			"..................................yu................e.....................................",
 			"...........................yu.....jk...............ss.....................................",
-			"...............F...yu....e.jk.....jk...ss...D.....ssss...........F...N...N...i............",
+			"...................yu....e.jk.....jk...ss...D.....ssss...........F...N...N...i............",
 			"gdggggdgggdggggddggggggdgggggggggggdgggggggdggdgdggddggdgdggddggggggdggddgggggggdggggggggg",
 		};
+
 
 		static constexpr const WCHAR* m_map01_gShape[TILE_SPR_SIZE_Y] = {
 			L"▓▓██▓▓",
@@ -145,10 +151,7 @@ namespace MyGame
 		};
 
 		//게임 오브젝트 -> { 오브젝트, 인스턴스 여부 }
-		std::vector<std::pair<Tile*, bool>> m_tiles;
-		std::vector<std::pair<Tile*, bool>> m_items;
-		std::vector<std::pair<Enemy*, bool>> m_enemys;
-
+		ObjectManager* m_objManager;
 
 		WCHAR** m_renderedMap; //[MAP01_SIZE_Y * MAP01_SPR_SIZE_Y][MAP01_SIZE_X * MAP01_SPR_SIZE_X];
 		PointPrinter* m_pointPrinter = nullptr;

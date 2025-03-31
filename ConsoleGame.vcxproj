@@ -128,6 +128,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Block.cpp" />
+    <ClCompile Include="BlockBroken.cpp" />
     <ClCompile Include="char_check.c" />
     <ClCompile Include="console_renderer.cpp" />
     <ClCompile Include="DummyGoomba.cpp" />
@@ -141,6 +143,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math.cpp" />
     <ClCompile Include="MenuScene.cpp" />
+    <ClCompile Include="MysteryBlock.cpp" />
     <ClCompile Include="Ninja.cpp" />
     <ClCompile Include="NinjaStar.cpp" />
     <ClCompile Include="PlayScene.cpp" />
@@ -154,6 +157,7 @@
   <ItemGroup>
     <ClInclude Include="bbox.hpp" />
     <ClInclude Include="Block.hpp" />
+    <ClInclude Include="BlockBroken.hpp" />
     <ClInclude Include="char_check.h" />
     <ClInclude Include="console_renderer.hpp" />
     <ClInclude Include="delegate.hpp" />
@@ -169,6 +173,7 @@
     <ClInclude Include="Jumper.hpp" />
     <ClInclude Include="math.hpp" />
     <ClInclude Include="MenuScene.hpp" />
+    <ClInclude Include="MysteryBlock.hpp" />
     <ClInclude Include="Ninja.hpp" />
     <ClInclude Include="NinjaStar.hpp" />
     <ClInclude Include="Player.hpp" />
@@ -181,6 +186,7 @@
     <ClInclude Include="time.hpp" />
     <ClInclude Include="GoalPole.hpp" />
     <ClInclude Include="ViewRankScene.hpp" />
+    <ClInclude Include="ObjectManager.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

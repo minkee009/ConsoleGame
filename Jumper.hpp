@@ -18,6 +18,7 @@ namespace MyGame
 		void Update() override;
 		void CheckCollision() override;
 		void CallInteract(int collisionFlag) override;
+		Enemy* Clone() const override { return new Jumper(*this); }
 	private:
 		static constexpr const WCHAR* m_jumperShape1[JUMPER_SPR_SIZE_Y] = {
 			L"^--^",
@@ -74,12 +75,12 @@ namespace MyGame
 			L"I| |I",
 			L"(x.x)",
 			L"v--v "
-			L"^--^",
+			L"^--^ ",
 			L"|   |",
 			L"|U U|",
 			L"(X.X)",
 			L"v--v ",
-
+			L"     ",
 		};
 
 		float m_timer;
@@ -87,5 +88,6 @@ namespace MyGame
 		short m_sprIdx;
 		bool m_isGrounded;
 		bool m_pressed;
+		bool m_smashed;
 	};
 }

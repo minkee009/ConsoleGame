@@ -20,6 +20,7 @@ namespace MyGame
 		void Update() override;
 		void CheckCollision() override;
 		void CallInteract(int collisionFlag) override;
+		Enemy* Clone() const override { return new Ninja(*this); }
 	private:
 		static constexpr const WCHAR* m_ninjaShape1[NINJA_SPR_SIZE_Y] = {
 			L"^--^",
@@ -59,11 +60,11 @@ namespace MyGame
 		};
 
 		static constexpr const WCHAR* m_ninjaShapeDead[NINJA_SPR_SIZE_Y] = {
-			L"!!!!",
-			L"!!!!",
-			L"!!!!",
-			L"!!!!",
-			L"!!!!",
+			L")   )",
+			L"|---|",
+			L"|   #",
+			L"(===)",
+			L" V V ",
 		};
 
 		float m_timer;
@@ -78,5 +79,6 @@ namespace MyGame
 		short m_sprIdx;
 		bool m_isGrounded;
 		bool m_pressed;
+		bool m_smashed;
 	};
 }

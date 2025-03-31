@@ -152,3 +152,8 @@ float MyGame::SqrtDistance(float ax, float ay, float bx, float by)
 	absY *= absY;
 	return absX + absY;
 }
+
+float MyGame::lerp_s_f(float a, float b, float t)
+{
+	return a + (b - a) * t;
+}

@@ -182,6 +182,7 @@ void MyGame::Player::CheckGround()
 	float playerFootY = m_posY + PLAYER_SPR_SIZE_Y;
 
 	if (m_velY >= -0.001f)
+	{
 		for (int i = playerMapYidx + 1; i <= playerMapYidx + 2; i++)
 			for (int j = playerMapXidx; j <= playerMapXidx + 2; j++)
 			{
@@ -203,6 +204,25 @@ void MyGame::Player::CheckGround()
 					break;
 				}
 			}
+
+		Bbox footbox = GetBbox();
+		footbox.maxY += 0.02f;
+
+		for (auto tile : *(m_scene->GetTiles()))
+		{
+			if (tile.first->GetActive() 
+				&& tile.first->IsSolid()
+				&& CheckAABB(footbox,
+					tile.first->GetBbox())
+				&& MATH_COL_FLAG_PUSHUP & CalcPenetration(footbox, tile.first->GetBbox()))
+			{
+				m_isGrounded = true;
+				m_velY = 0.0f;
+				break;
+			}
+		}
+	}
+		
 }
 
 void MyGame::Player::CheckCollision()
@@ -256,65 +276,101 @@ void MyGame::Player::CheckCollision()
 	Bbox p_checkBox = { m_posX - PLAYER_SPR_SIZE_X + (PLAYER_SPR_SIZE_X << 1), m_posY - PLAYER_SPR_SIZE_Y + (PLAYER_SPR_SIZE_X << 1) , m_posX - PLAYER_SPR_SIZE_X , m_posY - PLAYER_SPR_SIZE_Y };
 
 	//타일 충돌
+
 	for (auto& tile : *(m_scene->GetTiles()))
 	{
 		if (!tile.first->GetActive())
 			continue;
 
 		//경계범위 체크
-		if (CheckAABB(p_checkBox,
-			tile.first->GetBbox()))
-		{
-			bool isCollide = CheckAABB(GetBbox(),
-				tile.first->GetBbox());
+		Bbox pbox = GetBbox();
+		Bbox tbox = tile.first->GetBbox();
 
-			if (isCollide)
+		bool isCollide = CheckAABB(pbox,tbox);
+
+		if (isCollide)
+		{
+			int collisionFlag = tile.first->IsSolid()
+				? ApplyPenetration(&m_posX, &m_posY, pbox, tbox)
+				: CalcPenetration(pbox, tbox);
+
+			tile.first->CallInteract(collisionFlag);
+
+			if (tile.first->IsSolid())
 			{
-				tile.first->CallInteract(ApplyPenetration(&m_posX, &m_posY, GetBbox(),
-					tile.first->GetBbox()));
+				if ((MATH_COL_FLAG_PUSHLEFT | MATH_COL_FLAG_PUSHRIGHT) & collisionFlag)
+				{
+					if (pbox.maxY - 0.5 >= tbox.minY
+						&& pbox.minY + 0.5 < pbox.maxY)
+						m_velX = 0.0f;
+				}
+				if (collisionFlag & MATH_COL_FLAG_PUSHDOWN)
+				{
+					//리플렉트
+					m_velY = abs(m_velY);
+					m_jumpTrigger = false;
+					m_jumpTimer = 0.0f;
+				}
 			}
 		}
 	}
 
 	//아이템 충돌
+	//for (auto& tile : *(m_scene->GetTiles()))
+	//{
+	//	if (!tile.first->GetActive())
+	//		continue;
+
+	//	//경계범위 체크
+	//	if (CheckAABB(p_checkBox,
+	//		tile.first->GetBbox()))
+	//	{
+	//		bool isCollide = CheckAABB(GetBbox(),
+	//			tile.first->GetBbox());
+
+	//		if (isCollide)
+	//		{
+	//			tile.first->CallInteract(tile.first->IsSolid()
+	//				? ApplyPenetration(&m_posX, &m_posY, GetBbox(), tile.first->GetBbox())
+	//				: CalcPenetration(GetBbox(), tile.first->GetBbox()));
+	//		}
+	//	}
+	//}
 
 	//적 충돌
 	for (auto& enemy : *(m_scene->GetEnemys()))
 	{
 		if (!enemy.first->GetActive() 
+			|| enemy.first->GetForceIgnoreCollision()
 			|| enemy.first->IsActtacked()
 			|| !enemy.first->IsAlive())
 			continue;
 
 		//경계범위 체크
-		if (CheckAABB(p_checkBox,
-			enemy.first->GetBbox()))
+		bool isCollide = CheckAABB(GetBbox(),
+			enemy.first->GetBbox());
+
+		if (isCollide)
 		{
-			bool isCollide = CheckAABB(GetBbox(),
+			auto collisionFlag = CalcPenetration(GetBbox(),
 				enemy.first->GetBbox());
 
-			if (isCollide)
+			if (collisionFlag & (MATH_COL_FLAG_PUSHRIGHT | MATH_COL_FLAG_PUSHLEFT | MATH_COL_FLAG_PUSHDOWN))
 			{
-				auto collisionFlag = CalcPenetration(GetBbox(),
-					enemy.first->GetBbox());
-
-				if (collisionFlag & (MATH_COL_FLAG_PUSHRIGHT | MATH_COL_FLAG_PUSHLEFT | MATH_COL_FLAG_PUSHDOWN))
-				{
-					m_scene->gameState = PlayerDead;
-					break;
-				}
-
-				enemy.first->CallInteract(collisionFlag);
-
-				if (collisionFlag & MATH_COL_FLAG_PUSHUP)
-				{
-					m_velY = -(PLAYER_JUMPVEL);
-					m_jumpTrigger = false;
-					m_jumpTimer = 0.0f;
-					break;
-				}
-
+				m_scene->gameState = PlayerDead;
+				break;
 			}
+
+			enemy.first->CallInteract(collisionFlag);
+
+			if (collisionFlag & MATH_COL_FLAG_PUSHUP)
+			{
+				m_velY = -(PLAYER_JUMPVEL);
+				m_jumpTrigger = false;
+				m_jumpTimer = 0.0f;
+				break;
+			}
+
 		}
 	}
 }

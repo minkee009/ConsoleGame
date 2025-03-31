@@ -4,14 +4,25 @@
 #include <cwchar>
 #include <algorithm> 
 #include "math.hpp"
+#include "ObjectManager.hpp"
 
-//오브젝트
+////--오브젝트
+//타일
 #include "GoalPole.hpp"
 #include "GoalFlag.hpp"
+#include "Block.hpp"
+#include "MysteryBlock.hpp"
+
+//아이템
+
+
+//적
 #include "GoomBa.hpp"
 #include "Jumper.hpp"
 #include "Ninja.hpp"
 #include "DummyGoomba.hpp"
+
+
 
 using MyGame::Engine;
 
@@ -27,6 +38,7 @@ COORD DebugPos3 = { 0, 0 };
 
 MyGame::PlayScene::PlayScene()
 {
+	m_objManager = new ObjectManager;
 	m_msgBuffer = new wchar_t[MSG_BUFFER_SIZE];
 	m_renderedMap = new WCHAR * [TILE_SPR_SIZE_Y * MAP01_SIZE_Y];
 	for (int i = 0; i < TILE_SPR_SIZE_Y * MAP01_SIZE_Y; i++) {
@@ -36,6 +48,7 @@ MyGame::PlayScene::PlayScene()
 
 		m_renderedMap[i][TILE_SPR_SIZE_X * MAP01_SIZE_X] = L'\0';
 	}
+	
 
 	// 사전 렌더링 및 오브젝트 배치
 	for (int i = 0; i < MAP01_SIZE_Y; i++) {
@@ -97,7 +110,7 @@ MyGame::PlayScene::PlayScene()
 				goalPole->Initialize();
 
 
-				m_tiles.push_back({ goalPole, false });
+				m_objManager->tiles.push_back({ goalPole, false });
 
 				auto goalFlag = new GoalFlag(this);
 				spawnPosX += 2;
@@ -105,7 +118,7 @@ MyGame::PlayScene::PlayScene()
 				goalFlag->SetPosition(spawnPosX, spawnPosY);
 				goalFlag->Initialize();
 
-				m_tiles.push_back({ goalFlag, false });
+				m_objManager->tiles.push_back({ goalFlag, false });
 				break;
 			}
 			case 'e':
@@ -118,7 +131,7 @@ MyGame::PlayScene::PlayScene()
 				goomba->SetPosition(spawnPosX, spawnPosY);
 				goomba->Initialize();
 
-				m_enemys.push_back({ goomba, false });
+				m_objManager->enemys.push_back({ goomba, false });
 				break;
 			}
 			case 'F':
@@ -131,7 +144,7 @@ MyGame::PlayScene::PlayScene()
 				jumper->SetPosition(spawnPosX, spawnPosY);
 				jumper->Initialize();
 
-				m_enemys.push_back({ jumper, false });
+				m_objManager->enemys.push_back({ jumper, false });
 				break;
 			}
 			case 'N':
@@ -144,7 +157,7 @@ MyGame::PlayScene::PlayScene()
 				ninja->SetPosition(spawnPosX, spawnPosY);
 				ninja->Initialize();
 
-				m_enemys.push_back({ ninja, false });
+				m_objManager->enemys.push_back({ ninja, false });
 				break;
 			}
 			case 'D':
@@ -157,7 +170,34 @@ MyGame::PlayScene::PlayScene()
 				dgoomba->SetPosition(spawnPosX, spawnPosY);
 				dgoomba->Initialize();
 
-				m_enemys.push_back({ dgoomba, false });
+				m_objManager->enemys.push_back({ dgoomba, false });
+				break;
+			}
+			case 'B':
+			{
+				auto block = new Block(this);
+				auto spawnPosX = j * TILE_SPR_SIZE_X;
+				auto spawnPosY = i * TILE_SPR_SIZE_Y + CorrectPosY(block->GetSprite()->Size.Y);
+
+				block->SetSpawnPos(spawnPosX, spawnPosY);
+				block->SetPosition(spawnPosX, spawnPosY);
+				block->Initialize();
+
+				m_objManager->tiles.push_back({ block, false });
+				break;
+			}
+			case 'M':
+			{
+				auto block = new MysteryBlock(this);
+				block->SetInEnemy(new Ninja(this));
+				auto spawnPosX = j * TILE_SPR_SIZE_X;
+				auto spawnPosY = i * TILE_SPR_SIZE_Y + CorrectPosY(block->GetSprite()->Size.Y);
+
+				block->SetSpawnPos(spawnPosX, spawnPosY);
+				block->SetPosition(spawnPosX, spawnPosY);
+				block->Initialize();
+
+				m_objManager->tiles.push_back({ block, false });
 				break;
 			}
 			}
@@ -174,24 +214,25 @@ void MyGame::PlayScene::Initialize()
 	
 	//메모리 관리 (해제) 및 초기화
 	//타일
-	for (auto tile = m_tiles.begin(); tile != m_tiles.end(); ) {
+	for (auto tile = m_objManager->tiles.begin(); tile != m_objManager->tiles.end(); ) {
 		if (tile->second) {
 			//인스턴스인 경우 삭제
 			delete tile->first;  // 메모리 해제
-			tile = m_tiles.erase(tile);  // 원소 삭제 후 반복문 인덱스 조정
+			tile = m_objManager->tiles.erase(tile);  // 원소 삭제 후 반복문 인덱스 조정
 		}
 		else {
 			tile->first->Initialize();
 			++tile;
 		}
 	}
+
 	//아이템
 	//에너미
-	for (auto enemy = m_enemys.begin(); enemy != m_enemys.end(); ) {
+	for (auto enemy = m_objManager->enemys.begin(); enemy != m_objManager->enemys.end(); ) {
 		if (enemy->second) {
 			//인스턴스인 경우 삭제
 			delete enemy->first;  // 메모리 해제
-			enemy = m_enemys.erase(enemy);  // 원소 삭제 후 반복문 인덱스 조정
+			enemy = m_objManager->enemys.erase(enemy);  // 원소 삭제 후 반복문 인덱스 조정
 		}
 		else {
 			enemy->first->Initialize();
@@ -229,6 +270,23 @@ void MyGame::PlayScene::Update()
 	if (GET_KEY_DOWN(VK_ESCAPE))
 	{
 		m_pause = true;
+	}
+
+////--중간 추가생성된 오브젝트 관리
+	//타일
+	while (!m_objManager->addedTiles.empty())
+	{
+		m_objManager->tiles.push_back({ m_objManager->addedTiles.front(),true });
+		m_objManager->addedTiles.pop();
+	}
+
+	//아이템
+
+	//적
+	while (!m_objManager->addedEnemys.empty())
+	{
+		m_objManager->enemys.push_back({m_objManager->addedEnemys.front(),true});
+		m_objManager->addedEnemys.pop();
 	}
 
 	if (m_pause)
@@ -297,8 +355,14 @@ void MyGame::PlayScene::Update()
 
 	////--오브젝트 m_active관리
 		//타일 관리
-		for (auto& tile : m_tiles)
+		for (auto& tile : m_objManager->tiles)
 		{
+			if (tile.first->IsDeleted())
+			{
+				tile.first->SetActive(false);
+				continue;
+			}
+
 			//타일이 화면안에 들어오는지 체크
 			if (!CheckAABB(tile.first->GetBbox(), GET_SCREEN_BBOX()))
 			{
@@ -313,7 +377,7 @@ void MyGame::PlayScene::Update()
 		//아이템 관리
 
 		//적 관리
-		for (auto& enemy : m_enemys)
+		for (auto& enemy : m_objManager->enemys)
 		{
 			if (!enemy.first->IsAlive())
 			{
@@ -337,7 +401,7 @@ void MyGame::PlayScene::Update()
 	////--오브젝트 업데이트
 
 		//타일 업데이트
-		for (auto& tile : m_tiles)
+		for (auto& tile : m_objManager->tiles)
 		{
 			if (tile.first->GetActive())
 				tile.first->Update();
@@ -346,9 +410,9 @@ void MyGame::PlayScene::Update()
 		//아이템 업데이트
 
 		//적 업데이트
-		for (auto& enemy : m_enemys)
+		for (auto& enemy : m_objManager->enemys)
 		{
-			if (enemy.first->GetActive())
+			if (enemy.first->GetActive() && !enemy.first->GetForceIgnoreCollision())
 				enemy.first->Update();
 		}
 
@@ -357,9 +421,9 @@ void MyGame::PlayScene::Update()
 		//아이템
 
 		//적
-		for (auto& enemy : m_enemys)
+		for (auto& enemy : m_objManager->enemys)
 		{
-			if (enemy.first->GetActive())
+			if (enemy.first->GetActive() && !enemy.first->GetForceIgnoreCollision() && !enemy.first->IsActtacked())
 				enemy.first->CheckCollision();
 		}
 
@@ -426,7 +490,7 @@ void MyGame::PlayScene::Update()
 			m_player->CheckGround();
 			m_player->OnlyCheckStaticCollision();
 
-			for (auto tile : m_tiles)
+			for (auto tile : m_objManager->tiles)
 			{
 				if (!tile.first->GetActive())
 					continue;
@@ -544,17 +608,20 @@ void MyGame::PlayScene::Render()
 			Engine::GetInstance()->GetConsoleRenderer()->WStringDraw(pos, d, MAP01_SIZE_X * TILE_SPR_SIZE_X);
 		}
 
-		//m_acitve가 true인 오브젝트만 렌더링
-		for (auto& tile : m_tiles)
+		//m_acitve가 true인 오브젝트(+ 살아있는)만 렌더링
+		for (auto& tile : m_objManager->tiles)
 		{
 			if (tile.first->GetActive())
 			{
 				RENDER_SPR({ (SHORT)(ceil(tile.first->GetPosX())), (SHORT)(ceil(tile.first->GetPosY())) }, tile.first->GetSprite());
 			}
 		}
-		for (auto& enemy : m_enemys)
+
+		RENDER_STR({ 4,20 }, L"shift - 달리기, space - 점프, 방향키 - 이동");
+
+		for (auto& enemy : m_objManager->enemys)
 		{
-			if (enemy.first->GetActive() && enemy.first->IsAlive())
+			if (enemy.first->GetActive())
 			{
 				RENDER_SPR({ (SHORT)(ceil(enemy.first->GetPosX())), (SHORT)(ceil(enemy.first->GetPosY())) }, enemy.first->GetSprite());
 			}
@@ -567,10 +634,9 @@ void MyGame::PlayScene::Render()
 
 		RENDER_SPR({ (SHORT)(ceil(m_player->GetPosX())), (SHORT)(ceil(m_player->GetPosY())) }, m_player->GetSprite());
 
-		DebugPos = { GET_ANCHOR_POS().X, 0 };
-		swprintf_s(DebugMsg, 1024, L"{ %f } ", 1 / GET_DELTATIME());
-		RENDER_STR(DebugPos, DebugMsg);
-
+		//DebugPos = { GET_ANCHOR_POS().X, 0 };
+		//swprintf_s(DebugMsg, 1024, L"{ %f } ", 1 / GET_DELTATIME());
+		//RENDER_STR(DebugPos, DebugMsg);
 
 		RENDER_STR({ GET_ANCHOR_POS().X, -9 }, L"    점수                                                                                                       시간    ");
 		
@@ -597,21 +663,32 @@ MyGame::PlayScene::~PlayScene()
 	}
 	delete[] m_renderedMap;  // 외부 배열 해제
 	
-	for (auto& tile : m_tiles) {
+	for (auto& tile : m_objManager->tiles) {
 		if (tile.first) {
 			delete tile.first;  // 동적 할당된 Tile*을 해제
 			tile.first = nullptr;  
 		}
 	}
 
-	for (auto& enemy : m_enemys) {
+	for (auto& enemy : m_objManager->enemys) {
 		if (enemy.first) {
-			delete enemy.first;  // 동적 할당된 Tile*을 해제
+			delete enemy.first;  
 			enemy.first = nullptr;
 		}
 	}
 
+	while (!m_objManager->addedTiles.empty())
+	{
+		delete m_objManager->addedTiles.front();
+		m_objManager->addedTiles.pop();
+	}
+	while (!m_objManager->addedEnemys.empty())
+	{
+		delete m_objManager->addedEnemys.front();
+		m_objManager->addedEnemys.pop();
+	}
 
+	delete m_objManager;
 	delete[] m_msgBuffer;
 	delete m_player;
 	delete m_pointPrinter;

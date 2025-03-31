@@ -11,7 +11,9 @@ namespace MyGame
 		void SetSpawnPos(float x, float y) { m_spawnPosX = x; m_spawnPosY = y; }
 		void SetPosition(float x, float y) { m_posX = x; m_posY = y; }
 		void SetActive(bool active) { m_active = active; }
-		bool GetActive() { return m_active; }
+		bool GetActive() { return m_active && !m_isDeleted; }
+		bool IsSolid() { return m_isSolid; }
+		bool IsDeleted() { return m_isDeleted; }
 		virtual void Initialize() {}
 		virtual void Update() {}
 		virtual void CallInteract(int collisionFlag) {}
@@ -31,6 +33,8 @@ namespace MyGame
 		float m_spawnPosY;
 		float m_posX;
 		float m_posY;
+		bool m_isSolid = false;
+		bool m_isDeleted;
 		bool m_active;
 		PlayScene* m_scene;
 		SPRITE m_spr;

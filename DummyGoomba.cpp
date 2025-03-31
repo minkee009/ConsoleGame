@@ -20,6 +20,7 @@ void MyGame::DummyGoomBa::Initialize()
 {
 	m_isAlive = true;
 	m_pressed = false;
+	m_smashed = false;
 	m_attacked = false;
 	m_dontPress = true;
 	m_posX = m_spawnPosX;
@@ -31,7 +32,7 @@ void MyGame::DummyGoomBa::Initialize()
 
 void MyGame::DummyGoomBa::Update()
 {
-	if (!m_active || !m_isAlive) return;
+	//if (!m_active || !m_isAlive) return;
 
 	if (m_pressed)
 	{
@@ -43,6 +44,15 @@ void MyGame::DummyGoomBa::Update()
 		return;
 	}
 
+	if (m_smashed)
+	{
+		m_velY += PLAYER_GRAVITY * GET_DELTATIME();
+		m_velY = min(PLAYER_MAXFALLSPEED, m_velY);
+		m_posX += m_velX * GET_DELTATIME();
+		m_posY += m_velY * GET_DELTATIME();
+		return;
+	}
+
 	int goombaMapXidx = (int)(m_posX < 0.0f ? m_posX - TILE_SPR_SIZE_X : m_posX) / TILE_SPR_SIZE_X;
 	int goombaMapYidx = (int)(m_posY < 0.0f ? m_posY - TILE_SPR_SIZE_Y : m_posY) / TILE_SPR_SIZE_Y;
 
@@ -50,6 +60,24 @@ void MyGame::DummyGoomBa::Update()
 
 	m_isGrounded = false;
 	if (m_velY >= -0.001f)
+	{
+		Bbox footbox = GetBbox();
+		footbox.maxY += 0.02f;
+
+		for (auto tile : *(m_scene->GetTiles()))
+		{
+			if (tile.first->GetActive()
+				&& tile.first->IsSolid()
+				&& CheckAABB(footbox,
+					tile.first->GetBbox())
+				&& MATH_COL_FLAG_PUSHUP & CalcPenetration(footbox, tile.first->GetBbox()))
+			{
+				m_isGrounded = true;
+				m_velY = 0.0f;
+				break;
+			}
+		}
+
 		for (int i = goombaMapYidx + 1; i <= goombaMapYidx + 2; i++)
 			for (int j = goombaMapXidx; j <= goombaMapXidx + 2; j++)
 			{
@@ -72,6 +100,28 @@ void MyGame::DummyGoomBa::Update()
 				}
 			}
 
+		//타일 충돌
+		for (auto& tile : *(m_scene->GetTiles()))
+		{
+			if (!tile.first->GetActive() || !tile.first->IsSolid())
+				continue;
+
+			//경계범위 체크
+			bool isCollide = CheckAABB(GetBbox(),
+				tile.first->GetBbox());
+
+			if (isCollide)
+			{
+				int collisionFlag = ApplyPenetration(&m_posX, &m_posY, GetBbox(), tile.first->GetBbox());
+
+				if ((MATH_COL_FLAG_PUSHLEFT | MATH_COL_FLAG_PUSHRIGHT) & collisionFlag)
+				{
+					m_velX *= -1.0f;
+					m_spr.Flip = !m_spr.Flip;
+				}
+			}
+		}
+	}
 
 	if (!m_isGrounded)
 	{
@@ -144,6 +194,17 @@ void MyGame::DummyGoomBa::CallInteract(int collisionFlag)
 	if (collisionFlag & MATH_COL_FLAG_PUSHUP)
 	{
 		m_scene->GetPlayer()->AddVelocity(0, -32.0f);
+	}
+
+	else if (collisionFlag & MATH_COL_FLAG_PUSHDOWN)
+	{
+		m_timer = 0.0f;
+		m_attacked = true;
+		m_smashed = true;
+		m_spr.ShapeString = m_goombaShapeDead;
+		m_scene->PrintPoint(L"100", m_posX, m_posY);
+		m_scene->AddScore(100.0f);
+		m_velY = -25.0f;
 	}
 }
 

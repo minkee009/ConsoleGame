@@ -12,6 +12,7 @@ MyGame::GoalPole::GoalPole(PlayScene* scene)
 		FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
 		false
 	};
+	m_isSolid = false;
 }
 
 void MyGame::GoalPole::CallInteract(int collisionFlag)
