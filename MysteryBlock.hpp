@@ -13,6 +13,7 @@ namespace MyGame
 	public:
 		MysteryBlock(PlayScene* scene);
 
+		void SetHide() { m_hide = true;  m_isOnlyDownHit = true; m_initDownHit = true; }
 		void Initialize() override;
 		void Update() override;
 		void CallInteract(int collisionFlag) override;
@@ -29,10 +30,17 @@ namespace MyGame
 			L"⡇⠀⠀⠀⠀⢸",
 			L"⢇⣀⣀⣀⣀⡸",
 		};
+		static constexpr const WCHAR* m_hideshape[BLOCK_SPR_SIZE_Y] = {
+			L"      ",
+			L"      ",
+			L"      ",
+		};
 
 		bool m_isHit;
 		float m_timer;
+		bool m_hide;
 		bool m_created;
+		bool m_initDownHit;
 		Enemy* m_enemy = nullptr;
 		Enemy* m_prevEnemy = nullptr;
 		Item* m_item = nullptr;

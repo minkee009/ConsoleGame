@@ -212,6 +212,7 @@ void MyGame::Player::CheckGround()
 		{
 			if (tile.first->GetActive() 
 				&& tile.first->IsSolid()
+				&& !tile.first->IsOnlyDownHit()
 				&& CheckAABB(footbox,
 					tile.first->GetBbox())
 				&& MATH_COL_FLAG_PUSHUP & CalcPenetration(footbox, tile.first->GetBbox()))
@@ -320,8 +321,7 @@ void MyGame::Player::CheckCollision()
 	{
 		if (!item.first->GetActive()
 			|| item.first->GetForceIgnoreCollision()
-			|| item.first->IsInstancePlay()
-			|| !item.first->IsAlive())
+			|| item.first->IsInstancePlay())
 			continue;
 
 		//경계범위 체크

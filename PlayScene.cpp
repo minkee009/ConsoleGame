@@ -15,6 +15,7 @@
 
 //아이템
 #include "JumpCoin.hpp"
+#include "Coin.hpp"
 
 //적
 #include "GoomBa.hpp"
@@ -186,18 +187,48 @@ MyGame::PlayScene::PlayScene()
 				m_objManager->tiles.push_back({ block, false });
 				break;
 			}
-			case 'M':
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
 			{
 				auto block = new MysteryBlock(this);
-				block->SetInItem(new JumpCoin(this));
+
+				//coin
+				if(m_map01[i][j] == '0')
+					block->SetInItem(new JumpCoin(this));
+				if (m_map01[i][j] == '1')
+					block->SetInEnemy(new GoomBa(this));
+				if (m_map01[i][j] == '2')
+					block->SetInEnemy(new DummyGoomBa(this));
+				if (m_map01[i][j] == '3')
+					block->SetInEnemy(new Jumper(this));
+				if (m_map01[i][j] == '4')
+					block->SetInEnemy(new Ninja(this));
+
 				auto spawnPosX = j * TILE_SPR_SIZE_X;
 				auto spawnPosY = i * TILE_SPR_SIZE_Y + CorrectPosY(block->GetSprite()->Size.Y);
 
+				block->SetHide();
 				block->SetSpawnPos(spawnPosX, spawnPosY);
 				block->SetPosition(spawnPosX, spawnPosY);
 				block->Initialize();
 
 				m_objManager->tiles.push_back({ block, false });
+				break;
+			}
+			case 'C':
+			{
+				auto coin = new Coin(this);
+				auto spawnPosX = j * TILE_SPR_SIZE_X;
+				auto spawnPosY = i * TILE_SPR_SIZE_Y + CorrectPosY(coin->GetSprite()->Size.Y);
+
+				coin->SetSpawnPos(spawnPosX, spawnPosY);
+				coin->SetPosition(spawnPosX, spawnPosY);
+				coin->Initialize();
+
+				m_objManager->items.push_back({ coin, false });
 				break;
 			}
 			}

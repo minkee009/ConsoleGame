@@ -24,9 +24,13 @@ void MyGame::MysteryBlock::Initialize()
 {
 	m_prevEnemy = nullptr;
 	m_isHit = false;
-	m_spr.ShapeString = m_blockShape;
+	if(m_hide)
+		m_spr.ShapeString = m_hideshape;
+	else
+		m_spr.ShapeString = m_blockShape;
 	m_timer = 0.0f;
-	//m_created = false;
+	m_created = false;
+	m_isOnlyDownHit = m_initDownHit;
 }
 
 void MyGame::MysteryBlock::Update()
@@ -62,6 +66,8 @@ void MyGame::MysteryBlock::CallInteract(int collisionFlag)
 	{
 		m_isHit = true;
 		m_spr.ShapeString = m_blockHitShape;
+
+		m_isOnlyDownHit = false;
 
 		Bbox hitUp = GetBbox();
 		hitUp.minY -= 0.5f;

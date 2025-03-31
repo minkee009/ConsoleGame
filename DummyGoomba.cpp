@@ -68,6 +68,7 @@ void MyGame::DummyGoomBa::Update()
 		{
 			if (tile.first->GetActive()
 				&& tile.first->IsSolid()
+				&& !tile.first->IsOnlyDownHit()
 				&& CheckAABB(footbox,
 					tile.first->GetBbox())
 				&& MATH_COL_FLAG_PUSHUP & CalcPenetration(footbox, tile.first->GetBbox()))
@@ -187,6 +188,28 @@ void MyGame::DummyGoomBa::CheckCollision()
 				m_velX *= -1.0f;
 			}
 		}
+
+	//타일 충돌
+	for (auto& tile : *(m_scene->GetTiles()))
+	{
+		if (!tile.first->GetActive() || !tile.first->IsSolid() || tile.first->IsOnlyDownHit())
+			continue;
+
+		//경계범위 체크
+		bool isCollide = CheckAABB(GetBbox(),
+			tile.first->GetBbox());
+
+		if (isCollide)
+		{
+			int collisionFlag = ApplyPenetration(&m_posX, &m_posY, GetBbox(), tile.first->GetBbox());
+
+			if ((MATH_COL_FLAG_PUSHLEFT | MATH_COL_FLAG_PUSHRIGHT) & collisionFlag)
+			{
+				m_velX *= -1.0f;
+				m_spr.Flip = !m_spr.Flip;
+			}
+		}
+	}
 }
 
 void MyGame::DummyGoomBa::CallInteract(int collisionFlag)

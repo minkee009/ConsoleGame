@@ -38,8 +38,10 @@ void MyGame::JumpCoin::Update()
 		{
 		case 0:
 			m_spr.ShapeString = m_jumpCoinShape1;
+			break;
 		case 1:
 			m_spr.ShapeString = m_jumpCoinShape2;
+			break;
 		}
 	}
 

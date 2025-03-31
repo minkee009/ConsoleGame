@@ -13,6 +13,7 @@ namespace MyGame
 		void SetActive(bool active) { m_active = active; }
 		bool GetActive() { return m_active && !m_isDeleted; }
 		bool IsSolid() { return m_isSolid; }
+		bool IsOnlyDownHit() { return m_isOnlyDownHit; }
 		bool IsDeleted() { return m_isDeleted; }
 		virtual void Initialize() {}
 		virtual void Update() {}
@@ -36,6 +37,7 @@ namespace MyGame
 		bool m_isSolid = false;
 		bool m_isDeleted;
 		bool m_active;
+		bool m_isOnlyDownHit = false;
 		PlayScene* m_scene;
 		SPRITE m_spr;
 	};

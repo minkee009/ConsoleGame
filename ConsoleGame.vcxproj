@@ -131,6 +131,7 @@
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="BlockBroken.cpp" />
     <ClCompile Include="char_check.c" />
+    <ClCompile Include="Coin.cpp" />
     <ClCompile Include="console_renderer.cpp" />
     <ClCompile Include="DummyGoomba.cpp" />
     <ClCompile Include="engine.cpp" />

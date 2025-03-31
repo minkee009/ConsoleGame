@@ -64,6 +64,9 @@
     <Filter Include="헤더 파일\내 게임\씬\playScene 멤버">
       <UniqueIdentifier>{a64b3987-3691-4c44-a8b0-efff9df546fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\내 게임\오브젝트\아이템">
+      <UniqueIdentifier>{21f7a572-2d42-429e-ae32-f82f62c813a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="console_renderer.cpp">
@@ -141,8 +144,11 @@
     <ClCompile Include="MysteryBlock.cpp">
       <Filter>소스 파일\내 게임\오브젝트\타일</Filter>
     </ClCompile>
+    <ClCompile Include="Coin.cpp">
+      <Filter>소스 파일\내 게임\오브젝트\아이템</Filter>
+    </ClCompile>
     <ClCompile Include="JumpCoin.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\내 게임\오브젝트\아이템</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

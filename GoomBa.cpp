@@ -68,6 +68,7 @@ void MyGame::GoomBa::Update()
 		{
 			if (tile.first->GetActive()
 				&& tile.first->IsSolid()
+				&& !tile.first->IsOnlyDownHit()
 				&& CheckAABB(footbox,
 					tile.first->GetBbox())
 				&& MATH_COL_FLAG_PUSHUP & CalcPenetration(footbox, tile.first->GetBbox()))
@@ -171,7 +172,7 @@ void MyGame::GoomBa::CheckCollision()
 	//타일 충돌
 	for (auto& tile : *(m_scene->GetTiles()))
 	{
-		if (!tile.first->GetActive() || !tile.first->IsSolid())
+		if (!tile.first->GetActive() || tile.first->IsOnlyDownHit() || !tile.first->IsSolid())
 			continue;
 
 		//경계범위 체크
