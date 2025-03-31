@@ -16,6 +16,7 @@
 //아이템
 #include "JumpCoin.hpp"
 #include "Coin.hpp"
+#include "DeathShroom.hpp"
 
 //적
 #include "GoomBa.hpp"
@@ -192,25 +193,40 @@ MyGame::PlayScene::PlayScene()
 			case '2':
 			case '3':
 			case '4':
+			case '5':
+			case '~':
+			case '!':
+			case '@':
+			case '#':
+			case '$':
+			case '%':
 			{
 				auto block = new MysteryBlock(this);
 
+				char currentChar = m_map01[i][j];
+
 				//coin
-				if(m_map01[i][j] == '0')
+				if(currentChar == '0' || currentChar == '~')
 					block->SetInItem(new JumpCoin(this));
-				if (m_map01[i][j] == '1')
+				if (currentChar == '1' || currentChar == '!')
 					block->SetInEnemy(new GoomBa(this));
-				if (m_map01[i][j] == '2')
+				if (currentChar == '2' || currentChar == '@')
 					block->SetInEnemy(new DummyGoomBa(this));
-				if (m_map01[i][j] == '3')
+				if (currentChar == '3' || currentChar == '#')
 					block->SetInEnemy(new Jumper(this));
-				if (m_map01[i][j] == '4')
+				if (currentChar == '4' || currentChar == '$')
 					block->SetInEnemy(new Ninja(this));
+				if (currentChar == '5' || currentChar == '%')
+					block->SetInItem(new DeathShroom(this));
 
 				auto spawnPosX = j * TILE_SPR_SIZE_X;
 				auto spawnPosY = i * TILE_SPR_SIZE_Y + CorrectPosY(block->GetSprite()->Size.Y);
 
-				block->SetHide();
+				if(currentChar == '~' || currentChar == '!' 
+					|| currentChar == '@' || currentChar == '#' 
+					|| currentChar == '$' || currentChar == '%')
+					block->SetHide();
+				
 				block->SetSpawnPos(spawnPosX, spawnPosY);
 				block->SetPosition(spawnPosX, spawnPosY);
 				block->Initialize();
@@ -229,6 +245,19 @@ MyGame::PlayScene::PlayScene()
 				coin->Initialize();
 
 				m_objManager->items.push_back({ coin, false });
+				break;
+			}
+			case 'H':
+			{
+				auto shroom = new DeathShroom(this);
+				auto spawnPosX = j * TILE_SPR_SIZE_X;
+				auto spawnPosY = i * TILE_SPR_SIZE_Y + CorrectPosY(shroom->GetSprite()->Size.Y);
+
+				shroom->SetSpawnPos(spawnPosX, spawnPosY);
+				shroom->SetPosition(spawnPosX, spawnPosY);
+				shroom->Initialize();
+
+				m_objManager->items.push_back({ shroom, false });
 				break;
 			}
 			}

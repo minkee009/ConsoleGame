@@ -133,6 +133,7 @@
     <ClCompile Include="char_check.c" />
     <ClCompile Include="Coin.cpp" />
     <ClCompile Include="console_renderer.cpp" />
+    <ClCompile Include="DeathShroom.cpp" />
     <ClCompile Include="DummyGoomba.cpp" />
     <ClCompile Include="engine.cpp" />
     <ClCompile Include="GameOverScene.cpp" />
@@ -160,7 +161,6 @@
     <ClInclude Include="bbox.hpp" />
     <ClInclude Include="Block.hpp" />
     <ClInclude Include="BlockBroken.hpp" />
-    <ClInclude Include="Bonus.hpp" />
     <ClInclude Include="char_check.h" />
     <ClInclude Include="Coin.hpp" />
     <ClInclude Include="console_renderer.hpp" />

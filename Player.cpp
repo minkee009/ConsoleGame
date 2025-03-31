@@ -277,7 +277,7 @@ void MyGame::Player::CheckCollision()
 	Bbox p_checkBox = { m_posX - PLAYER_SPR_SIZE_X + (PLAYER_SPR_SIZE_X << 1), m_posY - PLAYER_SPR_SIZE_Y + (PLAYER_SPR_SIZE_X << 1) , m_posX - PLAYER_SPR_SIZE_X , m_posY - PLAYER_SPR_SIZE_Y };
 
 	//타일 충돌
-
+	int pushFlag = 0;
 	for (auto& tile : *(m_scene->GetTiles()))
 	{
 		if (!tile.first->GetActive())
@@ -291,29 +291,48 @@ void MyGame::Player::CheckCollision()
 
 		if (isCollide)
 		{
-			int collisionFlag = tile.first->IsSolid()
+  			int collisionFlag = (tile.first->IsSolid() && !tile.first->IsOnlyDownHit()) 
 				? ApplyPenetration(&m_posX, &m_posY, pbox, tbox)
 				: CalcPenetration(pbox, tbox);
 
+			if (tile.first->IsOnlyDownHit() && (m_velY >= 0.0f
+				|| (MATH_COL_FLAG_PUSHLEFT | MATH_COL_FLAG_PUSHRIGHT) & collisionFlag))
+			{
+				continue;
+			}
+
 			tile.first->CallInteract(collisionFlag);
 
-			if (tile.first->IsSolid())
+ 			if (tile.first->IsSolid())
 			{
 				if ((MATH_COL_FLAG_PUSHLEFT | MATH_COL_FLAG_PUSHRIGHT) & collisionFlag)
 				{
 					if (pbox.maxY - 0.5 >= tbox.minY
 						&& pbox.minY + 0.5 < pbox.maxY)
-						m_velX = 0.0f;
+					{
+						pushFlag |= collisionFlag;
+					}
+						
 				}
 				if (collisionFlag & MATH_COL_FLAG_PUSHDOWN)
 				{
-					//리플렉트
-					m_velY = abs(m_velY);
-					m_jumpTrigger = false;
-					m_jumpTimer = 0.0f;
+					pushFlag |= collisionFlag;
 				}
 			}
 		}
+	}
+
+	if (pushFlag & (MATH_COL_FLAG_PUSHLEFT | MATH_COL_FLAG_PUSHRIGHT))
+	{
+		m_velX = 0.0f;
+	}
+
+	if (pushFlag & MATH_COL_FLAG_PUSHDOWN)
+	{
+		//리플렉트
+		m_velY = abs(m_velY);
+		m_jumpTrigger = false;
+		m_jumpTimer = 0.0f;
 	}
 
 	//아이템 충돌

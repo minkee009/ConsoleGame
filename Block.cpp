@@ -32,7 +32,9 @@ void MyGame::Block::Update()
 
 void MyGame::Block::CallInteract(int collisionFlag)
 {
-	if (collisionFlag & MATH_COL_FLAG_PUSHDOWN)
+	//플레이어 값 하드코딩
+	if (collisionFlag & MATH_COL_FLAG_PUSHDOWN
+		&& m_scene->GetPlayer()->GetVelY() < 0.0f)
 	{
 		m_isDeleted = true;
 
@@ -53,6 +55,16 @@ void MyGame::Block::CallInteract(int collisionFlag)
 		//블록위의 오브젝트와 상호작용
 
 		//아이템
+		for (auto& item : *m_scene->GetItems())
+		{
+			if (!item.first->GetActive() || item.first->IsInstancePlay())
+				continue;
+
+			if (CheckAABB(hitUp, item.first->GetBbox()))
+			{
+				item.first->CallInteract(MATH_COL_FLAG_PUSHDOWN, IS_TILE);
+			}
+		}
 
 		//적
 		for (auto& enemy : *m_scene->GetEnemys())

@@ -47,6 +47,7 @@ void MyGame::JumpCoin::Update()
 
 	if (m_instanceTimer > 0.2f)
 	{
+		m_scene->AddScore(100);
 		m_isAlive = false;
 	}
 

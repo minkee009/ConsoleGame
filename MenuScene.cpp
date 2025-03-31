@@ -60,7 +60,7 @@ void MyGame::MenuScene::Render()
 	//드로우콜
 	RENDER_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 7), menuPointerY }, L">");
 	RENDER_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 5),24 }, L"게임 시작         ");
-	RENDER_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 5),26 }, L"체험 모드              ");
+	RENDER_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 5),26 }, L"연습 모드              ");
 	RENDER_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 5),28 }, L"명예의 전당       ");
 	RENDER_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 5),30 }, L"게임 종료        ");
 
