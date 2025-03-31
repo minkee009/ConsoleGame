@@ -14,7 +14,7 @@
 #include "MysteryBlock.hpp"
 
 //아이템
-
+#include "JumpCoin.hpp"
 
 //적
 #include "GoomBa.hpp"
@@ -189,7 +189,7 @@ MyGame::PlayScene::PlayScene()
 			case 'M':
 			{
 				auto block = new MysteryBlock(this);
-				block->SetInEnemy(new Ninja(this));
+				block->SetInItem(new JumpCoin(this));
 				auto spawnPosX = j * TILE_SPR_SIZE_X;
 				auto spawnPosY = i * TILE_SPR_SIZE_Y + CorrectPosY(block->GetSprite()->Size.Y);
 
@@ -227,6 +227,18 @@ void MyGame::PlayScene::Initialize()
 	}
 
 	//아이템
+	for (auto item = m_objManager->items.begin(); item != m_objManager->items.end(); ) {
+		if (item->second) {
+			//인스턴스인 경우 삭제
+			delete item->first;  // 메모리 해제
+			item = m_objManager->items.erase(item);  // 원소 삭제 후 반복문 인덱스 조정
+		}
+		else {
+			item->first->Initialize();
+			++item;
+		}
+	}
+
 	//에너미
 	for (auto enemy = m_objManager->enemys.begin(); enemy != m_objManager->enemys.end(); ) {
 		if (enemy->second) {
@@ -281,6 +293,11 @@ void MyGame::PlayScene::Update()
 	}
 
 	//아이템
+	while (!m_objManager->addedItems.empty())
+	{
+		m_objManager->items.push_back({ m_objManager->addedItems.front(),true });
+		m_objManager->addedItems.pop();
+	}
 
 	//적
 	while (!m_objManager->addedEnemys.empty())
@@ -375,6 +392,24 @@ void MyGame::PlayScene::Update()
 		}
 
 		//아이템 관리
+		for (auto& item : m_objManager->items)
+		{
+			if (!item.first->IsAlive())
+			{
+				item.first->SetActive(false);
+				continue;
+			}
+
+			//타일이 화면안에 들어오는지 체크
+			if (!CheckAABB(item.first->GetBbox(), GET_SCREEN_BBOX()))
+			{
+				item.first->SetActive(false);
+			}
+			else
+			{
+				item.first->SetActive(true);
+			}
+		}
 
 		//적 관리
 		for (auto& enemy : m_objManager->enemys)
@@ -408,6 +443,11 @@ void MyGame::PlayScene::Update()
 		}
 
 		//아이템 업데이트
+		for (auto& item : m_objManager->items)
+		{
+			if (item.first->GetActive() && !item.first->GetForceIgnoreCollision())
+				item.first->Update();
+		}
 
 		//적 업데이트
 		for (auto& enemy : m_objManager->enemys)
@@ -419,6 +459,11 @@ void MyGame::PlayScene::Update()
 	////--충돌체크
 
 		//아이템
+		for (auto& item : m_objManager->items)
+		{
+			if (item.first->GetActive() && !item.first->GetForceIgnoreCollision())
+				item.first->CheckCollision();
+		}
 
 		//적
 		for (auto& enemy : m_objManager->enemys)
@@ -619,6 +664,14 @@ void MyGame::PlayScene::Render()
 
 		RENDER_STR({ 4,20 }, L"shift - 달리기, space - 점프, 방향키 - 이동");
 
+		for (auto& item : m_objManager->items)
+		{
+			if (item.first->GetActive())
+			{
+				RENDER_SPR({ (SHORT)(ceil(item.first->GetPosX())), (SHORT)(ceil(item.first->GetPosY())) }, item.first->GetSprite());
+			}
+		}
+
 		for (auto& enemy : m_objManager->enemys)
 		{
 			if (enemy.first->GetActive())
@@ -667,6 +720,13 @@ MyGame::PlayScene::~PlayScene()
 		if (tile.first) {
 			delete tile.first;  // 동적 할당된 Tile*을 해제
 			tile.first = nullptr;  
+		}
+	}
+
+	for (auto& item : m_objManager->items) {
+		if (item.first) {
+			delete item.first;
+			item.first = nullptr;
 		}
 	}
 

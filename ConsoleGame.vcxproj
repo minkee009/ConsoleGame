@@ -139,6 +139,7 @@
     <ClCompile Include="GoalPole.cpp" />
     <ClCompile Include="GoomBa.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="JumpCoin.cpp" />
     <ClCompile Include="Jumper.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math.cpp" />
@@ -158,8 +159,11 @@
     <ClInclude Include="bbox.hpp" />
     <ClInclude Include="Block.hpp" />
     <ClInclude Include="BlockBroken.hpp" />
+    <ClInclude Include="Bonus.hpp" />
     <ClInclude Include="char_check.h" />
+    <ClInclude Include="Coin.hpp" />
     <ClInclude Include="console_renderer.hpp" />
+    <ClInclude Include="DeathShroom.hpp" />
     <ClInclude Include="delegate.hpp" />
     <ClInclude Include="DummyGoomba.hpp" />
     <ClInclude Include="Enemy.hpp" />
@@ -170,6 +174,7 @@
     <ClInclude Include="input.hpp" />
     <ClInclude Include="IScene.hpp" />
     <ClInclude Include="Item.hpp" />
+    <ClInclude Include="JumpCoin.hpp" />
     <ClInclude Include="Jumper.hpp" />
     <ClInclude Include="math.hpp" />
     <ClInclude Include="MenuScene.hpp" />

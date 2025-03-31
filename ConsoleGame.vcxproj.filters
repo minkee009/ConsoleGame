@@ -141,6 +141,9 @@
     <ClCompile Include="MysteryBlock.cpp">
       <Filter>소스 파일\내 게임\오브젝트\타일</Filter>
     </ClCompile>
+    <ClCompile Include="JumpCoin.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="console_renderer.hpp">
@@ -238,6 +241,18 @@
     </ClInclude>
     <ClInclude Include="ObjectManager.hpp">
       <Filter>헤더 파일\내 게임\씬\playScene 멤버</Filter>
+    </ClInclude>
+    <ClInclude Include="Coin.hpp">
+      <Filter>헤더 파일\내 게임\오브젝트\아이템</Filter>
+    </ClInclude>
+    <ClInclude Include="JumpCoin.hpp">
+      <Filter>헤더 파일\내 게임\오브젝트\아이템</Filter>
+    </ClInclude>
+    <ClInclude Include="Bonus.hpp">
+      <Filter>헤더 파일\내 게임\오브젝트\아이템</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathShroom.hpp">
+      <Filter>헤더 파일\내 게임\오브젝트\아이템</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

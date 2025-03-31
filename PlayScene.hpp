@@ -3,6 +3,7 @@
 #include "Player.hpp"
 #include "Tile.hpp"
 #include "Enemy.hpp"
+#include "Item.hpp"
 #include "PointPrinter.hpp"
 #include <vector>
 #include <queue>
@@ -25,6 +26,11 @@
 #define PLAY_DEADINCOUNT_01_TIMER 2.5f
 
 #define PRINTPOINT_VELY 15.0f
+
+#define IS_PLAYER 1
+#define IS_TILE 2
+#define IS_ITEM 4
+#define IS_ENEMY 8
 
 
 namespace MyGame
@@ -61,10 +67,12 @@ namespace MyGame
 
 		void AddTile(Tile* tile) { m_objManager->addedTiles.push(tile); };
 		void AddEnemy(Enemy* enemy) { m_objManager->addedEnemys.push(enemy); };
+		void AddItem(Item* item) { m_objManager->addedItems.push(item); }
 		void AddScore(float score) { m_score += score; }
 		void PrintPoint(const wchar_t* point, float posX, float posY) { m_pointPrinter->CreatePoint(point, 0.5f,posX,posY, 0.0f, -PRINTPOINT_VELY); }
 		const std::vector<std::pair<Tile*, bool>>* GetTiles() { return &m_objManager->tiles; }
 		const std::vector<std::pair<Enemy*, bool>>* GetEnemys() { return &m_objManager->enemys; }
+		const std::vector<std::pair<Item*, bool>>* GetItems() { return &m_objManager->items; }
 
 		static constexpr const char* const* GetTilemap() { return m_map01; }
 		Player* GetPlayer() { return m_player; }

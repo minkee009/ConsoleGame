@@ -316,26 +316,26 @@ void MyGame::Player::CheckCollision()
 	}
 
 	//아이템 충돌
-	//for (auto& tile : *(m_scene->GetTiles()))
-	//{
-	//	if (!tile.first->GetActive())
-	//		continue;
+	for (auto& item : *(m_scene->GetItems()))
+	{
+		if (!item.first->GetActive()
+			|| item.first->GetForceIgnoreCollision()
+			|| item.first->IsInstancePlay()
+			|| !item.first->IsAlive())
+			continue;
 
-	//	//경계범위 체크
-	//	if (CheckAABB(p_checkBox,
-	//		tile.first->GetBbox()))
-	//	{
-	//		bool isCollide = CheckAABB(GetBbox(),
-	//			tile.first->GetBbox());
+		//경계범위 체크
+		bool isCollide = CheckAABB(GetBbox(),
+			item.first->GetBbox());
 
-	//		if (isCollide)
-	//		{
-	//			tile.first->CallInteract(tile.first->IsSolid()
-	//				? ApplyPenetration(&m_posX, &m_posY, GetBbox(), tile.first->GetBbox())
-	//				: CalcPenetration(GetBbox(), tile.first->GetBbox()));
-	//		}
-	//	}
-	//}
+		if (isCollide)
+		{
+			auto collisionFlag = CalcPenetration(GetBbox(),
+				item.first->GetBbox());
+
+			item.first->CallInteract(collisionFlag,IS_PLAYER);
+		}
+	}
 
 	//적 충돌
 	for (auto& enemy : *(m_scene->GetEnemys()))
