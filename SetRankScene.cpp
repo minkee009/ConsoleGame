@@ -75,7 +75,7 @@ void MyGame::SetRankScene::Update()
         m_cursorX++;
         m_cursorX %= 7;
     }
-    if (GET_KEY_DOWN(VK_RETURN))
+    if (GET_KEY_DOWN(VK_RETURN) || GET_KEY_DOWN(VK_SPACE))
     {
         if (m_cursorX == 5 && m_cursorY == 4)
         {

@@ -208,21 +208,58 @@ void MyGame::PlayScene::Initialize()
 	m_player->Initialize();
 	m_player->SetPosition(2, 26);
 
+	m_pause = false;
 	m_timer = 0;
+	m_menuIdx = 0;
 	gameState = PrintLife;
 	m_pointPrinter->ClearAllPoints();
 }
 
 void MyGame::PlayScene::Update()
 {
-
-	if (m_life == 0)
+	if (!m_childMode && m_life == 0)
 	{
 		//게임 오버
 		CHANGE_SCENE(GameOver);
 		SET_ANCHOR_POS(0, 0);
 
 		m_life = 3;
+	}
+
+	if (GET_KEY_DOWN(VK_ESCAPE))
+	{
+		m_pause = true;
+	}
+
+	if (m_pause)
+	{
+		SET_ANCHOR_POS(0, 0);
+		if (GET_KEY_DOWN(VK_UP))
+			m_menuIdx--;
+
+		if (GET_KEY_DOWN(VK_DOWN))
+			m_menuIdx++;
+
+		m_menuIdx = m_menuIdx < 0 ? 2 - 1 : m_menuIdx;
+		m_menuIdx %= 2;
+
+		if (GET_KEY_DOWN(VK_RETURN) || GET_KEY_DOWN(VK_SPACE))
+		{
+			switch (m_menuIdx)
+			{
+			case 0:
+				SET_ANCHOR_POS(0,-10);
+				m_player->MoveViewport();
+				m_pause = false;
+				break;
+			case 1:
+				m_life = 3;
+				CHANGE_SCENE(Menu);
+				break;
+			}
+		}
+
+		return;
 	}
 
 	switch (gameState)
@@ -241,7 +278,7 @@ void MyGame::PlayScene::Update()
 	{
 		m_timer -= GET_DELTATIME() * 2.0f;
 
-		if (m_timer < 0.0f)
+		if (!m_childMode && m_timer < 0.0f)
 		{
 			gameState = PlayerDead;
 			return;
@@ -436,8 +473,16 @@ void MyGame::PlayScene::Update()
 				//골 종료
 				m_goalIncount++;
 				SET_ANCHOR_POS(0, 0);
-				dynamic_cast<SetRankScene*>(GET_SCENE(SetRank))->SetCurrentScore((int)m_score);
-				CHANGE_SCENE(SetRank);
+
+				if (m_childMode)
+				{
+					CHANGE_SCENE(GameOver);
+				}
+				else
+				{
+					dynamic_cast<SetRankScene*>(GET_SCENE(SetRank))->SetCurrentScore((int)m_score);
+					CHANGE_SCENE(SetRank);
+				}
 
 				m_life = 3;
 			}
@@ -452,6 +497,30 @@ void MyGame::PlayScene::Update()
 
 void MyGame::PlayScene::Render()
 {
+	if (m_pause)
+	{
+		short menuPointerY = 0;
+		switch (m_menuIdx)
+		{
+		case 0:
+		{
+			menuPointerY = (SHORT)(GET_SCREEN_HEIGHT() / 2 - 2);
+			break;
+		}
+		case 1:
+		{
+			menuPointerY = (SHORT)(GET_SCREEN_HEIGHT() / 2);
+			break;
+		}
+		}
+		RENDER_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 5), menuPointerY }, L">");
+		RENDER_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 6), (SHORT)(GET_SCREEN_HEIGHT() / 2 - 5) }, L"** 일시정지 **");
+		RENDER_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 3), (SHORT)(GET_SCREEN_HEIGHT() / 2 - 2) }, L"재개");
+		RENDER_STR({ (SHORT)(GET_SCREEN_WIDTH() / 2 - 3), (SHORT)(GET_SCREEN_HEIGHT() / 2) }, L"메인메뉴");
+		return;
+	}
+
+
 	switch (gameState)
 	{
 	case PrintLife:
@@ -504,7 +573,15 @@ void MyGame::PlayScene::Render()
 
 
 		RENDER_STR({ GET_ANCHOR_POS().X, -9 }, L"    점수                                                                                                       시간    ");
-		swprintf_s(m_msgBuffer, 1024, L"  %08d                                                                                                     %04d    ", (int)m_score, (int)m_timer);
+		
+		if (!m_childMode)
+		{
+			swprintf_s(m_msgBuffer, 1024, L"  %08d                                                                                                     %04d    ", (int)m_score, (int)m_timer);
+		}
+		else
+		{
+			swprintf_s(m_msgBuffer, 1024, L"  %08d   ", (int)m_score);
+		}
 		RENDER_STR({ GET_ANCHOR_POS().X, -8 }, m_msgBuffer);
 		break;
 	}

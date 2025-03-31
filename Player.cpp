@@ -246,6 +246,8 @@ void MyGame::Player::CheckCollision()
 			}
 			if (collisionFlag & MATH_COL_FLAG_PUSHDOWN)
 			{
+				//리플렉트
+				m_velY = abs(m_velY);
 				m_jumpTrigger = false;
 				m_jumpTimer = 0.0f;
 			}

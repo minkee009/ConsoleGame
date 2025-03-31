@@ -23,7 +23,7 @@ void MyGame::ViewRankScene::Update()
         m_cursor_visible = !m_cursor_visible;
     }
 
-    if(GET_KEY_DOWN(VK_RETURN))
+    if(GET_KEY_DOWN(VK_RETURN) || GET_KEY_DOWN(VK_SPACE))
         CHANGE_SCENE(Menu);
 }
 

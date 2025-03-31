@@ -55,6 +55,8 @@ namespace MyGame
 			return c == 'g' || c == 'd' || c == 'y' || c == 'u' || c == 'j' || c == 'k' || c == 's';
 		}
 
+		void SetChildMode(bool mode) { m_childMode = mode; }
+
 		void AddTile(Tile* tile) { m_tiles.push_back({ tile,true }); };
 		void AddScore(float score) { m_score += score; }
 		void PrintPoint(const wchar_t* point, float posX, float posY) { m_pointPrinter->CreatePoint(point, 0.5f,posX,posY, 0.0f, -PRINTPOINT_VELY); }
@@ -87,7 +89,7 @@ namespace MyGame
 			"...................................e........ggggg.........................................",
 			"..................................yu................e.....................................",
 			"...........................yu.....jk...............ss.....................................",
-			"...............F...yu....e.jk.....jk...gg...D.....ssss...........F...N...N...i............",
+			"...............F...yu....e.jk.....jk...ss...D.....ssss...........F...N...N...i............",
 			"gdggggdgggdggggddggggggdgggggggggggdgggggggdggdgdggddggdgdggddggggggdggddgggggggdggggggggg",
 		};
 
@@ -154,6 +156,7 @@ namespace MyGame
 
 		SceneState m_sceneState = Play;
 
+		bool m_childMode = false;
 		short m_goalIncount;
 		float m_goalTimer;
 
@@ -163,6 +166,8 @@ namespace MyGame
 		int m_life = 3;
 		float m_score = 0;
 		float m_timer;
+		bool m_pause = false;
+		short m_menuIdx = 0;
 
 		wchar_t* m_msgBuffer;
 	};
