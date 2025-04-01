@@ -18,6 +18,8 @@ namespace MyGame
 		virtual void Update() {}
 		virtual void CheckCollision() {}
 		virtual void CallInteract(int collisionFlag, int otherFlag) {}
+		float GetSpawnPosX() { return m_spawnPosX; }
+		float GetSpawnPosY() { return m_spawnPosY; }
 		float GetPosX() { return m_posX; }
 		float GetPosY() { return m_posY; }
 		Bbox GetCheckBBox() const {

@@ -20,6 +20,8 @@ namespace MyGame
 		virtual void CallInteract(int collisionFlag) {}
 		float GetPosX() { return m_posX; }
 		float GetPosY() { return m_posY; }
+		float GetSpawnPosX() { return m_spawnPosX; }
+		float GetSpawnPosY() { return m_spawnPosY; }
 		bool IsDontPress() { return m_dontPress; }
 		Bbox GetCheckBBox() const {
 			return {

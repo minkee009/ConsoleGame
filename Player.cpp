@@ -356,6 +356,7 @@ void MyGame::Player::CheckCollision()
 		}
 	}
 
+	//거리별 업데이트 만들기
 	//적 충돌
 	for (auto& enemy : *(m_scene->GetEnemys()))
 	{

@@ -40,7 +40,7 @@ void MyGame::MysteryBlock::Update()
 		if (m_prevItem != nullptr && m_prevItem->IsInstancePlay())
 			return;
 
-		if (m_timer > 0.3f)
+		if (m_timer > 0.2f)
 		{
 			if (m_enemy != nullptr)
 				m_prevEnemy->SetForceIgnoreCollision(false);
@@ -51,9 +51,9 @@ void MyGame::MysteryBlock::Update()
 		}
 		m_timer += GET_DELTATIME();
 		if (m_enemy != nullptr)
-			m_prevEnemy->SetPosition(m_prevEnemy->GetPosX(), lerp_s_f(m_posY, m_posY - m_prevEnemy->GetSprite()->Size.Y, m_timer / 0.3f));
+			m_prevEnemy->SetPosition(m_prevEnemy->GetPosX(), lerp_s_f(m_prevEnemy->GetSpawnPosY(), m_posY - m_prevEnemy->GetSprite()->Size.Y, m_timer / 0.2f));
 		else
-			m_prevItem->SetPosition(m_prevItem->GetPosX(), lerp_s_f(m_posY, m_posY - m_prevItem->GetSprite()->Size.Y, m_timer / 0.3f));
+			m_prevItem->SetPosition(m_prevItem->GetPosX(), lerp_s_f(m_prevItem->GetSpawnPosY(), m_posY - m_prevItem->GetSprite()->Size.Y, m_timer / 0.2f));
 	}
 }
 
@@ -79,8 +79,8 @@ void MyGame::MysteryBlock::CallInteract(int collisionFlag)
 		if (m_enemy != nullptr)
 		{
 			m_enemy->SetForceIgnoreCollision(true);
-			m_enemy->SetPosition(m_posX, m_posY);
-			m_enemy->SetSpawnPos(m_posX, m_posY);
+			m_enemy->SetPosition(m_posX , m_posY - abs(m_spr.Size.Y - m_enemy->GetSprite()->Size.Y ));
+			m_enemy->SetSpawnPos(m_posX, m_posY - abs(m_spr.Size.Y - m_enemy->GetSprite()->Size.Y));
 			m_enemy->Initialize();
 			m_scene->AddEnemy(m_enemy);
 			//복사 생성자 호출
@@ -98,8 +98,8 @@ void MyGame::MysteryBlock::CallInteract(int collisionFlag)
 			else
 			{
 				m_item->SetForceIgnoreCollision(true);
-				m_item->SetPosition(m_posX, m_posY);
-				m_item->SetSpawnPos(m_posX, m_posY);
+				m_item->SetPosition(m_posX, m_posY - abs(m_spr.Size.Y - m_item->GetSprite()->Size.Y));
+				m_item->SetSpawnPos(m_posX, m_posY - abs(m_spr.Size.Y - m_item->GetSprite()->Size.Y));
 			}
 			//복사 생성자 호출
 			//씬으로 옮긴 객체는 씬이 자동으로 
