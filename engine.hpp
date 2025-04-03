@@ -58,6 +58,8 @@ namespace MyGame
 #define PLAY_BGM Engine::GetInstance()->GetSoundManager()->PlayBGM
 #define PLAY_SE Engine::GetInstance()->GetSoundManager()->PlaySE
 #define STOP_BGM Engine::GetInstance()->GetSoundManager()->StopBGM
+#define BGM_ISPLAYING Engine::GetInstance()->GetSoundManager()->IsBGMPlaying
+#define PAUSE_BGM Engine::GetInstance()->GetSoundManager()->PauseBGM
 
 //Engine
 #define ENGINE_EXIT Engine::GetInstance()->Exit

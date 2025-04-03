@@ -9,26 +9,26 @@ namespace MyGame
 {
     class SoundManager {
     public:
-        SoundManager() : system(nullptr), bgmChannel(nullptr), seChannel1(nullptr), seChannel2(nullptr) {
-            if (FMOD::System_Create(&system) != FMOD_OK) {
+        SoundManager() : m_system(nullptr), m_bgmChannel(nullptr), m_seChannel1(nullptr), m_seChannel2(nullptr) {
+            if (FMOD::System_Create(&m_system) != FMOD_OK) {
                 std::cerr << "FMOD 시스템 생성 실패!" << std::endl;
             }
-            system->init(512, FMOD_INIT_NORMAL, nullptr);
+            m_system->init(512, FMOD_INIT_NORMAL, nullptr);
         }
 
         ~SoundManager() {
-            for (auto& pair : sounds) {
+            for (auto& pair : m_sounds) {
                 pair.second->release();
             }
-            system->close();
-            system->release();
+            m_system->close();
+            m_system->release();
         }
 
         void LoadSound(const std::string& filename, bool isBGM = false) {
             FMOD::Sound* sound = nullptr;
             FMOD_MODE mode = isBGM ? FMOD_LOOP_NORMAL : FMOD_DEFAULT;
-            if (system->createSound(filename.c_str(), mode, nullptr, &sound) == FMOD_OK) {
-                sounds[filename] = sound;
+            if (m_system->createSound(filename.c_str(), mode, nullptr, &sound) == FMOD_OK) {
+                m_sounds[filename] = sound;
             }
             else {
                 std::cerr << "사운드 로드 실패: " << filename << std::endl;
@@ -54,16 +54,16 @@ namespace MyGame
         }
 
         void PlayBGM(const std::string& filename) {
-            auto it = sounds.find(filename);
-            if (it != sounds.end()) {
-                if (bgmChannel) {
+            auto it = m_sounds.find(filename);
+            if (it != m_sounds.end()) {
+                if (m_bgmChannel) {
                     bool isPlaying = false;
-                    bgmChannel->isPlaying(&isPlaying);
+                    m_bgmChannel->isPlaying(&isPlaying);
                     if (isPlaying) {
-                        bgmChannel->stop();
+                        m_bgmChannel->stop();
                     }
                 }
-                system->playSound(it->second, nullptr, false, &bgmChannel);
+                m_system->playSound(it->second, nullptr, false, &m_bgmChannel);
             }
             else {
                 std::cerr << "BGM을 찾을 수 없음: " << filename << std::endl;
@@ -71,9 +71,9 @@ namespace MyGame
         }
 
         void PlaySE(const std::string& filename, int channelNumber) {
-            auto it = sounds.find(filename);
-            if (it != sounds.end()) {
-                FMOD::Channel** targetChannel = (channelNumber == 1) ? &seChannel1 : &seChannel2;
+            auto it = m_sounds.find(filename);
+            if (it != m_sounds.end()) {
+                FMOD::Channel** targetChannel = (channelNumber == 1) ? &m_seChannel1 : &m_seChannel2;
                 if (*targetChannel) {
                     bool isPlaying = false;
                     (*targetChannel)->isPlaying(&isPlaying);
@@ -81,34 +81,46 @@ namespace MyGame
                         *targetChannel = nullptr;
                     }
                 }
-                system->playSound(it->second, nullptr, false, targetChannel);
+                m_system->playSound(it->second, nullptr, false, targetChannel);
             }
             else {
                 std::cerr << "사운드를 찾을 수 없음: " << filename << std::endl;
             }
         }
 
+        bool IsBGMPlaying()
+        {
+            bool isPlaying = false;
+            m_bgmChannel->isPlaying(&isPlaying);
+            return isPlaying;
+        }
+
+        void PauseBGM(bool pause)
+        {
+            m_bgmChannel->setPaused(pause);
+        }
+
         void StopBGM()
         {
-            if (bgmChannel) {
+            if (m_bgmChannel) {
                 bool isPlaying = false;
-                bgmChannel->isPlaying(&isPlaying);
+                m_bgmChannel->isPlaying(&isPlaying);
                 if (isPlaying) {
-                    bgmChannel->stop();
+                    m_bgmChannel->stop();
                 }
             }
         }
 
         void Update() {
-            system->update();
+            m_system->update();
         }
 
     private:
-        FMOD::System* system;
-        FMOD::Channel* bgmChannel;
-        FMOD::Channel* seChannel1;
-        FMOD::Channel* seChannel2;
-        std::unordered_map<std::string, FMOD::Sound*> sounds;
+        FMOD::System* m_system;
+        FMOD::Channel* m_bgmChannel;
+        FMOD::Channel* m_seChannel1;
+        FMOD::Channel* m_seChannel2;
+        std::unordered_map<std::string, FMOD::Sound*> m_sounds;
     };
 }
 
