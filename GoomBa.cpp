@@ -202,6 +202,7 @@ void MyGame::GoomBa::CallInteract(int collisionFlag)
 		m_spr.ShapeString = m_goombaShapePress;
 		m_scene->PrintPoint(L"100",m_posX,m_posY);
 		m_scene->AddScore(100.0f);
+		PLAY_SE("SE\\humi.mp3", 1);
 	}
 
 	else if (collisionFlag & MATH_COL_FLAG_PUSHDOWN)
@@ -213,5 +214,6 @@ void MyGame::GoomBa::CallInteract(int collisionFlag)
 		m_scene->PrintPoint(L"100", m_posX, m_posY);
 		m_scene->AddScore(100.0f);
 		m_velY = -25.0f;
+		PLAY_SE("SE\\koura.mp3", 1);
 	}
 }

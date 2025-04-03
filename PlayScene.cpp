@@ -330,18 +330,23 @@ void MyGame::PlayScene::Initialize()
 
 void MyGame::PlayScene::Update()
 {
+	GameState lastState = gameState;
 	if (!m_childMode && m_life == 0)
 	{
 		//게임 오버
 		CHANGE_SCENE(GameOver);
 		SET_ANCHOR_POS(0, 0);
-
+		STOP_BGM();
 		m_life = 3;
+		
 	}
-
+	bool lastPause = m_pause;
 	if (GET_KEY_DOWN(VK_ESCAPE))
 	{
 		m_pause = true;
+		PAUSE_BGM(true);
+		if(lastPause != m_pause)
+			PLAY_SE("SE\\hintBlock.mp3", 2);
 	}
 
 ////--중간 추가생성된 오브젝트 관리
@@ -386,10 +391,12 @@ void MyGame::PlayScene::Update()
 				SET_ANCHOR_POS(0,-10);
 				m_player->MoveViewport();
 				m_pause = false;
+				PAUSE_BGM(false);
 				break;
 			case 1:
 				m_life = 3;
 				CHANGE_SCENE(Menu);
+				STOP_BGM();
 				break;
 			}
 		}
@@ -401,7 +408,8 @@ void MyGame::PlayScene::Update()
 	{
 	case PrintLife:
 	{
-		STOP_BGM();
+		if(BGM_ISPLAYING())
+			STOP_BGM();
 		m_timer += GET_DELTATIME();
 		if (m_timer > 2.0f)
 		{
@@ -412,7 +420,8 @@ void MyGame::PlayScene::Update()
 	}
 	case Playing:
 	{
-		
+		if (!BGM_ISPLAYING())
+			PLAY_BGM("BGM\\field.mp3");
 
 		m_timer -= GET_DELTATIME() * 2.0f;
 
@@ -536,13 +545,13 @@ void MyGame::PlayScene::Update()
 		}
 
 		m_player->CheckCollision();
-
 		break;
 	}
 	case PlayerDead:
 	{
 		if (m_deadIncount == 0)
 		{
+
 			m_player->SetVelocity(0, 0);
 			m_player->ForceChangePlayerShape(PLAYER_SPR_S_DIE);
 			m_deadTimer += GET_DELTATIME();
@@ -664,6 +673,26 @@ void MyGame::PlayScene::Update()
 	}
 	}
 
+	if (lastState != gameState)
+	{
+		switch (gameState)
+		{
+		case PlayerDead:
+			if (BGM_ISPLAYING())
+				STOP_BGM();
+
+			PLAY_SE("SE\\death.mp3", 2);
+			break;	
+		case Goal:
+			if (BGM_ISPLAYING())
+				STOP_BGM();
+
+			PLAY_SE("SE\\goal.mp3", 1);
+			break;
+		}
+	
+
+	}
 }
 
 

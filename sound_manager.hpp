@@ -123,29 +123,3 @@ namespace MyGame
         std::unordered_map<std::string, FMOD::Sound*> m_sounds;
     };
 }
-
-//int main() {
-//    SoundManager soundManager;
-//    soundManager.LoadAllSoundsFromFolder("SE");
-//    soundManager.LoadSound("bgm.mp3", true);
-//    
-//    std::cout << "재생할 사운드를 입력하세요 (bgm/se1/se2): ";
-//    std::string type, filename;
-//    std::cin >> type >> filename;
-//
-//    if (type == "bgm") {
-//        soundManager.PlayBGM(filename);
-//    } else if (type == "se1") {
-//        soundManager.PlaySE(filename, 1);
-//    } else if (type == "se2") {
-//        soundManager.PlaySE(filename, 2);
-//    } else {
-//        std::cerr << "잘못된 입력!" << std::endl;
-//    }
-//    
-//    std::cout << "Press Enter to stop..." << std::endl;
-//    std::cin.ignore();
-//    std::cin.get();
-//    
-//    return 0;
-//}

@@ -5,13 +5,14 @@ void MyGame::GameOverScene::Initialize()
 {
 	m_timer = 0.0f;
 	SET_ANCHOR_POS(0, 0);
+	PLAY_SE("SE\\gameover.mp3", 2);
 }
 
 void MyGame::GameOverScene::Update()
 {
 	m_timer += GET_DELTATIME();
 
-	if (m_timer > 3.0f)
+	if (m_timer > 4.5f)
 	{
 		CHANGE_SCENE(Menu);
 	}

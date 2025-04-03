@@ -290,6 +290,7 @@ void MyGame::Ninja::CallInteract(int collisionFlag)
 			m_spr.ShapeString = m_ninjaShapePress;
 			m_scene->PrintPoint(L"400", m_posX, m_posY);
 			m_scene->AddScore(400.0f);
+			PLAY_SE("SE\\humi.mp3", 1);
 		}
 	}
 
@@ -302,5 +303,6 @@ void MyGame::Ninja::CallInteract(int collisionFlag)
 		m_scene->PrintPoint(L"400", m_posX, m_posY);
 		m_scene->AddScore(400.0f);
 		m_velY = -25.0f;
+		PLAY_SE("SE\\koura.mp3", 1);
 	}
 }

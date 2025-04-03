@@ -83,6 +83,7 @@ void MyGame::MysteryBlock::CallInteract(int collisionFlag)
 			m_enemy->SetSpawnPos(m_posX, m_posY - abs(m_spr.Size.Y - m_enemy->GetSprite()->Size.Y));
 			m_enemy->Initialize();
 			m_scene->AddEnemy(m_enemy);
+			PLAY_SE("SE\\brockkinoko.mp3", 1);
 			//복사 생성자 호출
 			//씬으로 옮긴 객체는 씬이 자동으로 
 			m_prevEnemy = m_enemy;
@@ -94,9 +95,11 @@ void MyGame::MysteryBlock::CallInteract(int collisionFlag)
 			{
 				//하드코딩 - 바꾸기
 				m_item->SetPosition(m_posX + 3.0f, m_posY - m_item->GetSprite()->Size.Y);
+				PLAY_SE("SE\\brockcoin.mp3", 1);
 			}
 			else
 			{
+				PLAY_SE("SE\\brockkinoko.mp3", 1);
 				m_item->SetForceIgnoreCollision(true);
 				m_item->SetPosition(m_posX, m_posY - abs(m_spr.Size.Y - m_item->GetSprite()->Size.Y));
 				m_item->SetSpawnPos(m_posX, m_posY - abs(m_spr.Size.Y - m_item->GetSprite()->Size.Y));

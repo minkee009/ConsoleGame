@@ -67,6 +67,7 @@ void MyGame::Engine::Update()
 
 void MyGame::Engine::Render()
 {
+	m_soundManager->Update();
 	m_consoleRenderer.Clear();
 	m_sceneManager.RenderScene();
 	m_consoleRenderer.Swap();

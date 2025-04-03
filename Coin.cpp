@@ -48,5 +48,6 @@ void MyGame::Coin::CallInteract(int collisionFlag, int otherFlag)
 	{
 		m_isAlive = false;
 		m_scene->AddScore(100);
+		PLAY_SE("SE\\coin.mp3", 1);
 	}
 }

@@ -102,6 +102,7 @@ void MyGame::Player::UpdateMovement()
 
 		if (!m_forceInput && GET_KEY_DOWN(VK_SPACE))
 		{
+			PLAY_SE("SE\\jump.mp3", 1);
 			m_jumpTrigger = true;
 			m_velY = -PLAYER_JUMPVEL;
 			m_spr.ShapeString = m_playerShape3;

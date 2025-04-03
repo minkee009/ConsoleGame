@@ -52,6 +52,8 @@ void MyGame::Block::CallInteract(int collisionFlag)
 		hitUp.minY -= 0.5f;
 		hitUp.maxY -= 0.5f;
 
+		PLAY_SE("SE\\brockbreak.mp3",1);
+
 		//블록위의 오브젝트와 상호작용
 
 		//아이템
