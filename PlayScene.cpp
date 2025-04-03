@@ -401,6 +401,7 @@ void MyGame::PlayScene::Update()
 	{
 	case PrintLife:
 	{
+		STOP_BGM();
 		m_timer += GET_DELTATIME();
 		if (m_timer > 2.0f)
 		{
@@ -411,6 +412,7 @@ void MyGame::PlayScene::Update()
 	}
 	case Playing:
 	{
+		PLAY_BGM("BGM\\field.mp3");
 		m_timer -= GET_DELTATIME() * 2.0f;
 
 		if (!m_childMode && m_timer < 0.0f)

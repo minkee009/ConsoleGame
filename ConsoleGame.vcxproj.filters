@@ -150,6 +150,9 @@
     <ClCompile Include="JumpCoin.cpp">
       <Filter>소스 파일\내 게임\오브젝트\아이템</Filter>
     </ClCompile>
+    <ClCompile Include="DeathShroom.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="console_renderer.hpp">
@@ -254,11 +257,11 @@
     <ClInclude Include="JumpCoin.hpp">
       <Filter>헤더 파일\내 게임\오브젝트\아이템</Filter>
     </ClInclude>
-    <ClInclude Include="Bonus.hpp">
-      <Filter>헤더 파일\내 게임\오브젝트\아이템</Filter>
-    </ClInclude>
     <ClInclude Include="DeathShroom.hpp">
       <Filter>헤더 파일\내 게임\오브젝트\아이템</Filter>
+    </ClInclude>
+    <ClInclude Include="sound_manager.hpp">
+      <Filter>헤더 파일\엔진</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

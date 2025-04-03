@@ -141,8 +141,8 @@ namespace MyGame
 		};
 		static constexpr const WCHAR* m_map01_pipe1Shape[TILE_SPR_SIZE_Y] = {
 			L"████▓▓",
-			L"██▓▒  ",
-			L"██▓▒  ",
+			L"██▓▒▒ ",
+			L"██▓▒▒ ",
 		};
 		static constexpr const WCHAR* m_map01_pipe2Shape[TILE_SPR_SIZE_Y] = {
 			L" ▒▒▓██",
@@ -150,9 +150,9 @@ namespace MyGame
 			L" ▒▒▓██",
 		};
 		static constexpr const WCHAR* m_map01_pipe3Shape[TILE_SPR_SIZE_Y] = {
-			L"██▓▒  ",
-			L"██▓▒  ",
-			L"██▓▒  ",
+			L"██▓▒▒ ",
+			L"██▓▒▒ ",
+			L"██▓▒▒ ",
 		};
 
 		static constexpr const WCHAR* m_map01_solidBlock[TILE_SPR_SIZE_Y] = {

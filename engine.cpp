@@ -1,10 +1,15 @@
 #include "engine.hpp"
+#include <iostream>
 
 std::unique_ptr<MyGame::Engine> MyGame::Engine::m_instance = nullptr;
 
 MyGame::Engine::Engine(int screenWidth, int screenHeight) : m_consoleRenderer(screenWidth, screenHeight)
 {
 	m_engineIsExit = false;
+	m_soundManager = new SoundManager;
+
+	m_soundManager->LoadAllSoundsFromFolder("SE");
+	m_soundManager->LoadAllSoundsFromFolder("BGM",true);
 }
 
 bool MyGame::Engine::Initialize(int screenWidth, int screenHeight)
@@ -36,6 +41,11 @@ MyGame::SceneManager* MyGame::Engine::GetSceneManager()
 	return &m_sceneManager;
 }
 
+MyGame::SoundManager* MyGame::Engine::GetSoundManager()
+{
+	return m_soundManager;
+}
+
 void MyGame::Engine::Run()
 {
 	INIT_TIME();
@@ -52,6 +62,7 @@ void MyGame::Engine::Update()
 	SCAN_KEY();
 	m_sceneManager.CheckIsSceneChanged();
 	m_sceneManager.UpdateScene();
+	m_soundManager->Update();
 }
 
 void MyGame::Engine::Render()
@@ -64,4 +75,9 @@ void MyGame::Engine::Render()
 void MyGame::Engine::Exit()
 {
 	m_engineIsExit = true;
+}
+
+MyGame::Engine::~Engine()
+{
+	delete m_soundManager;
 }

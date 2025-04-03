@@ -4,6 +4,7 @@
 #include "scene_manager.hpp"
 #include "input.hpp"
 #include "time.hpp"
+#include "sound_manager.hpp"
 
 namespace MyGame
 {
@@ -18,8 +19,11 @@ namespace MyGame
 
 		ConsoleRenderer* GetConsoleRenderer();
 		SceneManager* GetSceneManager();
+		SoundManager* GetSoundManager();
 		void Run();
 		void Exit();
+
+		~Engine();
 	private:
 		static std::unique_ptr<Engine> m_instance;
 		Engine(int screenWidth, int screenHeight);
@@ -27,6 +31,8 @@ namespace MyGame
 		bool m_engineIsExit;
 		ConsoleRenderer m_consoleRenderer;
 		SceneManager m_sceneManager;
+		SoundManager* m_soundManager;
+
 
 		void Update();
 		void Render();
@@ -47,6 +53,11 @@ namespace MyGame
 #define ADD_SCENE Engine::GetInstance()->GetSceneManager()->AddScene
 #define CHANGE_SCENE Engine::GetInstance()->GetSceneManager()->ChangeScene
 #define GET_SCENE Engine::GetInstance()->GetSceneManager()->GetScene
+
+//Sound Manager
+#define PLAY_BGM Engine::GetInstance()->GetSoundManager()->PlayBGM
+#define PLAY_SE Engine::GetInstance()->GetSoundManager()->PlaySE
+#define STOP_BGM Engine::GetInstance()->GetSoundManager()->StopBGM
 
 //Engine
 #define ENGINE_EXIT Engine::GetInstance()->Exit

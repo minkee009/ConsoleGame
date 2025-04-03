@@ -100,7 +100,7 @@ void MyGame::Player::UpdateMovement()
 			m_velX = m_velX > 0 ? max(0.0f, m_velX - PLAYER_DECEL * GET_DELTATIME()) : min(0.0f, m_velX + PLAYER_DECEL * GET_DELTATIME());
 		}
 
-		if (GET_KEY_DOWN(VK_SPACE))
+		if (!m_forceInput && GET_KEY_DOWN(VK_SPACE))
 		{
 			m_jumpTrigger = true;
 			m_velY = -PLAYER_JUMPVEL;
